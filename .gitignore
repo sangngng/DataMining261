@@ -27,3 +27,5 @@ env/
 reports/figures/*.png
 reports/project_plan.md
 reports/project_plan.tex
+reports/*.docx
+reports/*.html
