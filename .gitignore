@@ -25,7 +25,7 @@ env/
 
 # Submissions & artifacts
 reports/figures/*.png
-reports/project_plan.md
-reports/project_plan.tex
-reports/*.docx
-reports/*.html
+
+# Personal & Private notes (not pushed to git)
+personal/
+

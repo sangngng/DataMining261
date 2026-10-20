@@ -23,17 +23,23 @@ The objective is to recommend and prioritize research papers for a specific rese
 
 ```
 DataMining/
-├── data/                  # Kaggle input files (train.csv, test.csv, sample_submission.csv)
-├── notebooks/             # Exploratory Data Analysis & experiments
-├── src/
-│   ├── metric.py          # Official competition metric calculation
-│   ├── utils.py           # Data loading, random seed, submission verification
-│   ├── features.py        # TF-IDF, K-Means clustering, and metadata features
-│   ├── models.py          # Two-stage recommender architecture
-│   └── evaluate.py        # 5-Fold Stratified Cross Validation & threshold sweep
-├── submissions/           # Generated submission CSVs ready for Kaggle
-├── requirements.txt       # Dependencies
-├── main.py                # End-to-end execution script
+├── source-code/           # Mã nguồn và pipeline làm việc chung của nhóm
+│   ├── data/              # File dữ liệu Kaggle (train.csv, test.csv, sample_submission.csv)
+│   ├── notebooks/         # Jupyter Notebooks (EDA, thử nghiệm mô hình)
+│   ├── src/               # Thư viện module chính
+│   │   ├── metric.py      # Công thức chấm điểm chính thức của cuộc thi
+│   │   ├── utils.py       # Load data, set seed, kiểm tra file nộp
+│   │   ├── features.py    # Pipeline trích xuất đặc trưng (TF-IDF, Clustering, Meta)
+│   │   ├── models.py      # Kiến trúc mô hình Two-Stage Recommender
+│   │   └── evaluate.py    # 5-Fold Stratified Cross Validation & tối ưu ngưỡng T*
+│   ├── submissions/       # Các file dự đoán xuất ra để nộp lên Kaggle
+│   ├── requirements.txt   # Danh sách thư viện cần cài đặt
+│   └── main.py            # Script chạy toàn bộ pipeline
+├── reports/               # Báo cáo và nhật ký thực nghiệm
+│   ├── figures/           # Biểu đồ EDA và phân tích phục vụ báo cáo
+│   └── experiment_log.csv # Nhật ký theo dõi kết quả nộp bài Kaggle của nhóm
+├── main.py                # Wrapper cho phép chạy trực tiếp từ thư mục gốc
+├── requirements.txt       # File requirements ở thư mục gốc
 └── README.md
 ```
 
