@@ -1,0 +1,103 @@
+\chapter{Thiết Kế Giải Pháp \& Kiến Trúc Hệ Thống}
+\label{chap:solution}
+
+\section{Kiến Trúc Tổng Thể Hai Giai Đoạn (Two-Stage Pipeline)}
+Để giải quyết hài hòa sự đánh đổi giữa hai thành phần $Q$ (Relevance) và $R$ (Coverage) trong hàm mục tiêu Harmonic Mean, nhóm thiết kế kiến trúc hệ thống gợi ý hai giai đoạn (\textit{Two-Stage Recommender Pipeline}):
+
+\begin{prismbox}[title=\textbf{Quy Trình Hoạt Động Của Two-Stage Pipeline}]
+\begin{enumerate}
+  \item \textbf{Giai đoạn 1 --- Bộ Lọc Nhị Phân (Filtering Stage):}
+    \begin{itemize}
+      \item \textit{Mục tiêu:} Phân biệt giữa bài không muốn đọc ($y = 1$) và bài đáng đọc ($y \ge 2$).
+      \item \textit{Đầu ra:} Xác suất bài báo thuộc nhóm đáng đọc: $p_i = P(y_i > 1 \mid \bm{x}_i)$.
+      \item \textit{Hành động:} Nếu $p_i < T^*$ (ngưỡng tối ưu), bài báo bị loại bỏ hoàn toàn bằng cách gán $\text{priority}_i = 0$.
+    \end{itemize}
+  \item \textbf{Giai đoạn 2 --- Bộ Xếp Hạng Ưu Tiên (Ranking Stage):}
+    \begin{itemize}
+      \item \textit{Mục tiêu:} Với các bài vượt qua bộ lọc ($p_i \ge T^*$), tính toán điểm số phản ánh độ ưu tiên đọc liên tục để sắp xếp các bài nhãn 4--5 lên các vị trí cao nhất.
+      \item \textit{Phương pháp:} Kết hợp giữa mô hình hồi quy GBDT ($\hat{y}_i$) và mô hình phân loại đa lớp tính Kỳ vọng Lợi ích ($\mathbb{E}[\text{Gain}_i]$).
+    \end{itemize}
+\end{enumerate}
+\end{prismbox}
+
+\section{Ứng Dụng Các Phương Pháp Cốt Lõi Môn Học}
+Nhóm đã tích hợp đầy đủ và thực chất các phương pháp nền tảng được giảng dạy trong chương trình môn học Khai phá Dữ liệu:
+
+\subsection{1. Phân Cụm Dữ Liệu (Clustering bằng K-Means)}
+Thay vì phân cụm trên không gian TF-IDF thưa thớt dễ bị phân mảnh từ ngữ, nhóm áp dụng thuật toán \textbf{K-Means Clustering} với $K = 12$ cụm trực tiếp trên không gian vector ngữ nghĩa 384 chiều của Sentence-BERT:
+\begin{itemize}
+  \item Các cụm tự động hội tụ về các trường phái nghiên cứu cụ thể: Cụm ASP Solvers \& Grounders, Cụm Neuro-Symbolic AI, Cụm Description Logics \& Ontologies, Cụm Model Checking \& Formal Verification, Cụm SAT/SMT Solving...
+  \item Khoảng cách Euclidean từ mỗi bài báo đến 12 tâm cụm được trích xuất thành 12 đặc trưng liên tục, giúp cây quyết định phân định ranh giới chủ đề một cách mượt mà.
+\end{itemize}
+
+\subsection{2. Khai Phá Luật Kết Hợp (Association Rules)}
+Áp dụng thuật toán Apriori để khai phá các mẫu từ khóa thường xuyên xuất hiện đồng thời trong các bài báo nhãn cao, từ đó xây dựng các cờ đặc trưng tương tác từ khóa có độ nâng (\textit{Lift}) cao.
+
+\subsection{3. Cây Quyết Định Tăng Cường Gradient (GBDT)}
+Sử dụng ba thư viện GBDT hiện đại nhất hiện nay:
+\begin{itemize}
+  \item \textbf{LightGBM} \cite{ke2017lightgbm}: Tốc độ huấn luyện vượt trội nhờ thuật toán GOSS (Gradient-based One-Side Sampling) và EFB (Exclusive Feature Bundling).
+  \item \textbf{XGBoost} \cite{chen2016xgboost}: Kiểm soát hiện tượng quá khớp (overfitting) chặt chẽ nhờ chính quy hóa bậc hai Hessian ($L_1, L_2$).
+  \item \textbf{CatBoost} \cite{prokhorenkova2018catboost}: Tối ưu hóa việc phân tách trên các biến phân loại và giảm thiểu độ lệch mục tiêu (\textit{Target Leakage}).
+\end{itemize}
+
+\subsection{4. Xếp Hạng Chuyên Sâu (LambdaMART \& Multiclass Expected Gain)}
+Nhóm triển khai hai kỹ thuật xếp hạng tiên tiến:
+\begin{enumerate}
+  \item \textbf{LightGBM LambdaMART (\texttt{lambdarank}):} Thuật toán học xếp hạng trực tiếp (\textit{Learning-to-Rank}) \cite{burges2010ranknet} tối ưu hóa hàm mất mát xấp xỉ NDCG, chú trọng đẩy các mẫu có mức độ phù hợp cao lên đầu danh sách.
+  \item \textbf{Multiclass Expected Gain Formulation:} Huấn luyện mô hình phân loại đa lớp 5 trạng thái để ước lượng phân phối xác suất $\{P(y=k)\}_{k=1}^5$. Kỳ vọng lợi ích toán học của bài báo được tính chính xác bằng:
+  \begin{equation}
+    \mathbb{E}[\text{Gain}_i] = \sum_{k=1}^5 \frac{k - 1}{4} \cdot P(y_i = k \mid \bm{x}_i)
+    \label{eq:expected_gain}
+  \end{equation}
+  Sau đó, điểm ưu tiên đọc cuối cùng được kết hợp theo công thức hỗn hợp (\textit{Blended Formulation}):
+  \begin{equation}
+    \text{priority}_i = 
+    \begin{cases}
+      \hat{y}_i + 2.0 \cdot \mathbb{E}[\text{Gain}_i], & \text{nếu } P(y_i > 1 \mid \bm{x}_i) \ge T^* \\
+      0.0, & \text{ngược lại}
+    \end{cases}
+    \label{eq:priority_formula}
+  \end{equation}
+\end{enumerate}
+
+\section{Thuật Toán Quét Ngưỡng Tối Ưu $T^*$ Trên Out-Of-Fold}
+Để tìm ra ngưỡng lọc $T^*$ mang lại điểm Harmonic Mean cao nhất mà không bị rò rỉ dữ liệu, nhóm xây dựng thuật toán quét lưới mịn (\textit{Fine Grid Search}) trên toàn bộ dự đoán Out-Of-Fold (OOF) thu được từ 5-Fold Cross Validation:
+
+\begin{prismbox}[title=\textbf{Thuật Toán Quét Ngưỡng Lọc Tối Ưu $T^*$}]
+\begin{enumerate}
+  \item Thu thập ma trận dự đoán ngoài mẫu (OOF): Xác suất $\bm{p}_{\text{oof}} = [p_1, \dots, p_N]$ và điểm ưu tiên dự đoán $\bm{s}_{\text{oof}} = [s_1, \dots, s_N]$.
+  \item Thiết lập không gian quét: $T \in [0.20, 0.80]$ với bước nhảy $\Delta T = 0.01$ (61 điểm thử nghiệm).
+  \item Với mỗi giá trị $T$:
+    \begin{itemize}
+      \item Tạo vector ưu tiên thử nghiệm: $\bm{p}^{(T)} = \text{where}(\bm{p}_{\text{oof}} \ge T, \; \bm{s}_{\text{oof}}, \; 0.0)$.
+      \item Tính toán chỉ số $Q(T), R(T)$ và $\text{Score}(T)$ theo đúng công thức cuộc thi \eqref{eq:harmonic_mean}.
+    \end{itemize}
+  \item Chọn $T^* = \arg\max_T \text{Score}(T)$. Ngưỡng tối ưu thực nghiệm ghi nhận được là $T^* \in [0.53, 0.57]$.
+\end{enumerate}
+\end{prismbox}
+
+\section{Hướng Dẫn Tái Lập Kết Quả Từ GitHub (Reproducibility)}
+Toàn bộ mã nguồn dự án được quản lý tại GitHub repository \url{https://github.com/sangngng/DataMining261}. Để tái lập chính xác kết quả nộp bài:
+
+\begin{enumerate}
+  \item \textbf{Cài đặt môi trường:}
+  \begin{verbatim}
+  git clone https://github.com/sangngng/DataMining261.git
+  cd DataMining261
+  python3 -m venv .venv
+  source .venv/bin/activate       # Trên Windows: .venv\Scripts\activate
+  pip install -r requirements.txt
+  \end{verbatim}
+
+  \item \textbf{Trích xuất Text Embeddings (Sentence-BERT):}
+  \begin{verbatim}
+  python extract_embeddings.py --model all-MiniLM-L6-v2
+  \end{verbatim}
+
+  \item \textbf{Huấn luyện mô hình, kiểm định 5-Fold CV \& Xuất file nộp bài:}
+  \begin{verbatim}
+  python main.py --seed 42 --sub-name submission_two_stage.csv
+  \end{verbatim}
+\end{enumerate}
+Mã nguồn được đóng dấu cố định tại commit hash chính thức trên GitHub để Giảng viên kiểm tra đối chiếu.

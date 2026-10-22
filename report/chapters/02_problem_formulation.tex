@@ -1,0 +1,127 @@
+\chapter{Định Nghĩa Bài Toán \& Phân Tích Chuyên Sâu Metric}
+\label{chap:problem}
+
+\section{Mô Hình Hóa Nhu Cầu Đọc Của Nhà Nghiên Cứu}
+Trong bài toán gợi ý bài báo cá nhân hóa (\textit{Personalized Paper Recommendation}), mỗi bài báo được nhà nghiên cứu đánh giá theo thang điểm nguyên $y \in \{1, 2, 3, 4, 5\}$:
+\begin{itemize}
+  \item \textbf{Nhãn 1 (Không muốn đọc --- Do not read):} Bài báo nằm ngoài phạm vi quan tâm, hoặc là tài liệu phi nghiên cứu (kỷ yếu hội thảo, lời tựa). Việc đề xuất các bài này gây lãng phí thời gian và làm giảm nghiêm trọng trải nghiệm người dùng.
+  \item \textbf{Nhãn 2 (Ưu tiên thấp --- Low Priority):} Bài báo có liên quan gián tiếp nhưng chỉ cần lướt qua khi có thời gian rảnh rỗi.
+  \item \textbf{Nhãn 3 (Ưu tiên trung bình --- Medium Priority):} Bài báo chứa ý tưởng hoặc kỹ thuật hữu ích liên quan đến chuyên ngành.
+  \item \textbf{Nhãn 4 (Ưu tiên cao --- High Priority):} Bài báo rất hay, xuất phát từ các tác giả uy tín hoặc giải quyết bài toán cốt lõi mà nhà nghiên cứu đang theo đuổi.
+  \item \textbf{Nhãn 5 (Bắt buộc phải đọc ngay --- Must Read):} Công trình mang tính đột phá, mở rộng trực tiếp các nghiên cứu hiện tại của tác giả; bắt buộc phải đọc sớm nhất có thể.
+\end{itemize}
+
+Nhiệm vụ của mô hình là gán một giá trị điểm ưu tiên $\text{priority} \in [0, +\infty)$ cho từng bài báo ứng viên trong tập kiểm thử gồm 596 bài:
+\begin{itemize}
+  \item $\text{priority} = 0$: Loại bỏ bài báo khỏi danh sách gợi ý.
+  \item $\text{priority} > 0$: Khuyến nghị bài báo; giá trị điểm số càng lớn thể hiện thứ tự đọc càng sớm.
+\end{itemize}
+
+\section{Phân Tích Chi Tiết Toán Học Của Hàm Mục Tiêu}
+Tập kiểm thử gồm 596 bài báo được hệ thống chấm điểm của Kaggle chia đều thành hai tập con ẩn độc lập: \textbf{Public Test set (298 bài)} và \textbf{Private Test set (298 bài)}. Trên mỗi tập con, bộ đánh giá thực hiện:
+\begin{enumerate}
+  \item Loại bỏ toàn bộ các bài có $\text{priority} = 0$.
+  \item Sắp xếp các bài còn lại giảm dần theo $\text{priority}$. Nếu điểm số bằng nhau, sử dụng ID (chuỗi ký tự) tăng dần để phá vỡ thế hòa.
+  \item Gán vị trí đọc $r = 1, 2, \dots, m$ cho $m$ bài báo được giữ lại và tính toán điểm số.
+\end{enumerate}
+
+Điểm số chung cuộc là trung bình điều hòa (\textit{Harmonic Mean}) giữa độ chính xác vị trí (\textit{Relevance - Q}) và tỷ lệ bao phủ (\textit{Coverage - R}):
+\begin{equation}
+  \text{Score} = \frac{2 \cdot Q \cdot R}{Q + R}
+  \label{eq:harmonic_mean}
+\end{equation}
+
+\subsection{Chỉ Số Relevance ($Q$)}
+Chỉ số Relevance đo lường chất lượng của danh sách khuyến nghị, trong đó các vị trí đầu tiên nhận trọng số lớn hơn theo nguyên lý chiết khấu tích lũy (\textit{Discounted Cumulative Gain - DCG}) \cite{jarvelin2002cumulated}:
+\begin{equation}
+  Q = \frac{\sum_{r=1}^m w_r \cdot g_r}{\sum_{r=1}^m w_r}
+  \label{eq:relevance}
+\end{equation}
+Trong đó:
+\begin{itemize}
+  \item $g_r = \frac{y_r - 1}{4} \in [0, 1]$ là điểm lợi ích thu được (\textit{usefulness gain}) từ bài báo tại vị trí $r$. Bảng quy đổi điểm lợi ích được cho trong Bảng \ref{tab:gain_weights}.
+  \item $w_r = \frac{1}{\log_2(r + 1)}$ là trọng số vị trí (\textit{position weight}). Khi vị trí $r$ tăng lên, $w_r$ suy giảm theo logarit.
+\end{itemize}
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{0.85\linewidth}{>{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}X}
+    \toprule
+    \rowcolor{PrismHeader}
+    \color{PrismWhite}\textbf{Nhãn Thật ($y_r$)} & 
+    \color{PrismWhite}\textbf{Điểm Lợi Ích ($g_r$)} & 
+    \color{PrismWhite}\textbf{Đóng Góp Vào Điểm $Q$} \\
+    \midrule
+    1 & $0.00$ & Không tăng tử số, tăng mẫu số $\to$ \textbf{Kéo tụt $Q$ rất mạnh} \\
+    \rowcolor{PrismLabel}
+    2 & $0.25$ & Đóng góp lợi ích tối thiểu ($25\%$) \\
+    3 & $0.50$ & Đóng góp lợi ích mức trung bình ($50\%$) \\
+    \rowcolor{PrismLabel}
+    4 & $0.75$ & Đóng góp lợi ích cao ($75\%$) \\
+    5 & $1.00$ & Đóng góp lợi ích tối đa ($100\%$) \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Quy đổi thang điểm nhãn sang điểm lợi ích $g_r$ trong công thức Relevance}
+  \label{tab:gain_weights}
+\end{table}
+
+\begin{prismbox}[title=\textbf{Cơ Chế Hình Phạt Chí Mạng Của Bài Nhãn 1 Đối Với $Q$}]
+Quan sát công thức \eqref{eq:relevance}, nếu một bài nhãn 1 ($y_r = 1 \implies g_r = 0$) xuất hiện tại vị trí $r$:
+\begin{itemize}
+  \item Tử số $\sum w_r g_r$ tăng thêm: $w_r \times 0 = 0$.
+  \item Mẫu số $\sum w_r$ tăng thêm: $w_r > 0$.
+\end{itemize}
+Điều này làm cho giá trị phân số giảm ngay lập tức. Đặc biệt, nếu bài nhãn 1 lọt vào các vị trí đầu ($r = 1, 2, 3$ với $w_1 = 1.0, w_2 \approx 0.63, w_3 = 0.50$), mẫu số sẽ tăng vọt khiến chỉ số $Q$ sụt giảm thảm hại. Do đó, \textbf{nguyên tắc sống còn của hệ thống là phải lọc sạch các bài có khả năng cao là nhãn 1}.
+\end{prismbox}
+
+\subsection{Chỉ Số Coverage ($R$)}
+Coverage đo lường độ phủ của các bài báo đáng đọc (nhãn $y \ge 2$) được mô hình giữ lại:
+\begin{equation}
+  R = \frac{\sum_{r=1}^m \mathbb{I}(y_r > 1)}{\text{Tổng số bài có } y > 1 \text{ trong split}}
+  \label{eq:coverage}
+\end{equation}
+Trong đó $\mathbb{I}(\cdot)$ là hàm chỉ thị. Đặc điểm của Coverage:
+\begin{itemize}
+  \item Không phụ thuộc vào thứ tự xếp hạng; chỉ cần bài nhãn $\ge 2$ được gán $\text{priority} > 0$ là được tính vào tử số.
+  \item Gợi ý bài nhãn 1 không làm tăng $R$, nhưng loại bỏ nhầm bài nhãn 2--5 sẽ làm giảm $R$.
+\end{itemize}
+
+\subsection{Bản Chất Của Trung Bình Điều Hòa \& Sự Đánh Đổi (Trade-Off)}
+Hàm mục tiêu sử dụng Harmonic Mean thay vì Trung bình cộng (\textit{Arithmetic Mean}):
+\begin{itemize}
+  \item Trung bình cộng $\frac{Q + R}{2}$ cho phép mô hình hy sinh một chỉ số để đẩy chỉ số kia lên cực cao (ví dụ $Q = 0.9, R = 0.2 \implies \text{Mean} = 0.55$).
+  \item Trong khi đó, Harmonic Mean \eqref{eq:harmonic_mean} bị khống chế nặng nề bởi giá trị nhỏ hơn trong hai số:
+  \begin{equation*}
+    \text{Score} \le 2 \cdot \min(Q, R)
+  \end{equation*}
+\end{itemize}
+
+Từ đó nảy sinh sự đánh đổi cốt lõi giữa hai giai đoạn:
+\begin{itemize}
+  \item \textbf{Nếu ngưỡng lọc $T$ quá cao (Lọc quá gắt):} Hầu như không có bài nhãn 1 nào lọt vào danh sách $\to Q$ rất cao ($Q > 0.70$). Tuy nhiên, nhiều bài nhãn 2 và 3 bị loại bỏ oan $\to R$ giảm mạnh ($R < 0.50$) $\to \text{Score}$ sụp đổ.
+  \item \textbf{Nếu ngưỡng lọc $T$ quá thấp (Thả lỏng):} Giữ lại được hầu hết các bài nhãn 2--5 $\to R$ rất cao ($R > 0.90$). Tuy nhiên, các bài nhãn 1 tràn vào danh sách $\to Q$ tụt dốc thảm hại $\to \text{Score}$ sụp đổ.
+\end{itemize}
+$\implies$ \textbf{Mấu chốt của bài toán:} Tìm kiếm ngưỡng lọc tối ưu $T^*$ trên phân phối dự đoán Out-Of-Fold để đạt điểm cực trị của hàm điều hòa.
+
+\section{Phân Tích Cận Trên Lý Thuyết (Theoretical Ceiling Analysis)}
+Để xác định trần điểm tối đa mà một mô hình hoàn hảo có thể đạt được, nhóm đã thực hiện mô phỏng Monte Carlo 100 lần trên các tập con 298 bài báo (tương ứng kích thước split của Kaggle) với giả định mô hình là một \textit{"Nhà tiên tri" (Oracle)} biết trước $100\%$ nhãn thật của giám khảo:
+\begin{itemize}
+  \item Nhà tiên tri gán $\text{priority} = 0$ cho toàn bộ bài nhãn 1.
+  \item Sắp xếp toàn bộ bài nhãn 5 lên đầu danh sách, tiếp theo đến nhãn 4, nhãn 3 và cuối cùng là nhãn 2.
+\end{itemize}
+
+Kết quả mô phỏng cho thấy:
+\begin{equation}
+  \text{Score}_{\text{Oracle}} \approx \mathbf{0.77654} \quad (Q = 0.63489, \; R = 1.00000)
+\end{equation}
+
+\begin{prismbox}[title=\textbf{Tại Sao Điểm Tối Đa Không Thể Đạt 0.8?}]
+Để $\text{Score} \ge 0.800$ khi $R = 1.0$:
+\begin{equation*}
+  \frac{2Q}{Q + 1} \ge 0.8 \iff 1.2Q \ge 0.8 \iff Q \ge \frac{2}{3} \approx \mathbf{0.6667}
+\end{equation*}
+Tuy nhiên, trong tập dữ liệu thực tế, các bài nhãn 2 ($g=0.25$) và nhãn 3 ($g=0.50$) chiếm tới gần $\mathbf{60\%}$ tổng số bài đáng đọc. Dù Nhà tiên tri có đẩy chúng về cuối danh sách, chúng vẫn đóng góp lợi ích thấp vào tử số và làm phình to mẫu số có trọng số, khiến $Q$ không thể vượt quá mốc $\mathbf{0.635}$. 
+
+Nếu Nhà tiên tri cố tình vứt bỏ toàn bộ bài nhãn 2 để ép $Q$ tăng lên $0.768$, thì Coverage $R$ sẽ tụt từ $1.0$ xuống còn $0.674$, khiến điểm số $\text{Score}$ giảm từ $0.776$ xuống còn $\mathbf{0.717}$. Vì vậy, \textbf{0.776 chính là trần lý thuyết tuyệt đối của cuộc thi}.
+\end{prismbox}

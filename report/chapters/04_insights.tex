@@ -1,0 +1,98 @@
+\chapter{Insights Từ Dữ Liệu \& Kỹ Thuật Đặc Trưng}
+\label{chap:insights}
+
+\section{Phân Định Rõ Ràng Giữa Quan Sát Thực Tế \& Giả Định}
+Trong khai phá dữ liệu, việc phân biệt rạch ròi giữa \textit{"Quan sát thực nghiệm được chứng minh bằng số liệu"} (\textbf{Empirical Observations}) và \textit{"Giả định chủ quan ban đầu"} (\textbf{Assumptions}) là tiêu chí cốt lõi trong Rubric đánh giá (chiếm 1.5 điểm):
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+    \toprule
+    \rowcolor{PrismHeader}
+    \color{PrismWhite}\textbf{Khía Cạnh Phân Tích} & 
+    \color{PrismWhite}\textbf{Giả Định Ban Đầu (Assumptions)} & 
+    \color{PrismWhite}\textbf{Quan Sát Thực Nghiệm (Empirical Evidence)} \\
+    \midrule
+    Phạm vi chuyên môn của nhà nghiên cứu & Giả định tác giả quan tâm đồng đều đến mọi lĩnh vực Khoa học Máy tính tại các hội nghị lớn. & \textbf{Thực tế bác bỏ:} Tác giả có gu đọc chuyên sâu hẹp về \textit{Answer Set Programming (ASP)}, Lập trình Logic (\texttt{iclp}, \texttt{lpnmr}) và Biểu diễn tri thức (\texttt{kr}). \\
+    \rowcolor{PrismLabel}
+    Vai trò của tên tác giả bài báo & Giả định chất lượng bài báo chủ yếu nằm ở nội dung tiêu đề, tên tác giả ít ảnh hưởng. & \textbf{Thực tế bác bỏ:} $45.9\%$ tác giả tập Test đã từng xuất hiện ở tập Train. Một số tác giả chủ chốt như \textit{Francesco Ricca, Tran Cao Son, Torsten Schaub} được chấm 4--5 sao liên tục. \\
+    Tác động của bài kỷ yếu (Proceedings) & Giả định các bài ghi *"Proceedings..."* là các bài báo tổng hợp có giá trị tham khảo. & \textbf{Thực tế chứng minh:} $100\%$ các bài chứa từ *"Proceedings"*, *"Preface"*, *"Workshop"* có nhãn thật là $1$ ($0$ bài nhãn cao). \\
+    \rowcolor{PrismLabel}
+    Phương pháp trích xuất văn bản & Giả định mô hình TF-IDF truyền thống là đủ để bắt từ khóa. & \textbf{Thực tế chứng minh:} TF-IDF bỏ sót các mối quan hệ đồng nghĩa và ngữ cảnh; trong khi Sentence-BERT tạo ra tương quan đơn điệu với điểm nhãn ($r = 0.280$). \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Đối chiếu giữa giả định ban đầu và quan sát thực tế từ dữ liệu huấn luyện}
+  \label{tab:assumptions_vs_observations}
+\end{table}
+
+\section{Bốn Insights Cốt Lõi Từ Dữ Liệu}
+
+\subsection{Insight 1: Chân Dung Gu Nghiên Cứu Chuyên Sâu (The ASP Profiling)}
+\begin{itemize}
+  \item \textbf{Phát hiện:} Tác giả là chuyên gia đầu ngành trong lĩnh vực \textit{Answer Set Programming (ASP)} \cite{gebser2011potassco}, Logic Programming và Knowledge Representation. Các bài viết kết hợp giữa học sâu và suy diễn logic (\textit{Neuro-Symbolic AI}, \textit{Explainable AI}) nhận được điểm đánh giá cao vượt trội.
+  \item \textbf{Hành động kỹ thuật:} Xây dựng vector trung bình quan tâm (\textit{Interest Centroid}) của các bài nhãn 5 ($\vec{C}_5$) và nhãn 4 ($\vec{C}_4$). Tạo đặc trưng khoảng cách Cosine Similarity giữa mỗi bài báo ứng viên với các tâm này.
+\end{itemize}
+
+\subsection{Insight 2: Cơ Chế Chặn Cứng Bài Kỷ Yếu (The Proceedings Penalty)}
+\begin{itemize}
+  \item \textbf{Phát hiện:} Trong tập dữ liệu có các dòng ghi kỷ yếu hoặc lời giới thiệu ban biên tập hội nghị. Toàn bộ các dòng này đều có nhãn thật bằng $1$. Nếu mô hình để lọt dù chỉ $1-2$ bài kỷ yếu vào top 50 danh sách đề xuất, chỉ số $Q$ sẽ bị giảm rất nặng do trọng số vị trí $w_r$ cực lớn ở đầu danh sách.
+  \item \textbf{Hành động kỹ thuật:} Xây dựng bộ quy tắc lọc cứng (\textit{Hard Rule Filter}): Cờ \texttt{is\_proceedings} tự động phát hiện các từ khóa \textit{"proceedings", "conference on", "preface", "workshop on", "doctoral consortium"}. Nếu cờ này bật, xác suất $P(y > 1)$ của bài báo sẽ bị cưỡng bức về gần $0$.
+\end{itemize}
+
+\subsection{Insight 3: Tận Dụng Lịch Sử Tác Giả (Author Historical Affinity)}
+\begin{itemize}
+  \item \textbf{Phát hiện:} Tỷ lệ trùng lặp tác giả giữa Train và Test lên tới $\mathbf{45.9\%}$ (648 trên tổng số 1.411 tác giả trong Test). Những bài báo có đồng tác giả là các nhà nghiên cứu ruột của tác giả luôn có xác suất cao đạt nhãn 4 hoặc 5.
+  \item \textbf{Hành động kỹ thuật:} Xây dựng đặc trưng thống kê tác giả Out-Of-Fold (\textit{OOF Author Target Encoding}):
+    \begin{itemize}
+      \item \texttt{author\_max\_rating}: Điểm đánh giá cao nhất trong quá khứ của các đồng tác giả bài báo.
+      \item \texttt{author\_mean\_rating}: Điểm đánh giá trung bình lịch sử.
+      \item \texttt{author\_paper\_count}: Tần suất xuất hiện của tác giả trong tập dữ liệu.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Insight 4: Cân Bằng Thiên Lệch Hội Nghị (Bayesian Venue Smoothing)}
+\begin{itemize}
+  \item \textbf{Phát hiện:} Hai hội nghị \texttt{cav} và \texttt{lics} chiếm tới $68.5\%$ tập Test, nhưng tỷ lệ bài đáng đọc của chúng chỉ xấp xỉ $52\% - 54\%$, thấp hơn nhiều so với \texttt{lpnmr} ($81.9\%$) và \texttt{iclp} ($74.3\%$).
+  \item \textbf{Hành động kỹ thuật:} Áp dụng công thức làm mượt Bayes (\textit{Bayesian Smoothing}) với tham số $m = 5$:
+    \begin{equation}
+      S_{\text{venue}} = \frac{n_v \cdot \bar{y}_v + m \cdot \bar{y}_{\text{global}}}{n_v + m}
+      \label{eq:bayesian_venue}
+    \end{equation}
+    Đặc trưng này giúp mô hình điều chỉnh xác suất tiên nghiệm hợp lý cho từng bài báo tùy thuộc vào nguồn xuất bản.
+\end{itemize}
+
+\section{Bảng Ánh Xạ Từ Insights Đến Thiết Kế Đặc Trưng}
+Toàn bộ quá trình chuyển đổi từ phát hiện thực tế thành bộ đặc trưng toán học được tổng hợp trong Bảng \ref{tab:feature_mapping}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{3.2cm} >{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}X}
+    \toprule
+    \rowcolor{PrismHeader}
+    \color{PrismWhite}\textbf{Nhóm Đặc Trưng} & 
+    \color{PrismWhite}\textbf{Tên Biến Kỹ Thuật} & 
+    \color{PrismWhite}\textbf{Ý Nghĩa Kỹ Thuật \& Cách Tính Toán} \\
+    \midrule
+    \multirow{3}{3.2cm}{\textbf{Semantic Embeddings (384d)}} & \texttt{emb\_minilm\_[0..383]} & Vector dense 384 chiều từ Sentence-BERT \texttt{all-MiniLM-L6-v2}, chuẩn hóa $L_2$. \\
+    & \texttt{sim\_to\_high\_profile} & Cosine similarity giữa tiêu đề và tâm bài nhãn 4--5 ($\vec{C}_{\text{high}}$). \\
+    & \texttt{semantic\_margin} & Chênh lệch khoảng cách: $\text{Sim}(\vec{x}, \vec{C}_5) - \text{Sim}(\vec{x}, \vec{C}_1)$. \\
+    \midrule
+    \multirow{2}{3.2cm}{\textbf{Topic Clustering}} & \texttt{kmeans\_dist\_[0..11]} & Khoảng cách từ bài báo đến 12 tâm cụm chủ đề nghiên cứu ẩn sinh từ K-Means trên vector SBERT. \\
+    & \texttt{cluster\_id} & Nhãn cụm chủ đề nghiên cứu (One-hot encoded). \\
+    \midrule
+    \multirow{2}{3.2cm}{\textbf{Venue Statistics}} & \texttt{venue\_bayes\_mean} & Điểm trung bình lịch sử của Venue theo công thức Bayes \eqref{eq:bayesian_venue}. \\
+    & \texttt{venue\_worthwhile\_pct} & Xác suất bài báo thuộc Venue đạt nhãn $\ge 2$. \\
+    \midrule
+    \multirow{2}{3.2cm}{\textbf{Author Affinity}} & \texttt{author\_max\_rating} & Điểm cao nhất của các đồng tác giả trên tập Train (OOF strictly). \\
+    & \texttt{author\_paper\_count} & Số bài báo tác giả đã xuất bản trong tập dữ liệu. \\
+    \midrule
+    \multirow{3}{3.2cm}{\textbf{Domain \& Rules}} & \texttt{is\_proceedings} & Cờ nhị phân nhận diện tài liệu kỷ yếu/hội thảo. \\
+    & \texttt{asp\_core\_keyword} & Tần suất xuất hiện các từ khóa vàng: \textit{answer set, asp, neural, explainable, datalog}. \\
+    & \texttt{year\_norm, has\_doi} & Năm xuất bản chuẩn hóa và cờ có mã số định danh DOI. \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Bảng ánh xạ chi tiết các đặc trưng kỹ thuật được thiết kế cho mô hình}
+  \label{tab:feature_mapping}
+\end{table}

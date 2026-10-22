@@ -1,0 +1,39 @@
+\chapter{Tổng Quan Đề Tài \& Bố Cục Báo Cáo}
+\label{chap:intro}
+
+\section{Bối Cảnh Bài Toán \& Đặt Vấn Đề}
+Trong kỷ nguyên bùng nổ thông tin khoa học, số lượng bài báo nghiên cứu được công bố hàng năm tại các hội nghị và tạp chí hàng đầu gia tăng với tốc độ cấp số nhân. Một nhà nghiên cứu trong lĩnh vực Khoa học Máy tính thường xuyên phải đối mặt với hàng nghìn công trình mới xuất bản mỗi năm từ nhiều hội nghị uy tín như \textit{International Conference on Logic Programming (ICLP)}, \textit{Principles of Knowledge Representation and Reasoning (KR)}, \textit{Computer Aided Verification (CAV)}, hay \textit{Logic in Computer Science (LICS)}.
+
+Tuy nhiên, quỹ thời gian của mỗi nhà nghiên cứu là hữu hạn. Họ không thể đọc hết mọi bài báo mà bắt buộc phải có một cơ chế lọc và xếp thứ tự ưu tiên:
+\begin{itemize}
+  \item \textbf{Loại bỏ bài không phù hợp:} Những bài báo không thuộc hướng nghiên cứu quan tâm (nhãn 1) cần được loại bỏ ngay lập tức để tránh lãng phí thời gian.
+  \item \textbf{Xếp thứ tự ưu tiên đọc (Prioritization):} Những công trình có mức độ liên quan cao (nhãn 2 đến 5), đặc biệt là các bài báo then chốt mang tính đột phá (nhãn 4--5), phải được đẩy lên đầu danh sách đọc.
+\end{itemize}
+
+Bài toán \textbf{Personalized Research Paper Recommendation (Kaggle Assignment 261)} yêu cầu các nhóm nghiên cứu xây dựng một hệ thống học máy tự động nhằm phân loại và gán điểm ưu tiên đọc (\textit{priority}) cho 596 bài báo trong tập kiểm thử (Test set), dựa trên tập dữ liệu lịch sử gồm 2.494 bài báo đã được nhà nghiên cứu chấm điểm từ 1 đến 5 (Train set).
+
+\section{Mục Tiêu Đồ Án}
+Mục tiêu trọng tâm của nhóm \textbf{hí ộ} bao gồm:
+\begin{enumerate}
+  \item \textbf{Khám phá và thấu hiểu dữ liệu (EDA \& Profiling):} Phân tích sở thích đọc thực tế của nhà nghiên cứu thông qua đặc trưng tiêu đề, tác giả, hội nghị và năm xuất bản.
+  \item \textbf{Áp dụng các phương pháp nền tảng môn Khai phá Dữ liệu:} Kết hợp linh hoạt kỹ thuật Phân cụm đề tài (\textit{K-Means Clustering}), Khai phá luật kết hợp (\textit{Association Rules Mining}), và các thuật toán học máy phân loại/hồi quy dựa trên cây quyết định (\textit{GBDT}).
+  \item \textbf{Xây dựng kiến trúc gợi ý hai giai đoạn (Two-Stage Recommendation Pipeline):} 
+    \begin{itemize}
+      \item \textit{Giai đoạn 1 (Lọc):} Mô hình phân loại nhị phân chính xác cao nhằm triệt tiêu tối đa các bài nhãn 1 (gán $\text{priority} = 0$).
+      \item \textit{Giai đoạn 2 (Xếp hạng):} Mô hình hồi quy kết hợp xếp hạng chuyên sâu (\textit{LambdaMART / Multiclass Expected Gain}) nhằm tối ưu hóa thứ tự đọc từ nhãn 2 đến nhãn 5.
+    \end{itemize}
+  \item \textbf{Tối ưu hóa hàm mục tiêu cuộc thi:} Quét tìm ngưỡng lọc tối ưu $T^*$ trên Out-Of-Fold để cân bằng tối hảo giữa độ chính xác vị trí (\textit{Relevance - Q}) và tỷ lệ bao phủ bài đáng đọc (\textit{Coverage - R}).
+  \item \textbf{Đảm bảo tính tái lập (Reproducibility):} Toàn bộ mã nguồn, dữ liệu cache và hướng dẫn cài đặt môi trường được tổ chức bài bản tại GitHub repository: \url{https://github.com/sangngng/DataMining261}.
+\end{enumerate}
+
+\section{Bố Cục Báo Cáo}
+Báo cáo được cấu trúc chặt chẽ theo 7 tiêu chí trong Rubric đánh giá của Giảng viên:
+\begin{itemize}
+  \item \textbf{Mục 1 (Tổng quan):} Giới thiệu bài toán, mục tiêu và bố cục báo cáo.
+  \item \textbf{Mục 2 (Định nghĩa bài toán):} Mô hình hóa nhu cầu đọc, phân tích chi tiết toán học của hàm mục tiêu $Q, R$, Harmonic Mean, và phân tích cận trên lý thuyết.
+  \item \textbf{Mục 3 (Phân tích dữ liệu - EDA):} Trực quan hóa dữ liệu bằng 5 biểu đồ chất lượng cao, khai phá luật kết hợp Apriori/FP-Growth và phân tích tương quan ngữ nghĩa Sentence-BERT.
+  \item \textbf{Mục 4 (Insights từ dữ liệu):} Đúc kết các phát hiện thực tế từ dữ liệu và luận cứ dẫn tới việc thiết kế đặc trưng.
+  \item \textbf{Mục 5 (Thiết kế giải pháp):} Trình bày chi tiết kiến trúc Two-Stage, các kỹ thuật trích xuất đặc trưng và thuật toán quét ngưỡng $T^*$.
+  \item \textbf{Mục 6 (Đánh giá thực nghiệm \& Phân tích lỗi):} Quy trình 5-Fold Stratified CV, bảng so sánh đối chứng mô hình, giải thích mô hình bằng SHAP và phân tích sâu các ca lỗi (Error Analysis).
+  \item \textbf{Mục 7 (Kết luận \& Mở rộng):} Đánh giá kết quả đạt được, chỉ ra các hạn chế và hướng phát triển trong tương lai.
+\end{itemize}

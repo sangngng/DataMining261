@@ -29,6 +29,7 @@ env/
 *.zip
 *.tar.gz
 *.npy
+/data
 
 
 # Personal & Private notes (not pushed to git)
