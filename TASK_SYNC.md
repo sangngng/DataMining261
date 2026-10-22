@@ -4,7 +4,8 @@
 > **Ngày lập:** 22/10/2026  
 > **Dự án:** CO3029 Data Mining (HK241) — Personalized Research Paper Recommendation  
 > **Cuộc thi:** [Assignment Data Mining - 261 (Kaggle)](https://www.kaggle.com/competitions/assignment-data-mining-261)  
-> **Đội thi:** `hí ộ` | **Vị trí hiện tại:** **Rank 5 / 16 (Score: 0.65006, 2 entries)**  
+> **Đội thi:** `hí ộ` | **Thành viên:** Sáng (TV1 - Lead), Vĩ (TV2 - NLP/Embeddings), Duân (TV3 - EDA/Report)  
+> **Vị trí hiện tại:** **Rank 5 / 16 (Score: 0.65006, 2 entries)**  
 > **Mục tiêu chặng tới:** Bứt phá vào **TOP 1 (> 0.66962)** và hoàn thiện các yêu cầu thuật toán trong Rubric Báo cáo 10đ.
 
 ---
@@ -91,7 +92,7 @@ Agent 2 (Cline) cần triển khai 4 hạng mục kỹ thuật cốt lõi sau:
   * Viết script `source-code/notebooks/mine_association_rules.py`.
   * Biến đổi danh sách từ khóa trong tiêu đề và tác giả của các bài báo nhãn 4–5 thành các transactions.
   * Dùng thuật toán `frequent_patterns.apriori` hoặc `frequent_patterns.fpgrowth` (thư viện `mlxtend` hoặc script thuần python) để khai phá luật dạng: `{Keyword A, Keyword B} -> {High Priority (Label >= 4)}` với Support $\ge 0.02$, Confidence $\ge 0.70$.
-  * Xuất kết quả ra `reports/association_rules.csv` để Thành viên 3 đưa vào báo cáo.
+  * Xuất kết quả ra `reports/association_rules.csv` để Duân đưa vào báo cáo.
 
 ### 🎯 Mục tiêu 4: Blending 3 Mô hình (LightGBM + XGBoost + CatBoost/Ridge) & Tối ưu Ngưỡng $T^*$
 * Chạy 5-Fold Stratified CV nghiêm ngặt.
