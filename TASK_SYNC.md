@@ -169,7 +169,35 @@ class AuthorVenueEncoder:
 ---
 
 ## 5. Quy chuẩn Đảm bảo Chất lượng (Quality Checklist)
-- [ ] Không có Data Leakage: Không fit target encoder hoặc TF-IDF trước khi chia fold.
-- [ ] Tính tái lập (Reproducibility): `set_seed(42)` ở đầu mọi script.
-- [ ] Format file nộp chuẩn xác với Kaggle `sample_submission.csv`.
+- [x] Không có Data Leakage: Không fit target encoder hoặc TF-IDF trước khi chia fold.
+- [x] Tính tái lập (Reproducibility): `set_seed(42)` ở đầu mọi script.
+- [x] Format file nộp chuẩn xác với Kaggle `sample_submission.csv`.
 - [ ] Git commit thông điệp rõ ràng: `feat(v3): ...`
+
+---
+
+## 6. Kết quả Thực nghiệm V3 & Vấn đề Phát sinh (Cline báo cáo)
+
+### 6.1. Kết quả cuối cùng
+* **OOF Overall Score: `0.61716`** (V2: `0.61256`, **+0.00460**)
+* **Mean Fold Score: `0.61797`** (V2: `0.61601`, **+0.00196**)
+* **Relevance (Q): `0.49700`** (V2: `0.49175`)
+* **Coverage (R): `0.81395` trên OOF**, nhưng ở ngưỡng $T^*=0.53$ áp dụng cho test set thì tỷ lệ `priority > 0` là **62.8% (374/596)** — nằm trong khoảng mục tiêu 55–70%.
+* **Chưa đạt** mốc stretch-goal `≥ 0.625` đề ra ở Mục 2.4, nhưng **đã vượt** điều kiện hoàn thành bắt buộc (vượt mốc V2 `0.61601`).
+
+### 6.2. ⚠️ Sai lệch so với đặc tả: Loại bỏ `author_max_rating`, `author_mean_rating`, `author_is_preferred`
+Trong quá trình triển khai Mục tiêu 1 (Author/Venue OOF Encoding) đúng theo đặc tả ban đầu, Cline phát hiện 3 đặc trưng `author_max_rating`, `author_mean_rating`, `author_is_preferred` **gây rò rỉ dữ liệu nghiêm trọng về mặt thống kê** (không phải leak chéo fold, nhưng leak "trong-fold"):
+
+* **Nguyên nhân:** Tập train chỉ có 2494 dòng, chia 5 fold còn ~2000 dòng/fold train. Phần lớn tác giả chỉ xuất hiện 1–2 bài trong mỗi fold train. Do đó `author_max_rating`/`author_mean_rating` của một tác giả xuất hiện 1 lần **chính là nhãn của chính dòng đó**, biến đặc trưng "lịch sử tác giả" thành một dạng target-encoding gần như hoàn hảo trên train nhưng vô giá trị (nhiễu) trên validation — cây quyết định (LightGBM/XGBoost/CatBoost) học bám vào tín hiệu giả này, phá vỡ khả năng tổng quát hóa.
+* **Đã thử & đo đạc (ablation test trên LGBM đơn, OOF threshold-sweep):**
+  1. Đặc trưng gốc (raw max/mean/count/flag theo đúng đặc tả): **OOF Score = 0.56690** (Q=0.42376, R=0.85607) — **tệ hơn V2 rất nhiều**.
+  2. Thêm Bayesian Smoothing cho author mean ($m=3$) + chỉ tin `max`/`is_preferred` khi tác giả có $\ge 2$ bài trong fold: **OOF Score = 0.57295** (Q=0.43072) — cải thiện nhẹ nhưng vẫn kém xa V2.
+  3. Loại bỏ hoàn toàn 3 đặc trưng rating-history, chỉ giữ `author_paper_count` (không phụ thuộc nhãn) + `venue_bayesian_smoothed` (giữ nguyên theo đặc tả, $m=5$): **OOF Score = 0.61452** — vượt mốc V2.
+* **Quyết định (đã xác nhận với người dùng):** Loại bỏ hẳn `author_max_rating`, `author_mean_rating`, `author_is_preferred` khỏi `AuthorVenueEncoder`. Chỉ giữ `author_paper_count` (đặc trưng cấu trúc, không dẫn xuất từ nhãn) và `venue_bayesian_smoothed`. `AuthorVenueEncoder.FEATURE_NAMES` nay chỉ còn 2 cột thay vì 5, tổng số đặc trưng V3 giảm từ 69 → 66.
+* **Khuyến nghị cho Antigravity:** Nếu muốn khôi phục tín hiệu "tác giả ruột" trong tương lai, cần nguồn dữ liệu lịch sử tác giả **độc lập với nhãn của tập thi đấu hiện tại** (ví dụ: số lượt trích dẫn, H-index từ nguồn ngoài) thay vì tính trực tiếp từ nhãn `Label` trên cùng tập train nhỏ.
+
+### 6.3. File đã thay đổi
+* `source-code/src/features_v3.py`: `AuthorVenueEncoder` rút gọn (chỉ `author_paper_count` + `venue_bayesian_smoothed`), `FEATURE_COLUMN_NAMES` tự động cập nhật theo.
+* `source-code/src/train_v3.py`: Blend LambdaRank đổi từ min-max scale 50/50 sang "rank-percentile nudge" (`combined = reg_ensemble * (1 + RANK_NUDGE_WEIGHT * (rank_pct - 0.5))`, `RANK_NUDGE_WEIGHT = 0.15`) để tránh phá vỡ scale tuyệt đối của regressor ensemble — bản blend tuyến tính 50/50 cũ làm Q giảm mạnh dù ranker đã train đúng.
+* `source-code/submissions/submission_v3_lambdarank.csv`: Submission mới (596 dòng, không NaN/Inf, 62.8% `priority > 0`).
+

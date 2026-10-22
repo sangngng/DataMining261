@@ -1,8 +1,14 @@
 # Python
+
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.Python
+
+# CatBoost training artifacts
+catboost_info/
+
 .Python
 
 # Virtual Environment
