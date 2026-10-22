@@ -9,6 +9,34 @@
 
 ---
 
+## 0. Mô Hình Quản Trị & Phân Vai 2 AI Agent (Governance Protocol)
+
+Dự án được vận hành theo mô hình phân tầng chặt chẽ giữa 2 AI Agent:
+
+```
+┌────────────────────────────────────────────────────────┐
+│        ANTIGRAVITY (Project Manager & Chief Architect) │
+│  - Quản lý toàn bộ tiến độ dự án, GitHub, Kaggle       │
+│  - Định hướng chiến lược, phân tích kiến trúc          │
+│  - Giám sát Rubric 10đ và chất lượng sản phẩm bàn giao │
+└───────────────────────────┬────────────────────────────┘
+                            │ (Giao đề bài qua TASK_SYNC.md)
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│           CLINE / CLAUDE CODE (Execution Engineer)     │
+│  - Nhận nhiệm vụ từ TASK_SYNC.md                       │
+│  - Viết code chi tiết trong source-code/               │
+│  - Chạy lệnh terminal, train mô hình, xuất submission   │
+└────────────────────────────────────────────────────────┘
+```
+
+* **Quy tắc phối hợp:** 
+  1. Cline tập trung vào việc hiện thực hóa code và thực thi lệnh theo đúng đặc tả của Kiến trúc sư (Antigravity).
+  2. Mọi thay đổi về cấu trúc thư mục, kiến trúc mô hình hoặc chiến thuật nộp bài đều do Antigravity điều phối.
+  3. Sau khi Cline hoàn thành một sprint, Antigravity sẽ kiểm tra tính đúng đắn, rà soát data leakage, đối chiếu Leaderboard Kaggle và cập nhật nhật ký thực nghiệm.
+
+---
+
 ## 1. Bối cảnh & Hiện trạng Kỹ thuật (System Context)
 
 ### 1.1. Công thức Metric Cuộc thi:
