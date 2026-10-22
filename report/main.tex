@@ -3,6 +3,7 @@
 \input{preamble}
 
 \begin{document}
+\selectlanguage{vietnamese}
 
 %% ── Trang Bìa (Cover Page) ───────────────────────────────────────────────
 \begin{titlepage}
@@ -18,24 +19,24 @@
     \includegraphics[width=4.5cm]{figures/hcmut_logo.png}
   \end{figure}
 
-  \vspace{0.6cm}
-  {\LARGE\bfseries\color{PrismHeader} BÁO CÁO BÀI TẬP LỚN}\\[0.4cm]
-  {\Large\bfseries\color{PrismDark} MÔN HỌC: KHAI PHÁ DỮ LIỆU (CO3029)}\\[0.6cm]
+  \vspace{0.5cm}
+  {\LARGE\bfseries\color{PrismHeader} BÁO CÁO BÀI TẬP LỚN}\\[0.3cm]
+  {\Large\bfseries\color{PrismDark} MÔN HỌC: KHAI PHÁ DỮ LIỆU (CO3029)}\\[0.5cm]
   
   \begin{prismbox}[title=\centering\bfseries ĐỀ TÀI: PERSONALIZED PAPER RECOMMENDATION SYSTEM, colbacktitle=PrismHeader]
     \centering
     {\normalsize\bfseries Cuộc thi: Kaggle Assignment 261 | Học kỳ: HK241 (Năm học 2026--2027)}\\[4pt]
-    {\small Xếp hạng độ ưu tiên đọc bài báo khoa học dựa trên mô hình học máy kết hợp trích xuất ngữ nghĩa và phân loại hai giai đoạn (Two-Stage Recommendation Pipeline)}
+    {\small Xếp hạng độ ưu tiên đọc bài báo khoa học dựa trên kiến trúc hai giai đoạn (Two-Stage Recommendation Pipeline) kết hợp mô hình ngôn ngữ và phân cụm ngữ nghĩa}
   \end{prismbox}
 
-  \vspace{0.8cm}
+  \vspace{0.6cm}
   \begin{tabular}{ll}
     \textbf{Giảng viên hướng dẫn:} & \textit{ThS. Vũ Ngọc Tú} (\href{mailto:tuvn@hcmut.edu.vn}{tuvn@hcmut.edu.vn}) \\[4pt]
     \textbf{Tên đội thi Kaggle:}   & \textbf{hí ộ} \\[4pt]
     \textbf{Khoảng thời gian:}     & \textit{Học kỳ 1 (2026--2027)} \\[4pt]
   \end{tabular}
 
-  \vspace{0.6cm}
+  \vspace{0.5cm}
   {\bfseries\color{PrismHeader} BẢNG PHÂN CÔNG NHIỆM VỤ THÀNH VIÊN THEO RUBRIC (10.0 ĐIỂM)}
   \vspace{0.2cm}
   
@@ -50,10 +51,10 @@
       \color{PrismWhite}\textbf{Vai trò \& Trách nhiệm} & 
       \color{PrismWhite}\textbf{Mục Rubric} \\
       \midrule
-      Nguyễn Văn Sáng & Leader & ML Architect, xây dựng Two-Stage Pipeline, tối ưu ngưỡng $T^*$, quản lý GitHub \& nộp bài Kaggle & Mục 5 (2.0đ), Mục 6 (1.0đ) \\
+      Nguyễn Ngọc Sáng & 2353046 & Team Leader, ML Architect, Two-Stage Pipeline, tối ưu ngưỡng $T^*$, quản lý GitHub \& nộp bài Kaggle & Mục 5 (2.0đ), Mục 6 (1.0đ) \\
       \rowcolor{PrismLabel}
       Nguyễn Trần Vĩ & 2353338 & NLP Specialist, trích xuất Sentence-BERT / SciBERT, phân cụm K-Means ngữ nghĩa, xây dựng đặc trưng & Mục 4 (1.5đ), Mục 5 (FE) \\
-      Bùi Văn Duân & Lead Report & Data Analyst, phân tích EDA dữ liệu, khai phá luật kết hợp, phân tích ca lỗi \& viết báo cáo & Mục 1 (1.0đ), Mục 2 (1.5đ), Mục 3 (1.5đ), Mục 6, 7 \\
+      Trần Minh Duân & 2352166 & Data Analyst \& Report Lead, phân tích EDA dữ liệu, khai phá luật kết hợp, phân tích ca lỗi \& viết báo cáo & Mục 1 (1.0đ), Mục 2 (1.5đ), Mục 3 (1.5đ), Mục 6, 7 \\
       \bottomrule
     \end{tabularx}
   \end{table}
@@ -73,27 +74,16 @@
 \newpage
 
 %% ── Các Chương Báo Cáo Chuẩn 7 Mục Rubric ───────────────────────────────
+%% Không chèn \newpage thủ công giữa các chapter để tránh sinh trang trắng
 \input{chapters/01_introduction}
-\newpage
-
 \input{chapters/02_problem_formulation}
-\newpage
-
 \input{chapters/03_data_analysis}
-\newpage
-
 \input{chapters/04_insights}
-\newpage
-
 \input{chapters/05_solution_design}
-\newpage
-
 \input{chapters/06_evaluation}
-\newpage
-
 \input{chapters/07_conclusion}
-\newpage
 
+\newpage
 %% ── Tài Liệu Tham Khảo ───────────────────────────────────────────────────
 \bibliographystyle{plainnat}
 \bibliography{references}

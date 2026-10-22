@@ -1,9 +1,11 @@
 %% preamble.tex  –  Prism Theme (HCMUT Teal) for Data Mining CO3029
 %% ─────────────────────────────────────────────────────────────────────────
 
-%% ── Encoding & Fonts ─────────────────────────────────────────────────────
+%% ── PDF Searchability & Vietnamese Font Encoding ─────────────────────────
+\usepackage{cmap}                           %% Đảm bảo copy/search tiếng Việt không bị mất dấu
 \usepackage[utf8]{inputenc}
-\usepackage[T5]{fontenc}    
+\usepackage[vietnamese,english]{babel}
+\usepackage[T5,T1]{fontenc}    
 \usepackage{lmodern}
 \usepackage{amsmath, amssymb, amsfonts}
 \usepackage{bm}
@@ -58,19 +60,25 @@
 \usepackage{colortbl}
 \usepackage{multirow}
 \usepackage{longtable}
-\renewcommand{\arraystretch}{1.4}
+\renewcommand{\arraystretch}{1.3}
 
 %% ── Lists ────────────────────────────────────────────────────────────────
 \usepackage{enumitem}
-\setlist{noitemsep, topsep=3pt, parsep=2pt}
+\setlist{noitemsep, topsep=2pt, parsep=1pt}
 
-%% ── Graphics & Figures ───────────────────────────────────────────────────
+%% ── Graphics, Floating & Page Packing Rules ──────────────────────────────
 \usepackage{graphicx}
 \graphicspath{{figures/}{../reports/figures/}}
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
 \captionsetup{font=small, labelfont={bf,color=PrismHeader}}
+
+%% Ngăn chặn việc hình ảnh đẩy văn bản xuống trang quá sớm / để khoảng trống lớn
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.75}
 
 %% ── Hyperlinks ───────────────────────────────────────────────────────────
 \usepackage[hidelinks,
@@ -88,19 +96,19 @@
 \titleformat{\chapter}[block]
   {\LARGE\bfseries\color{PrismHeader}}
   {Mục \thechapter.}{0.6em}{}
-  [\color{PrismRule}\rule{\linewidth}{1.5pt}\vspace{4pt}]
+  [\color{PrismRule}\rule{\linewidth}{1.5pt}\vspace{3pt}]
 
 \titleformat{\section}
   {\large\bfseries\color{PrismHeader}}
   {\thesection}{0.5em}{}
   [\color{PrismRule}\rule{\linewidth}{0.6pt}]
-  \titlespacing*{\section}{0pt}{*2.5}{*1.2}[0pt]
-\preto\section{\needspace{5\baselineskip}}
+  \titlespacing*{\section}{0pt}{*2}{*1}[0pt]
+\preto\section{\needspace{2\baselineskip}}
 
 \titleformat{\subsection}
   {\normalsize\bfseries\color{PrismDark}}
   {\thesubsection}{0.5em}{}
-  \titlespacing*{\subsection}{0pt}{*2}{*1}[0pt]
+  \titlespacing*{\subsection}{0pt}{*1.5}{*0.8}[0pt]
 
 \titleformat{\subsubsection}
   {\small\bfseries\itshape\color{PrismHeader}}
@@ -115,9 +123,9 @@
   fonttitle=\bfseries\color{PrismWhite},
   coltitle=PrismWhite,
   colbacktitle=PrismHeader,
-  boxrule=1pt,
+  boxrule=0.8pt,
   arc=3pt,
-  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
   breakable,
   #1
 }

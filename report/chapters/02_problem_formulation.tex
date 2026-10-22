@@ -78,10 +78,10 @@ Quan sát công thức \eqref{eq:relevance}, nếu một bài nhãn 1 ($y_r = 1 
 \subsection{Chỉ Số Coverage ($R$)}
 Coverage đo lường độ phủ của các bài báo đáng đọc (nhãn $y \ge 2$) được mô hình giữ lại:
 \begin{equation}
-  R = \frac{\sum_{r=1}^m \mathbb{I}(y_r > 1)}{\text{Tổng số bài có } y > 1 \text{ trong split}}
+  R = \frac{\sum_{r=1}^m \mathbb{I}(y_r > 1)}{N_{\text{worthwhile}}}
   \label{eq:coverage}
 \end{equation}
-Trong đó $\mathbb{I}(\cdot)$ là hàm chỉ thị. Đặc điểm của Coverage:
+Trong đó $N_{\text{worthwhile}} = \sum_{j=1}^N \mathbb{I}(y_j > 1)$ là tổng số bài báo đáng đọc ($y > 1$) trong phân vùng kiểm thử đang xét, và $\mathbb{I}(\cdot)$ là hàm chỉ thị. Đặc điểm của Coverage:
 \begin{itemize}
   \item Không phụ thuộc vào thứ tự xếp hạng; chỉ cần bài nhãn $\ge 2$ được gán $\text{priority} > 0$ là được tính vào tử số.
   \item Gợi ý bài nhãn 1 không làm tăng $R$, nhưng loại bỏ nhầm bài nhãn 2--5 sẽ làm giảm $R$.

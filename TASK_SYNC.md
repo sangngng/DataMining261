@@ -4,7 +4,7 @@
 > **Ngày lập:** 22/10/2026  
 > **Dự án:** CO3029 Data Mining (HK241) — Personalized Research Paper Recommendation  
 > **Cuộc thi:** [Assignment Data Mining - 261 (Kaggle)](https://www.kaggle.com/competitions/assignment-data-mining-261)  
-> **Đội thi:** `hí ộ` | **Thành viên:** Sáng (TV1 - Lead), Vĩ (TV2 - NLP/Embeddings), Duân (TV3 - EDA/Report)  
+> **Đội thi:** `hí ộ` | **Thành viên:** Nguyễn Ngọc Sáng (2353046 - TV1 Lead), Nguyễn Trần Vĩ (2353338 - TV2 NLP/Embeddings), Trần Minh Duân (2352166 - TV3 EDA/Report)  
 > **Vị trí hiện tại:** **Rank 5 / 16 (Score: 0.65006, 2 entries)**  
 > **Mục tiêu chặng tới:** Bứt phá vào **TOP 1 (> 0.66962)** và hoàn thiện các yêu cầu thuật toán trong Rubric Báo cáo 10đ.
 

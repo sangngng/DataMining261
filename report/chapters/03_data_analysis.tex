@@ -22,9 +22,9 @@ Qua quá trình kiểm tra toàn vẹn dữ liệu (\textit{Data Sanity Check}),
 \subsection{Phân Phối Nhãn Đánh Giá (\texttt{Label})}
 Hình \ref{fig:label_dist} thể hiện phân phối tần suất của 5 mức đánh giá trong tập huấn luyện 2.494 bài báo.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.85\linewidth]{figures/01_label_distribution.png}
+  \includegraphics[width=0.75\linewidth]{figures/01_label_distribution.png}
   \caption{Phân phối tần suất và tỷ lệ phần trăm các mức đánh giá (Nhãn 1 đến 5)}
   \label{fig:label_dist}
 \end{figure}
@@ -38,9 +38,9 @@ Hình \ref{fig:label_dist} thể hiện phân phối tần suất của 5 mức 
 \subsection{Mối Quan Hệ Giữa Năm Xuất Bản \& Điểm Đánh Giá}
 Hình \ref{fig:year_dist} phân tích sự phân bổ của điểm đánh giá theo từng năm xuất bản (từ 2016 đến 2026).
 
-\begin{figure}[H]
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.88\linewidth]{figures/02_year_vs_label.png}
+  \includegraphics[width=0.76\linewidth]{figures/02_year_vs_label.png}
   \caption{Phân phối năm xuất bản phân tầng theo mức độ ưu tiên đọc}
   \label{fig:year_dist}
 \end{figure}
@@ -54,9 +54,9 @@ Hình \ref{fig:year_dist} phân tích sự phân bổ của điểm đánh giá 
 \subsection{Hiện Tượng Thiên Lệch Hội Nghị (Venue Skew Analysis)}
 Hình \ref{fig:venues} thể hiện số lượng bài báo và tỷ lệ bài đáng đọc phân bổ theo từng hội nghị/tạp chí.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.85\linewidth]{figures/03_top_venues.png}
+  \includegraphics[width=0.75\linewidth]{figures/03_top_venues.png}
   \caption{Thống kê số lượng bài báo và điểm đánh giá trung bình theo từng hội nghị/tạp chí}
   \label{fig:venues}
 \end{figure}
@@ -99,9 +99,9 @@ Bảng \ref{tab:venue_stats} chỉ ra một sự phân hóa cực kỳ sâu sắ
 \subsection{Phân Tích Độ Dài Tiêu Đề Bài Báo}
 Hình \ref{fig:title_length} phân tích tương quan giữa độ dài tiêu đề (số từ và số ký tự) với từng nhãn đánh giá.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.88\linewidth]{figures/04_title_length_analysis.png}
+  \includegraphics[width=0.76\linewidth]{figures/04_title_length_analysis.png}
   \caption{Phân phối độ dài tiêu đề (số lượng từ và số ký tự) theo từng nhãn đánh giá}
   \label{fig:title_length}
 \end{figure}
@@ -115,9 +115,9 @@ Hình \ref{fig:title_length} phân tích tương quan giữa độ dài tiêu đ
 \subsection{Phân Tích Từ Khóa \& N-Gram Phân Biệt}
 Hình \ref{fig:keywords} so sánh tỷ lệ xuất hiện của các cụm từ khóa (N-grams) phổ biến giữa nhóm bài báo có mức ưu tiên cao (Nhãn 4--5) và nhóm bài báo không muốn đọc (Nhãn 1).
 
-\begin{figure}[H]
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.88\linewidth]{figures/05_top_keywords_comparison.png}
+  \includegraphics[width=0.76\linewidth]{figures/05_top_keywords_comparison.png}
   \caption{Tần suất xuất hiện của các từ khóa đặc trưng trong bài nhãn cao (4--5) so với nhãn 1}
   \label{fig:keywords}
 \end{figure}
@@ -173,9 +173,9 @@ Nhóm tính toán vector tâm quan tâm (\textit{Interest Centroid} $\vec{C}_{\t
   \text{Sim}(i) = \vec{v}_i \cdot \vec{C}_{\text{high}}
 \end{equation}
 
-\begin{figure}[H]
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=\linewidth]{figures/05_sentence_bert_semantic_insights.png}
+  \includegraphics[width=0.92\linewidth]{figures/05_sentence_bert_semantic_insights.png}
   \caption{Phân tích ngữ nghĩa tiêu đề bài báo bằng Sentence-BERT: (Trái) Phân phối Cosine Similarity theo nhãn đọc; (Phải) Chiếu không gian ngữ nghĩa 2D bằng PCA}
   \label{fig:sbert_insights}
 \end{figure}
