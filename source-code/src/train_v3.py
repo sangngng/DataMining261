@@ -28,8 +28,13 @@ from src.features_v3 import extract_features_v3, compute_author_global_preferred
 #              + 3-Model Blending (LightGBM + XGBoost + CatBoost)
 # -----------------------------------------------------------------------------
 
-RANK_POWER = 1.2  # Priority = RankScore * P(worthwhile) ** RANK_POWER
+RANK_POWER = 0.0  # V3.1 calibration: priority = combined_score (no probability-power compression)
 RANK_NUDGE_WEIGHT = 0.15  # Max +/-15% re-ranking adjustment from the LambdaRank percentile signal
+
+# "Golden zone" target for the number of test papers recommended (priority > 0),
+# per Antigravity's V3.1 calibration directive: 365-380 papers out of 596 (~61.5%-63.8%).
+TEST_COVERAGE_TARGET_MIN = 365
+TEST_COVERAGE_TARGET_MAX = 380
 
 
 def build_stage1_models(seed: int = 42):
@@ -186,42 +191,17 @@ def run_v3_pipeline():
 
     print(f"\nMean Fold Score: {np.mean(fold_scores):.5f} (std={np.std(fold_scores):.5f})")
 
-    # ---------------- Overall OOF Evaluation & Threshold Sweep ----------------
+    # ---------------- Overall OOF Evaluation ----------------
     oof_proba_ens = blend_predictions(oof_proba)
     oof_reg_ens = blend_predictions(oof_reg)
     oof_rank_percentile = pd.Series(oof_rank).rank(pct=True).values
     oof_combined_score = oof_reg_ens * (1.0 + RANK_NUDGE_WEIGHT * (oof_rank_percentile - 0.5))
 
-    best_t = 0.40
-    best_score = 0.0
-    best_q = 0.0
-    best_r = 0.0
-
-    print("\n--- Sweeping Threshold T* on Out-Of-Fold Predictions [0.20, 0.70] ---")
-    for t in np.linspace(0.20, 0.70, 51):
-        priority_oof = oof_combined_score * np.power(oof_proba_ens, RANK_POWER)
-        p_oof = np.where(oof_proba_ens >= t, priority_oof, 0.0)
-        p_oof = np.clip(p_oof, 0.0, None)
-        sc, q, r = compute_competition_metric(train_df['id'].values, y, p_oof)
-        if sc > best_score:
-            best_score = sc
-            best_q = q
-            best_r = r
-            best_t = t
-
-    print(f"\n=======================================================")
-    print(f"🔥 V3 PIPELINE OOF RESULTS:")
-    print(f"   Optimal Threshold T* = {best_t:.3f}")
-    print(f"   OOF Overall Score    = {best_score:.5f}")
-    print(f"   Relevance (Q)        = {best_q:.5f}")
-    print(f"   Coverage (R)         = {best_r:.5f}")
-    print(f"   Mean Fold Score      = {np.mean(fold_scores):.5f}")
-    print(f"   -- V2 Reference --     OOF: 0.61256 | Mean Folds: 0.61601")
-    print(f"   Delta OOF vs V2       : {best_score - 0.61256:+.5f}")
-    print(f"=======================================================\n")
-
-    # ---------------- Train on Full Dataset and Predict on Test Set ----------------
-    print("Training on Full Dataset with Optimal T*...")
+    # ---------------- Train Stage 1 (Classifier) on Full Dataset ----------------
+    # Done BEFORE the threshold sweep so the test-set coverage ("golden zone" count
+    # of papers with priority > 0) can be used as a calibration signal alongside the
+    # OOF score when picking T*.
+    print("\nTraining Stage 1 (Classifier) on Full Dataset for threshold calibration...")
     X_full, full_cache = extract_features_v3(train_df, train_emb, is_train=True, y_train=y, author_global_stats=author_global_stats)
     X_test, _ = extract_features_v3(
         test_df, test_emb, is_train=False,
@@ -233,13 +213,98 @@ def run_v3_pipeline():
         author_global_stats=author_global_stats,
     )
 
-    # Stage 1 full fit
     clf_models_full = build_stage1_models(seed=42)
     test_proba_preds = {}
     for name, model in clf_models_full.items():
         model.fit(X_full, y_binary)
         test_proba_preds[name] = model.predict_proba(X_test)[:, 1]
     test_proba = blend_predictions(test_proba_preds)
+    n_test = len(test_proba)
+
+    # ---------------- Threshold Sweep: OOF Score + Test "Golden Zone" Coverage ----------------
+    # V3.1 calibration directive: among thresholds, prefer the one whose TEST SET
+    # recommendation count (priority > 0, i.e. test_proba >= t) falls inside the
+    # golden zone [TEST_COVERAGE_TARGET_MIN, TEST_COVERAGE_TARGET_MAX] (365-380 papers,
+    # ~61.5%-63.8%), breaking ties by the highest OOF score. If no threshold lands
+    # inside the zone, fall back to the candidate whose test coverage is closest to
+    # the zone (ties broken by OOF score).
+    best_t = 0.40
+    best_score = 0.0
+    best_q = 0.0
+    best_r = 0.0
+    best_test_count = 0
+
+    fallback_t = 0.40
+    fallback_score = 0.0
+    fallback_q = 0.0
+    fallback_r = 0.0
+    fallback_test_count = 0
+    fallback_dist = np.inf
+
+    in_zone_found = False
+
+    print("\n--- Sweeping Threshold T* on OOF Predictions, calibrated to Test Golden Zone"
+          f" [{TEST_COVERAGE_TARGET_MIN}, {TEST_COVERAGE_TARGET_MAX}] ---")
+    for t in np.linspace(0.20, 0.70, 51):
+        priority_oof = oof_combined_score * np.power(oof_proba_ens, RANK_POWER)
+        p_oof = np.where(oof_proba_ens >= t, priority_oof, 0.0)
+        p_oof = np.clip(p_oof, 0.0, None)
+        sc, q, r = compute_competition_metric(train_df['id'].values, y, p_oof)
+
+        test_count = int(np.sum(test_proba >= t))
+        in_zone = TEST_COVERAGE_TARGET_MIN <= test_count <= TEST_COVERAGE_TARGET_MAX
+
+        if in_zone:
+            if (not in_zone_found) or (sc > best_score):
+                best_score = sc
+                best_q = q
+                best_r = r
+                best_t = t
+                best_test_count = test_count
+            in_zone_found = True
+
+        # Track the best fallback (closest to zone, tie-broken by OOF score) in case
+        # no threshold in the sweep lands inside the golden zone.
+        if test_count < TEST_COVERAGE_TARGET_MIN:
+            dist = TEST_COVERAGE_TARGET_MIN - test_count
+        elif test_count > TEST_COVERAGE_TARGET_MAX:
+            dist = test_count - TEST_COVERAGE_TARGET_MAX
+        else:
+            dist = 0
+        if (dist < fallback_dist) or (dist == fallback_dist and sc > fallback_score):
+            fallback_dist = dist
+            fallback_score = sc
+            fallback_q = q
+            fallback_r = r
+            fallback_t = t
+            fallback_test_count = test_count
+
+    if not in_zone_found:
+        print(f"⚠️  No threshold in the sweep produced a test coverage count inside "
+              f"[{TEST_COVERAGE_TARGET_MIN}, {TEST_COVERAGE_TARGET_MAX}]. "
+              f"Falling back to the closest candidate (test_count={fallback_test_count}).")
+        best_t = fallback_t
+        best_score = fallback_score
+        best_q = fallback_q
+        best_r = fallback_r
+        best_test_count = fallback_test_count
+
+    print(f"\n=======================================================")
+    print(f"🔥 V3.1 CALIBRATED PIPELINE OOF RESULTS:")
+    print(f"   Optimal Threshold T* = {best_t:.3f}")
+    print(f"   OOF Overall Score    = {best_score:.5f}")
+    print(f"   Relevance (Q)        = {best_q:.5f}")
+    print(f"   Coverage (R)         = {best_r:.5f}")
+    print(f"   Mean Fold Score      = {np.mean(fold_scores):.5f}")
+    print(f"   Test coverage @ T*   = {best_test_count} / {n_test} "
+          f"({100.0 * best_test_count / n_test:.1f}%) [target: "
+          f"{TEST_COVERAGE_TARGET_MIN}-{TEST_COVERAGE_TARGET_MAX}]")
+    print(f"   -- V2 Reference --     OOF: 0.61256 | Mean Folds: 0.61601")
+    print(f"   Delta OOF vs V2       : {best_score - 0.61256:+.5f}")
+    print(f"=======================================================\n")
+
+    # ---------------- Train Stage 2 (Regression + LambdaRank) on Full Dataset ----------------
+    print("Training Stage 2 (Regression + LambdaRank) on Full Dataset with Optimal T*...")
 
     # Stage 2a full fit (regression)
     reg_models_full = build_stage2_models(seed=42)
@@ -260,12 +325,12 @@ def run_v3_pipeline():
     test_priorities = np.where(test_proba >= best_t, test_priorities_raw, 0.0)
     test_priorities = np.clip(test_priorities, 0.0, None)
 
-    # Save submission v3
+    # Save submission v3.1 (calibrated)
     sub_dir = os.path.join(base_dir, "submissions")
     out_file = save_submission(
         ids=test_df['id'].tolist(),
         priorities=test_priorities.tolist(),
-        filename="submission_v3_lambdarank.csv",
+        filename="submission_v3_calibrated.csv",
         output_dir=sub_dir
     )
 
