@@ -5,6 +5,51 @@ from sklearn.decomposition import TruncatedSVD
 from typing import Dict, Any, List, Optional
 
 VENUE_SMOOTHING_M = 5.0
+AUTHOR_GLOBAL_MIN_PAPERS = 5  # Only trust an author's global preferred-score if they have >= 5 papers in the ENTIRE train.csv
+
+
+def compute_author_global_preferred_score(df_full_train: pd.DataFrame, y_full: np.ndarray) -> Dict[str, Any]:
+    """
+    Global (not per-fold) author preference statistic, computed ONCE on the entire
+    train.csv before any CV splitting — analogous to a static external lookup table
+    (similar in spirit to global venue frequency).
+
+    author_preferred_score = (mean_rating - 1) / 4, restricted to authors with
+    >= AUTHOR_GLOBAL_MIN_PAPERS papers across the whole train set. Authors with fewer
+    papers are left out of the map entirely; callers should fall back to the global
+    mean score for them.
+
+    NOTE on leakage semantics: this is intentionally computed from the full train.csv
+    (including whatever ends up in each fold's validation split) per explicit project
+    direction. For the held-out Kaggle test.csv this is unambiguously safe (pure
+    external global statistic). For in-sample 5-Fold CV, a given validation row's own
+    label contributes at most 1/5 of weight to its author's score (since the minimum
+    support is 5 papers), which bounds the self-leakage effect far below the previous
+    per-fold single/double-paper case (which was up to 1/1 or 1/2).
+    """
+    y_full = np.asarray(y_full, dtype=float)
+    global_mean = float(y_full.mean())
+    global_mean_score = (global_mean - 1.0) / 4.0
+
+    author_ratings: Dict[str, List[float]] = {}
+    author_series = df_full_train['authors'].fillna('')
+    for authors_cell, rating in zip(author_series.values, y_full):
+        for author in _split_authors(authors_cell):
+            author_ratings.setdefault(author, []).append(rating)
+
+    preferred_map = {
+        a: float((np.mean(r) - 1.0) / 4.0)
+        for a, r in author_ratings.items()
+        if len(r) >= AUTHOR_GLOBAL_MIN_PAPERS
+    }
+    n_qualified = len(preferred_map)
+    print(f"[author_global_preferred_score] {n_qualified} authors qualify with >= {AUTHOR_GLOBAL_MIN_PAPERS} papers "
+          f"(global_mean_score={global_mean_score:.4f})")
+
+    return {
+        'preferred_map': preferred_map,
+        'global_mean_score': global_mean_score,
+    }
 
 
 def _split_authors(author_str: str) -> List[str]:
@@ -104,15 +149,21 @@ def extract_features_v3(
     neg_centroid: Optional[np.ndarray] = None,
     author_venue_encoder: Optional[AuthorVenueEncoder] = None,
     y_train: Optional[np.ndarray] = None,
+    author_global_stats: Optional[Dict[str, Any]] = None,
 ) -> "tuple[np.ndarray, Dict[str, Any]]":
     """
     V3 feature pipeline: SBERT embeddings + SVD(48) + K-Means(12) topic clusters +
-    preference centroids + metadata + Out-of-fold-safe Author/Venue encoding.
+    preference centroids + metadata + Out-of-fold-safe Author/Venue encoding +
+    optional global author-preference score.
 
     When `is_train=True`, all stateful transformers (SVD, K-Means, centroids,
     AuthorVenueEncoder) are fit on the given split only. When `is_train=False`,
     the fitted transformers passed in are reused (never refit), guaranteeing no leakage
     across CV folds.
+
+    `author_global_stats` (optional): output of `compute_author_global_preferred_score`,
+    computed ONCE on the full train.csv before CV splitting. Passed through unchanged
+    (never refit) to both train/val/test calls. If omitted, the column is filled with 0.0.
     """
     # 1. Cosine similarity to Preference Centroids (positive: label>=4, negative: label==1)
     if is_train:
@@ -161,7 +212,23 @@ def extract_features_v3(
     if is_train:
         author_venue_encoder = AuthorVenueEncoder()
         author_venue_encoder.fit(df, y_train)
-    av_feats = author_venue_encoder.transform(df)  # (N, 5)
+    av_feats = author_venue_encoder.transform(df)  # (N, 2)
+
+    # 6. Global (pre-fold) Author Preferred Score — transform-only, never fit here.
+    # Computed once on the full train.csv via compute_author_global_preferred_score().
+    n = len(df)
+    if author_global_stats is not None:
+        preferred_map = author_global_stats['preferred_map']
+        fallback_score = author_global_stats['global_mean_score']
+        author_series_g = df['authors'].fillna('')
+        author_global_score = np.full((n, 1), fallback_score, dtype=float)
+        for i, authors_cell in enumerate(author_series_g.values):
+            names = _split_authors(authors_cell)
+            scores = [preferred_map[a] for a in names if a in preferred_map]
+            if scores:
+                author_global_score[i, 0] = float(np.max(scores))
+    else:
+        author_global_score = np.zeros((n, 1), dtype=float)
 
     # Assemble all features
     X = np.hstack([
@@ -179,7 +246,9 @@ def extract_features_v3(
         char_len,              # 1
         word_count,            # 1
         av_feats,              # 2 (author_paper_count, venue_smoothed)
+        author_global_score,   # 1 (author_global_preferred_score)
     ])
+
 
     cache = {
         'kmeans': kmeans_model,
@@ -196,5 +265,6 @@ FEATURE_COLUMN_NAMES = (
     [f'kmeans_dist_{i}' for i in range(12)] +
     ['sim_pos', 'sim_neg', 'sim_diff', 'year_norm', 'paper_age', 'is_recent',
      'has_doi', 'author_count', 'is_single_author', 'char_len', 'word_count'] +
-    AuthorVenueEncoder.FEATURE_NAMES
+    AuthorVenueEncoder.FEATURE_NAMES +
+    ['author_global_preferred_score']
 )

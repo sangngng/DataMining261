@@ -20,7 +20,7 @@ except ImportError:
 
 from src.metric import compute_competition_metric
 from src.utils import set_seed, save_submission
-from src.features_v3 import extract_features_v3
+from src.features_v3 import extract_features_v3, compute_author_global_preferred_score
 
 # -----------------------------------------------------------------------------
 # V3 Pipeline: SBERT + SVD + KMeans + Out-of-fold Author/Venue stats
@@ -111,6 +111,12 @@ def run_v3_pipeline():
     y_binary = (y > 1.0).astype(int)
     y_rank_rel = (y - 1).astype(int)  # relevance label in {0,1,2,3,4} for LambdaRank
 
+    # Global (pre-fold) Author Preferred Score: computed ONCE on the entire train.csv
+    # before any CV splitting, per explicit project direction. Passed as a static,
+    # transform-only lookup into every fold (and the full-train/test-predict step) —
+    # never refit per fold.
+    author_global_stats = compute_author_global_preferred_score(train_df, y)
+
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
     n = len(train_df)
@@ -132,7 +138,7 @@ def run_v3_pipeline():
         emb_tr, emb_val = train_emb[train_idx], train_emb[val_idx]
 
         # Extract features fitted strictly on train fold (no leakage)
-        X_tr, cache = extract_features_v3(df_tr, emb_tr, is_train=True, y_train=y_tr)
+        X_tr, cache = extract_features_v3(df_tr, emb_tr, is_train=True, y_train=y_tr, author_global_stats=author_global_stats)
         X_val, _ = extract_features_v3(
             df_val, emb_val, is_train=False,
             kmeans_model=cache['kmeans'],
@@ -140,6 +146,7 @@ def run_v3_pipeline():
             pos_centroid=cache['pos_centroid'],
             neg_centroid=cache['neg_centroid'],
             author_venue_encoder=cache['author_venue_encoder'],
+            author_global_stats=author_global_stats,
         )
 
         # ---------------- Stage 1: Classification Ensemble ----------------
@@ -215,7 +222,7 @@ def run_v3_pipeline():
 
     # ---------------- Train on Full Dataset and Predict on Test Set ----------------
     print("Training on Full Dataset with Optimal T*...")
-    X_full, full_cache = extract_features_v3(train_df, train_emb, is_train=True, y_train=y)
+    X_full, full_cache = extract_features_v3(train_df, train_emb, is_train=True, y_train=y, author_global_stats=author_global_stats)
     X_test, _ = extract_features_v3(
         test_df, test_emb, is_train=False,
         kmeans_model=full_cache['kmeans'],
@@ -223,6 +230,7 @@ def run_v3_pipeline():
         pos_centroid=full_cache['pos_centroid'],
         neg_centroid=full_cache['neg_centroid'],
         author_venue_encoder=full_cache['author_venue_encoder'],
+        author_global_stats=author_global_stats,
     )
 
     # Stage 1 full fit
