@@ -1,2 +1,3 @@
 experiment_id,date,author,model_name,features_description,cv_score,cv_q,cv_r,threshold,public_lb_score,submission_file,notes
-1,2026-10-20,TV1,TwoStage_LightGBM,"TF-IDF (2500) + KMeans (8 clusters) + Year + has_doi + venue_freq",0.8037,0.8521,0.7604,0.35,0.61546,submission_two_stage.csv,"Initial baseline, debut at Rank 10 with 1 submission"
+1,2026-10-20,TV1,TwoStage_LightGBM,"TF-IDF (2500) + KMeans (8 clusters) + Year + has_doi + venue_freq",0.60431,0.49595,0.75801,0.35,0.61546,submission_two_stage.csv,"Initial baseline, debut at Rank 10 with 1 submission"
+2,2026-10-22,TV2+TV1,TwoStage_SBERT_Ensemble,"Sentence-BERT (MiniLM 384d) + SVD(48) + KMeans(12) + Preference Centroids + Venue Stats + LightGBM & XGBoost Blending",0.61256,0.49175,0.81207,0.53,,submission_v2_sbert_ensemble.csv,"V2: SBERT + GBDT Ensemble (+0.013 CV gain across all 5 folds), ready for Kaggle"

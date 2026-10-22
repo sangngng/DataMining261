@@ -22,6 +22,7 @@ env/
 # Data files (optional: keep data if small, but ignore zips)
 *.zip
 *.tar.gz
+*.npy
 
 # Submissions & artifacts
 reports/figures/*.png
