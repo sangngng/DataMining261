@@ -11,10 +11,11 @@ To impartially assess generalization capability and strictly prevent data leakag
 \section{Model Comparison Table}
 Table \ref{tab:model_comparison} documents the iterative performance evolution across all model generations, as logged in the official experiment tracking file \texttt{reports/experiment_log.csv}.
 
-\begin{table}[H]
+\begin{table}[!htbp]
   \centering
-  \small
-  \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{1.8cm} >{\centering\arraybackslash}p{1.5cm} >{\centering\arraybackslash}p{1.5cm} >{\centering\arraybackslash}p{1.5cm} >{\centering\arraybackslash}p{1.8cm}}
+  \footnotesize
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{1.3cm} >{\centering\arraybackslash}p{1.2cm} >{\centering\arraybackslash}p{1.2cm} >{\centering\arraybackslash}p{1.1cm} >{\centering\arraybackslash}p{1.8cm}}
     \toprule
     \rowcolor{PrismHeader}
     \color{PrismWhite}\textbf{Version} & 
@@ -22,7 +23,7 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \color{PrismWhite}\textbf{CV Score} & 
     \color{PrismWhite}\textbf{CV $Q$} & 
     \color{PrismWhite}\textbf{CV $R$} & 
-    \color{PrismWhite}\textbf{Optimal $T^*$} & 
+    \color{PrismWhite}\textbf{Opt. $T^*$} & 
     \color{PrismWhite}\textbf{Kaggle LB} \\
     \midrule
     \textbf{V1 (Baseline)} & Two-Stage LightGBM + TF-IDF (2500) + KMeans (8 TF-IDF clusters) & $0.60431$ & $0.49595$ & $0.75801$ & $0.35$ & $0.61546$ (Rank 10) \\
@@ -30,7 +31,7 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \textbf{V2 (SBERT)} & Sentence-BERT (384d) + Preference Centroids + LightGBM/XGBoost Blending & $0.61256$ & $0.49175$ & $0.81207$ & $0.53$ & $\mathbf{0.65006}$ (\textbf{Rank 5}) \\
     \textbf{V3 (OOF Stats)} & V2 + OOF Author/Venue Stats + LightGBM LambdaMART ranker & $0.61716$ & $0.49700$ & $0.81395$ & $0.53$ & $0.64766$ \\
     \rowcolor{PrismLabel}
-    \textbf{V4 (Clean Ensemble)} & SBERT (384d) + SVD (48) + KMeans (12) + Multi-Centroids + Tri-Model (LGBM/XGB/CatBoost) & $\mathbf{0.62103}$ & $\mathbf{0.49991}$ & $\mathbf{0.81961}$ & $0.525$ & $0.64907$ (\textbf{Rank 5}) \\
+    \textbf{V4 (Ensemble)} & SBERT (384d) + SVD (48) + KMeans (12) + Multi-Centroids + Tri-Model Ensemble & $\mathbf{0.62103}$ & $\mathbf{0.49991}$ & $\mathbf{0.81961}$ & $0.525$ & $0.64907$ (\textbf{Rank 5}) \\
     \bottomrule
   \end{tabularx}
   \caption{Benchmark comparison of model generations on 5-Fold CV and Kaggle Leaderboard}
@@ -47,16 +48,18 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
 \section{Model Interpretability via SHAP}
 To explain model decisions and ensure algorithmic transparency, we computed SHAP (\textit{SHapley Additive exPlanations}) values across the out-of-fold validation set.
 
-\begin{figure}[!ht]
+\begin{figure}[!htbp]
   \centering
-  \begin{subfigure}[b]{0.68\linewidth}
-    \includegraphics[width=\linewidth]{figures/06_shap_summary.png}
+  \begin{subfigure}[b]{0.48\linewidth}
+    \centering
+    \includegraphics[height=5.8cm, width=\linewidth, keepaspectratio]{figures/06_shap_summary.png}
     \caption{SHAP Summary Beeswarm Plot}
     \label{fig:shap_summary}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[b]{0.30\linewidth}
-    \includegraphics[width=\linewidth]{figures/07_shap_bar.png}
+  \begin{subfigure}[b]{0.48\linewidth}
+    \centering
+    \includegraphics[height=5.8cm, width=\linewidth, keepaspectratio]{figures/07_shap_bar.png}
     \caption{Mean Global Importance}
     \label{fig:shap_bar}
   \end{subfigure}
@@ -73,54 +76,42 @@ Key takeaways from Figure \ref{fig:shap_analysis} include:
 \end{enumerate}
 
 \section{In-Depth Error Analysis}
-In compliance with the 2.0-point rubric requirement, we dissected the most severe prediction anomalies across out-of-fold instances to identify root failure modes:
+In compliance with the 2.0-point rubric requirement, we dissected the most severe prediction anomalies across out-of-fold instances to identify root failure modes. Table \ref{tab:error_cases} summarizes representative Type~I and Type~II failure cases.
 
 \subsection{1. Type I Errors (False Positives: Over-Recommended Irrelevant Items)}
-\textit{Definition:} Publications with hidden label $y = 1$ that received high predicted relevance probabilities and priority scores.
+\textit{Definition:} Publications with hidden label $y = 1$ that received high predicted relevance probabilities and priority scores. As shown in Panel~A of Table \ref{tab:error_cases}, lexical overlap in multi-disciplinary venues (e.g., \texttt{cav}) represents the primary false positive trigger.
 
-\begin{table}[H]
+\subsection{2. Type II Errors (False Negatives: Pruned Breakthrough Papers)}
+\textit{Definition:} Publications with hidden label $y = 5$ that fell below threshold $T^*$ and were mistakenly assigned $\text{priority} = 0$. As shown in Panel~B of Table \ref{tab:error_cases}, vocabulary novelty and author cold-start effects are the dominant causes of false negative pruning.
+
+\begin{table}[!htbp]
   \centering
   \small
-  \begin{tabularx}{\linewidth}{>{\bfseries\centering\arraybackslash}p{1.2cm} >{\raggedright\arraybackslash}p{6.0cm} >{\centering\arraybackslash}p{1.5cm} >{\centering\arraybackslash}p{1.8cm} >{\raggedright\arraybackslash}X}
+  \setlength{\tabcolsep}{4.0pt}
+  \begin{tabularx}{\linewidth}{>{\bfseries\centering\arraybackslash}p{1.2cm} >{\raggedright\arraybackslash}p{4.2cm} >{\centering\arraybackslash}p{1.2cm} >{\centering\arraybackslash}p{1.6cm} >{\raggedright\arraybackslash}X}
     \toprule
     \rowcolor{PrismHeader}
     \color{PrismWhite}\textbf{ID} & 
     \color{PrismWhite}\textbf{Publication Title} & 
     \color{PrismWhite}\textbf{Venue} & 
-    \color{PrismWhite}\textbf{Predicted Score} & 
-    \color{PrismWhite}\textbf{Root Cause of Misclassification} \\
+    \color{PrismWhite}\textbf{Score} & 
+    \color{PrismWhite}\textbf{Root Cause Analysis} \\
+    \midrule
+    \multicolumn{5}{l}{\bfseries\color{PrismDark}\textit{Panel A: Type I Errors (False Positives --- Irrelevant Papers Over-Recommended)}}\\
     \midrule
     \texttt{\#412} & \textit{"Formal Verification of Deep Neural Network Controllers for Autonomous Systems"} & \texttt{cav} & $3.82$ & Title contains trendy keywords (\textit{"deep neural network"}), but focuses on hardware control engineering at CAV, outside the researcher's logical reasoning scope. \\
     \rowcolor{PrismLabel}
     \texttt{\#887} & \textit{"Explainable AI: A Survey on Interpretable Machine Learning Methods"} & \texttt{kr} & $4.10$ & High lexical affinity (\textit{"explainable"}) at KR, but represents a broad survey without novel theoretical logic contributions. \\
-    \bottomrule
-  \end{tabularx}
-  \caption{Representative False Positive cases examined on Out-Of-Fold predictions}
-  \label{tab:fp_cases}
-\end{table}
-
-\subsection{2. Type II Errors (False Negatives: Pruned Breakthrough Papers)}
-\textit{Definition:} Publications with hidden label $y = 5$ that fell below threshold $T^*$ and were mistakenly assigned $\text{priority} = 0$.
-
-\begin{table}[H]
-  \centering
-  \small
-  \begin{tabularx}{\linewidth}{>{\bfseries\centering\arraybackslash}p{1.2cm} >{\raggedright\arraybackslash}p{6.0cm} >{\centering\arraybackslash}p{1.5cm} >{\centering\arraybackslash}p{1.8cm} >{\raggedright\arraybackslash}X}
-    \toprule
-    \rowcolor{PrismHeader}
-    \color{PrismWhite}\textbf{ID} & 
-    \color{PrismWhite}\textbf{Publication Title} & 
-    \color{PrismWhite}\textbf{Venue} & 
-    \color{PrismWhite}\textbf{Predicted Score} & 
-    \color{PrismWhite}\textbf{Root Cause of Pruning} \\
+    \midrule
+    \multicolumn{5}{l}{\bfseries\color{PrismDark}\textit{Panel B: Type II Errors (False Negatives --- High-Value Papers Pruned Below $T^*$)}}\\
     \midrule
     \texttt{\#1503} & \textit{"Towards Declarative Stream Reasoning with Non-Ground Temporal Constraints"} & \texttt{lics} & $0.00$ ($P = 0.46$) & Published at \texttt{lics} (low prior worthwhile ratio); introduced novel vocabulary (\textit{"stream reasoning"}) absent from standard ASP corpora. \\
     \rowcolor{PrismLabel}
     \texttt{\#2190} & \textit{"A Modular Framework for Dynamic Semantics in Abstract Argumentation"} & \texttt{kr} & $0.00$ ($P = 0.49$) & Authored entirely by new junior researchers with no historical training record, defaulting author affinity features to global mean. \\
     \bottomrule
   \end{tabularx}
-  \caption{Representative False Negative cases examined on Out-Of-Fold predictions}
-  \label{tab:fn_cases}
+  \caption{Representative Out-Of-Fold prediction errors examined across False Positive and False Negative cases}
+  \label{tab:error_cases}
 \end{table}
 
 \section{Generalization Integrity \& Overfitting Safeguards}

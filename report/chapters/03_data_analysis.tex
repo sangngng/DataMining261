@@ -61,10 +61,11 @@ Figure \ref{fig:venues} and Table \ref{tab:venue_stats} examine the distribution
   \label{fig:venues}
 \end{figure}
 
-\begin{table}[H]
+\begin{table}[!htbp]
   \centering
   \small
-  \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.2cm} >{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.8cm} >{\centering\arraybackslash}p{2.5cm}}
+  \setlength{\tabcolsep}{4.5pt}
+  \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}X >{\centering\arraybackslash}p{2.2cm} >{\centering\arraybackslash}p{2.2cm} >{\centering\arraybackslash}p{3.2cm} >{\centering\arraybackslash}p{2.4cm}}
     \toprule
     \rowcolor{PrismHeader}
     \color{PrismWhite}\textbf{Venue Name} & 
@@ -131,10 +132,11 @@ Quantitative odds ratios $\frac{\text{Rate in Ratings 4-5}}{\text{Rate in Rating
 \section{Association Rules Mining}
 To fulfill core curricular requirements, we implemented the \textit{Apriori} algorithm \cite{agrawal1994fast} on transactions constructed from paper titles and authors of high-priority publications ($y \ge 4$). Table \ref{tab:assoc_rules} highlights the strongest mined rules with $\text{Support} \ge 0.02, \text{Confidence} \ge 0.60$, and $\text{Lift} > 1.0$.
 
-\begin{table}[H]
+\begin{table}[!htbp]
   \centering
   \small
-  \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{3.8cm} >{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.2cm} >{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.0cm}}
+  \setlength{\tabcolsep}{4.5pt}
+  \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.6cm} >{\centering\arraybackslash}p{2.0cm} >{\centering\arraybackslash}p{2.2cm} >{\centering\arraybackslash}p{1.8cm}}
     \toprule
     \rowcolor{PrismHeader}
     \color{PrismWhite}\textbf{Antecedent} & 

@@ -78,26 +78,21 @@ To determine the optimal threshold $T^*$ without data snooping, we implement a f
 \end{prismbox}
 
 \section{Reproducibility Protocol}
-The full project repository is hosted at \url{https://github.com/sangngng/DataMining261}. To reproduce all experimental artifacts:
+The full project repository is hosted at \url{https://github.com/sangngng/DataMining261}. All experimental artifacts, feature representations, and submission files are fully reproducible via the following streamlined execution sequence:
 
-\begin{enumerate}
-  \item \textbf{Environment Initialization:}
-  \begin{verbatim}
-  git clone https://github.com/sangngng/DataMining261.git
-  cd DataMining261
-  python3 -m venv .venv
-  source .venv/bin/activate       # Windows: .venv\Scripts\activate
-  pip install -r requirements.txt
-  \end{verbatim}
+\begin{prismbox}[title=\textbf{End-to-End Command Sequence}]
+\small\ttfamily
+\textcolor{PrismDark}{\textbf{\# 1. Clone repository and initialize Python 3.12 environment:}}\\
+git clone https://github.com/sangngng/DataMining261.git\\
+cd DataMining261\\
+python3 -m venv .venv\\
+source .venv/bin/activate\\
+\textcolor{gray}{\# On Windows: .venv\textbackslash Scripts\textbackslash activate}\\
+pip install -r requirements.txt\\[5pt]
+\textcolor{PrismDark}{\textbf{\# 2. Extract and cache Sentence-BERT embeddings (384d):}}\\
+python extract_embeddings.py --model all-MiniLM-L6-v2\\[5pt]
+\textcolor{PrismDark}{\textbf{\# 3. Train Two-Stage Pipeline, tune decision threshold $T^*$, and generate submission:}}\\
+python main.py --seed 42 --sub-name submission_two_stage.csv
+\end{prismbox}
 
-  \item \textbf{Text Embedding Generation:}
-  \begin{verbatim}
-  python extract_embeddings.py --model all-MiniLM-L6-v2
-  \end{verbatim}
-
-  \item \textbf{Pipeline Execution \& Submission Generation:}
-  \begin{verbatim}
-  python main.py --seed 42 --sub-name submission_two_stage.csv
-  \end{verbatim}
-\end{enumerate}
-Exact random seeds and model hyperparameters are frozen at the official GitHub release commit.
+Exact random seeds and model hyperparameters are strictly frozen at the official GitHub release commit.

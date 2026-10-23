@@ -9,6 +9,7 @@
 \usepackage{amsmath, amssymb, amsfonts}
 \usepackage{bm}
 \usepackage{etoolbox}
+\usepackage{microtype}             %% Subtle typographical refinements, prevents overfull boxes
 
 %% ── Vietnamese Proper Name Encoding Support ──────────────────────────────
 %% Switches to T5 for Vietnamese diacritics while preserving T1 English layout
@@ -98,13 +99,17 @@
 \usepackage{subcaption}
 \captionsetup{font=small, labelfont={bf,color=PrismHeader}}
 
-%% Prevent figures from prematurely pushing text to subsequent pages
-\renewcommand{\topfraction}{0.85}
-\renewcommand{\bottomfraction}{0.85}
-\renewcommand{\textfraction}{0.15}
-\renewcommand{\floatpagefraction}{0.75}
+%% Prevent figures/tables from overflowing or causing early breaks
+\renewcommand{\topfraction}{0.90}
+\renewcommand{\bottomfraction}{0.90}
+\renewcommand{\textfraction}{0.10}
+\renewcommand{\floatpagefraction}{0.80}
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{6}
 
-%% ── Hyperlinks ───────────────────────────────────────────────────────────
+%% ── Hyperlinks & URLs ───────────────────────────────────────────────────
+\usepackage{xurl}                  %% Allows arbitrary line breaks in URLs to prevent overflow
 \usepackage[hidelinks,
             colorlinks=true,
             linkcolor=PrismHeader,
@@ -115,6 +120,8 @@
 \usepackage{parskip}
 \usepackage{titlesec}
 \usepackage{needspace}
+\emergencystretch=2.5em            %% Eliminates horizontal margin overflow on difficult lines
+\hfuzz=1pt
 \vfuzz=130pt
 
 \titleformat{\chapter}[block]
