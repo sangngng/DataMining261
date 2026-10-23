@@ -6,21 +6,22 @@
 
 %% ── Title Page ───────────────────────────────────────────────────────────
 \begin{titlepage}
+  \thispagestyle{empty}
   \centering
   {\large\bfseries VIETNAM NATIONAL UNIVERSITY, HO CHI MINH CITY}\\[3pt]
   {\large\bfseries UNIVERSITY OF TECHNOLOGY}\\[3pt]
-  {\normalsize\bfseries FACULTY OF COMPUTER SCIENCE AND ENGINEERING}\\[0.4cm]
+  {\normalsize\bfseries FACULTY OF COMPUTER SCIENCE AND ENGINEERING}\\[0.3cm]
   \noindent\rule{\linewidth}{1.2pt}
-  \vspace{0.8cm}
+  \vspace{0.5cm}
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=4.5cm]{figures/hcmut_logo.png}
+    \includegraphics[width=3.8cm]{figures/hcmut_logo.png}
   \end{figure}
 
-  \vspace{0.5cm}
-  {\LARGE\bfseries\color{PrismHeader} COURSE PROJECT REPORT}\\[0.3cm]
-  {\Large\bfseries\color{PrismDark} DATA MINING (CO3029)}\\[0.5cm]
+  \vspace{0.3cm}
+  {\LARGE\bfseries\color{PrismHeader} COURSE PROJECT REPORT}\\[0.2cm]
+  {\Large\bfseries\color{PrismDark} DATA MINING (CO3029)}\\[0.4cm]
   
   \begin{prismbox}[title=\centering\bfseries PROJECT: PERSONALIZED RESEARCH PAPER RECOMMENDATION SYSTEM, colbacktitle=PrismHeader]
     \centering
@@ -28,21 +29,22 @@
     {\small Prioritizing research papers based on a Two-Stage Recommendation Architecture combining Dense Semantic Embeddings, Topic Clustering, and Expected Gain Ranking}
   \end{prismbox}
 
-  \vspace{0.6cm}
+  \vspace{0.4cm}
   \begin{tabular}{ll}
-    \textbf{Course Instructor:} & \textit{MSc. Vũ Ngọc Tú} (\href{mailto:tuvn@hcmut.edu.vn}{tuvn@hcmut.edu.vn}) \\[4pt]
-    \textbf{Kaggle Team Name:}  & \textbf{hí ộ} \\[4pt]
-    \textbf{Academic Term:}     & \textit{Semester 1 (2026--2027)} \\[4pt]
+    \textbf{Course Instructor:} & \textit{\InstructorName} (\href{mailto:tuvn@hcmut.edu.vn}{tuvn@hcmut.edu.vn}) \\[3pt]
+    \textbf{Kaggle Team Name:}  & \textbf{\TeamName} \\[3pt]
+    \textbf{Academic Term:}     & \textit{Semester 1 (2026--2027)} \\[3pt]
   \end{tabular}
 
-  \vspace{0.5cm}
+  \vspace{0.4cm}
   {\bfseries\color{PrismHeader} MEMBER CONTRIBUTION MATRIX ACCORDING TO RUBRIC (10.0 PTS)}
   \vspace{0.2cm}
   
   \begin{table}[H]
     \centering
-    \small
-    \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{3.8cm} >{\centering\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{2.2cm}}
+    \footnotesize
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{3.6cm} >{\centering\arraybackslash}p{1.8cm} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{2.2cm}}
       \toprule
       \rowcolor{PrismHeader}
       \color{PrismWhite}\textbf{Full Name} & 
@@ -50,10 +52,10 @@
       \color{PrismWhite}\textbf{Role \& Responsibilities} & 
       \color{PrismWhite}\textbf{Rubric Section} \\
       \midrule
-      Nguyễn Ngọc Sáng & 2353046 & Team Leader \& ML Architect: Two-Stage Pipeline design, threshold $T^*$ tuning, GitHub \& Kaggle management & Section 5 (2.0p), Section 6 (1.0p) \\
+      \NameSang & 2353046 & Team Leader \& ML Architect: Two-Stage Pipeline design, threshold $T^*$ tuning, GitHub \& Kaggle management & Section 5 (2.0p), Section 6 (1.0p) \\
       \rowcolor{PrismLabel}
-      Nguyễn Trần Vĩ & 2353338 & NLP Specialist \& Feature Engineer: Sentence-BERT / SciBERT embeddings, semantic K-Means, feature design & Section 4 (1.5p), Section 5 (FE) \\
-      Trần Minh Duân & 2352166 & Data Analyst \& Report Lead: Exploratory Data Analysis, Association Rules mining, Error Analysis \& Report writing & Section 1 (1.0p), 2 (1.5p), 3 (1.5p), 6, 7 \\
+      \NameVi   & 2353338 & NLP Specialist \& Feature Engineer: Sentence-BERT / SciBERT embeddings, semantic K-Means, feature design & Section 4 (1.5p), Section 5 (FE) \\
+      \NameDuan & 2352166 & Data Analyst \& Report Lead: Exploratory Data Analysis, Association Rules mining, Error Analysis \& Report writing & Section 1 (1.0p), 2 (1.5p), 3 (1.5p), 6, 7 \\
       \bottomrule
     \end{tabularx}
   \end{table}
@@ -63,14 +65,27 @@
   {\small Ho Chi Minh City, October 2026}
 \end{titlepage}
 
-\pagestyle{fancy}
+%% ── Front Matter (Roman numerals: i, ii, ...) ─────────────────────────────
+\cleardoublepage
+\pagenumbering{roman}
+\pagestyle{plain}
 
-%% ── Table of Contents, Figures & Tables ──────────────────────────────────
 \tableofcontents
-\newpage
+\clearpage
+
+\begingroup
+\let\clearpage\relax
 \listoffigures
+\vspace{1.0cm}
 \listoftables
-\newpage
+\endgroup
+\clearpage
+
+%% ── Main Matter (Arabic numerals: 1, 2, 3, ...) ───────────────────────────
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{fancy}
 
 %% ── Chapters Following the 7 Rubric Criteria ────────────────────────────
 \input{chapters/01_introduction}
@@ -81,7 +96,7 @@
 \input{chapters/06_evaluation}
 \input{chapters/07_conclusion}
 
-\newpage
+\clearpage
 %% ── References ───────────────────────────────────────────────────────────
 \bibliographystyle{plainnat}
 \bibliography{references}
