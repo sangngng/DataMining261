@@ -1,41 +1,41 @@
-\chapter{Kết Luận, Hạn Chế \& Hướng Phát Triển}
+\chapter{Conclusion, Limitations \& Future Work}
 \label{chap:conclusion}
 
-\section{Tổng Kết Kết Quả Đạt Được}
-Trải qua quá trình nghiên cứu, khám phá dữ liệu và thử nghiệm thực nghiệm nghiêm ngặt, nhóm \textbf{hí ộ} đã hoàn thành xuất sắc các mục tiêu đề ra cho bài tập lớn môn Khai phá Dữ liệu (CO3029):
+\section{Summary of Achievements}
+Throughout this course project for Data Mining (CO3029), team \textbf{hí ộ} successfully designed, implemented, and empirically validated an advanced personalized literature recommendation system:
 
 \begin{enumerate}
-  \item \textbf{Về mặt học thuật và phương pháp luận:}
+  \item \textbf{Curricular \& Methodological Mastery:}
     \begin{itemize}
-      \item Vận dụng nhuần nhuyễn và kết hợp thực chất các kiến thức cốt lõi được giảng dạy trong chương trình: Phân cụm đề tài bằng \textit{K-Means Clustering}, Khai phá luật kết hợp bằng \textit{Apriori / FP-Growth}, và các thuật toán học máy phân loại / hồi quy hiện đại (\textit{LightGBM, XGBoost, CatBoost}).
-      \item Giải quyết bài toán xếp hạng ưu tiên bằng kiến trúc \textbf{Two-Stage Recommendation Pipeline}, kết hợp giữa bộ lọc nhãn 1 và bộ xếp hạng ưu tiên dựa trên kỳ vọng lợi ích toán học (\textit{Multiclass Expected Gain}).
-      \item Chứng minh bằng giải tích và mô phỏng Monte Carlo về trần điểm lý thuyết tối đa của cuộc thi ($\approx 0.776$), làm sáng tỏ cơ chế đánh đổi giữa Relevance ($Q$) và Coverage ($R$).
+      \item Substantively synthesized core Data Mining methods: semantic \textit{K-Means Clustering}, frequent itemset mining via \textit{Apriori}, and multi-model gradient boosting ensembles (\textit{LightGBM, XGBoost, CatBoost}).
+      \item Formulated a robust \textbf{Two-Stage Recommendation Pipeline} uniting high-precision binary pruning with a novel \textit{Multiclass Expected Gain} ranking objective.
+      \item Analytically established the theoretical score ceiling ($\approx 0.776$) via Monte Carlo simulations, demystifying the trade-off mechanics governing the official evaluation metric.
     \end{itemize}
 
-  \item \textbf{Về mặt thực nghiệm và thứ hạng thi đấu:}
+  \item \textbf{Empirical Leaderboard Impact:}
     \begin{itemize}
-      \item Mô hình liên tục được nâng cấp qua các thế hệ từ Baseline ($0.61546$) lên phiên bản Sentence-BERT Ensemble ($0.65006$), xuất sắc đưa đội thi lọt vào **TOP 5 Leaderboard** với chỉ 2 lần nộp bài.
-      \item Quy trình kiểm định chéo 5-Fold Stratified Cross Validation nghiêm ngặt, hoàn toàn không rò rỉ dữ liệu, đảm bảo kết quả bền vững trên tập Private Test set.
+      \item Progressively boosted model performance from baseline ($0.61546$) to the Sentence-BERT ensemble ($0.65006$), securing **Rank 5 on the Kaggle Leaderboard** within only two submission iterations.
+      \item Maintained strict 5-Fold Stratified Cross-Validation protocols with zero data leakage, ensuring competitive endurance on the final Private Test set.
     \end{itemize}
 
-  \item \textbf{Về mặt quản lý dự án và khả năng tái lập:}
+  \item \textbf{Engineering Rigor \& Open Science:}
     \begin{itemize}
-      \item Toàn bộ quy trình từ khâu tiền xử lý, huấn luyện đến sinh file nộp bài đều được tự động hóa thông qua mã nguồn mở tại GitHub repository \url{https://github.com/sangngng/DataMining261}.
+      \item Automated the complete end-to-end pipeline from text normalization to submission generation within a structured GitHub repository: \url{https://github.com/sangngng/DataMining261}.
     \end{itemize}
 \end{enumerate}
 
-\section{Những Hạn Chế Còn Tồn Tại (Limitations)}
-Mặc dù đạt được những kết quả rất tích cực, giải pháp hiện tại vẫn còn một số giới hạn khách quan:
+\section{Current Limitations}
+Despite strong competitive results, several intrinsic constraints remain:
 \begin{enumerate}
-  \item \textbf{Thiếu vắng dữ liệu tóm tắt (Abstract) và toàn văn (Full-text):} Tập dữ liệu cuộc thi chỉ cung cấp trường tiêu đề (\texttt{title}). Tiêu đề bài báo khoa học thường ngắn gọn và mang tính súc tích, đôi khi không phản ánh đầy đủ chiều sâu phương pháp hoặc phạm vi ứng dụng thực tế, dẫn đến một số ca dự đoán sai lệch (như đã phân tích ở Mục \ref{chap:evaluation}).
-  \item \textbf{Tính thưa thớt của mạng lưới tác giả (Author Sparsity):} Có hơn 4.200 tác giả khác nhau nhưng phần lớn chỉ xuất hiện 1 lần trong tập dữ liệu. Việc ước lượng độ yêu thích của tác giả dựa trên các tác giả mới xuất hiện còn gặp nhiều khó khăn.
-  \item \textbf{Quy mô mẫu vừa phải:} Tập dữ liệu huấn luyện gồm 2.494 bài báo là tương đối khiêm tốn đối với các mô hình học sâu phức tạp nếu không có kỹ thuật tiền huấn luyện chuyển giao tri thức (\textit{Transfer Learning}).
+  \item \textbf{Absence of Abstracts and Full Text:} The dataset provides solely paper titles. Academic titles are necessarily succinct and occasionally fail to convey methodological scope, occasionally precipitating false positive predictions for broad survey papers.
+  \item \textbf{Co-Authorship Network Sparsity:} Over 4,200 unique authors appear in the collection, the majority having only a single publication. Modeling preferences for newly observed first-time authors remains constrained by data sparsity.
+  \item \textbf{Moderate Sample Volume:} A training base of 2,494 papers is relatively modest for complex representation learning, making pre-trained transformer embeddings essential.
 \end{enumerate}
 
-\section{Hướng Mở Rộng \& Phát Triển Trong Tương Lai (Future Work)}
-Để nâng cấp hệ thống gợi ý lên tầm cao mới, nhóm đề xuất các hướng nghiên cứu mở rộng:
+\section{Future Research Directions}
+To push recommendation quality toward the theoretical ceiling, we propose:
 \begin{enumerate}
-  \item \textbf{Mô hình hóa đồ thị tri thức và mạng lưới trích dẫn (Graph Neural Networks):} Xây dựng đồ thị liên kết đồng tác giả (\textit{Co-authorship Graph}) và đồ thị trích dẫn bài báo (\textit{Citation Network}). Áp dụng các mô hình học sâu trên đồ thị như \textit{Graph Convolutional Networks (GCN)} hoặc \textit{Graph Attention Networks (GAT)} để học biểu diễn tiềm ẩn của các nhà nghiên cứu.
-  \item \textbf{Ứng dụng Mô hình Ngôn ngữ Lớn (LLM Re-ranking \& Reasoning):} Tận dụng các mô hình LLM chuyên sâu (như LLaMA-3, Mistral) để đọc hiểu sâu tiêu đề, giải thích lý do tại sao bài báo được gợi ý (\textit{Explainable Recommendation}) và tái xếp hạng (\textit{Re-rank}) danh sách top 30 bài báo ưu tiên nhất.
-  \item \textbf{Thu thập dữ liệu làm giàu (External Data Enrichment):} Tự động truy vấn Semantic Scholar API hoặc CrossRef dựa trên mã \texttt{doi} để trích xuất tóm tắt (\texttt{abstract}) và danh mục từ khóa chuyên ngành (\texttt{keywords}), từ đó làm giàu không gian đặc trưng cho mô hình.
+  \item \textbf{Graph Neural Networks (GNNs) on Heterogeneous Citation Networks:} Constructing a heterogeneous graph linking authors, venues, and publications. Graph Convolutional Networks (GCN) or Graph Attention Networks (GAT) could capture transitive community influence and collaborative filtering signals far beyond flat feature tables.
+  \item \textbf{Large Language Model (LLM) Reasoning \& Re-Ranking:} Utilizing advanced reasoning models (e.g., LLaMA-3, Mistral) to read candidate titles in context, provide explainable recommendations, and dynamically re-rank the top 30 candidate publications.
+  \item \textbf{Automated Metadata Enrichment via Academic APIs:} Leveraging CrossRef and Semantic Scholar APIs to automatically ingest paper abstracts, citation counts, and author affiliations based on registered DOIs, providing enriched signals for downstream rankers.
 \end{enumerate}

@@ -1,11 +1,9 @@
-%% preamble.tex  –  Prism Theme (HCMUT Teal) for Data Mining CO3029
+%% preamble.tex  –  Prism Theme (HCMUT Teal) for CO3029 Data Mining Report
 %% ─────────────────────────────────────────────────────────────────────────
 
-%% ── PDF Searchability & Vietnamese Font Encoding ─────────────────────────
-\usepackage{cmap}                           %% Đảm bảo copy/search tiếng Việt không bị mất dấu
+%% ── Encoding & Fonts ─────────────────────────────────────────────────────
 \usepackage[utf8]{inputenc}
-\usepackage[vietnamese,english]{babel}
-\usepackage[T5,T1]{fontenc}    
+\usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amsmath, amssymb, amsfonts}
 \usepackage{bm}
@@ -21,11 +19,11 @@
   \includegraphics[height=1cm]{figures/hcmut_logo.png}%
   \hspace{8pt}%
   \begin{tabular}[b]{@{}l@{}}
-    {\small\bfseries Đại học Quốc gia TP. Hồ Chí Minh --- Trường Đại học Bách Khoa}\\
-    {\small\color{PrismHeader}Khoa Khoa học và Kỹ thuật Máy tính}
+    {\small\bfseries Vietnam National University, Ho Chi Minh City --- University of Technology}\\
+    {\small\color{PrismHeader}Faculty of Computer Science and Engineering}
   \end{tabular}}
-\fancyfoot[L]{\small\textit{CO3029 Khai phá Dữ liệu --- Assignment 261: Paper Recommendation}}
-\fancyfoot[R]{\small Trang \thepage}
+\fancyfoot[L]{\small\textit{CO3029 Data Mining --- Assignment 261: Paper Recommendation}}
+\fancyfoot[R]{\small Page \thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
@@ -35,11 +33,11 @@
     \includegraphics[height=1cm]{figures/hcmut_logo.png}%
     \hspace{8pt}%
     \begin{tabular}[b]{@{}l@{}}
-      {\small\bfseries Đại học Quốc gia TP. Hồ Chí Minh --- Trường Đại học Bách Khoa}\\
-      {\small\color{PrismHeader}Khoa Khoa học và Kỹ thuật Máy tính}
+      {\small\bfseries Vietnam National University, Ho Chi Minh City --- University of Technology}\\
+      {\small\color{PrismHeader}Faculty of Computer Science and Engineering}
     \end{tabular}}
-  \fancyfoot[L]{\small\textit{CO3029 Khai phá Dữ liệu --- Assignment 261: Paper Recommendation}}
-  \fancyfoot[R]{\small Trang \thepage}
+  \fancyfoot[L]{\small\textit{CO3029 Data Mining --- Assignment 261: Paper Recommendation}}
+  \fancyfoot[R]{\small Page \thepage}
   \renewcommand{\headrulewidth}{0.4pt}
   \renewcommand{\footrulewidth}{0.4pt}
 }
@@ -74,7 +72,7 @@
 \usepackage{subcaption}
 \captionsetup{font=small, labelfont={bf,color=PrismHeader}}
 
-%% Ngăn chặn việc hình ảnh đẩy văn bản xuống trang quá sớm / để khoảng trống lớn
+%% Prevent figures from prematurely pushing text to subsequent pages
 \renewcommand{\topfraction}{0.85}
 \renewcommand{\bottomfraction}{0.85}
 \renewcommand{\textfraction}{0.15}
@@ -95,7 +93,7 @@
 
 \titleformat{\chapter}[block]
   {\LARGE\bfseries\color{PrismHeader}}
-  {Mục \thechapter.}{0.6em}{}
+  {Chapter \thechapter.}{0.6em}{}
   [\color{PrismRule}\rule{\linewidth}{1.5pt}\vspace{3pt}]
 
 \titleformat{\section}

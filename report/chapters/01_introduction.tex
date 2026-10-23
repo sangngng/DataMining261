@@ -1,39 +1,39 @@
-\chapter{Tổng Quan Đề Tài \& Bố Cục Báo Cáo}
+\chapter{Introduction \& Project Overview}
 \label{chap:intro}
 
-\section{Bối Cảnh Bài Toán \& Đặt Vấn Đề}
-Trong kỷ nguyên bùng nổ thông tin khoa học, số lượng bài báo nghiên cứu được công bố hàng năm tại các hội nghị và tạp chí hàng đầu gia tăng với tốc độ cấp số nhân. Một nhà nghiên cứu trong lĩnh vực Khoa học Máy tính thường xuyên phải đối mặt với hàng nghìn công trình mới xuất bản mỗi năm từ nhiều hội nghị uy tín như \textit{International Conference on Logic Programming (ICLP)}, \textit{Principles of Knowledge Representation and Reasoning (KR)}, \textit{Computer Aided Verification (CAV)}, hay \textit{Logic in Computer Science (LICS)}.
+\section{Background \& Motivation}
+In the contemporary era of exponential scientific output, academic researchers in Computer Science face an overwhelming volume of newly published literature each year. Thousands of cutting-edge papers are presented annually at prestigious venues such as the \textit{International Conference on Logic Programming (ICLP)}, the \textit{International Conference on Principles of Knowledge Representation and Reasoning (KR)}, \textit{Computer Aided Verification (CAV)}, and \textit{Logic in Computer Science (LICS)}.
 
-Tuy nhiên, quỹ thời gian của mỗi nhà nghiên cứu là hữu hạn. Họ không thể đọc hết mọi bài báo mà bắt buộc phải có một cơ chế lọc và xếp thứ tự ưu tiên:
+However, an individual researcher possesses strictly bounded reading bandwidth and cognitive capacity. It is humanly impossible to digest every incoming publication. Consequently, an intelligent literature filtering and prioritization mechanism is essential:
 \begin{itemize}
-  \item \textbf{Loại bỏ bài không phù hợp:} Những bài báo không thuộc hướng nghiên cứu quan tâm (nhãn 1) cần được loại bỏ ngay lập tức để tránh lãng phí thời gian.
-  \item \textbf{Xếp thứ tự ưu tiên đọc (Prioritization):} Những công trình có mức độ liên quan cao (nhãn 2 đến 5), đặc biệt là các bài báo then chốt mang tính đột phá (nhãn 4--5), phải được đẩy lên đầu danh sách đọc.
+  \item \textbf{Filtering Out Irrelevant Literature:} Papers lying outside the researcher's specialized interests (labeled as 1) must be filtered out immediately, as recommending them wastes valuable research time.
+  \item \textbf{Prioritizing High-Impact Contributions:} Worthwhile publications (ratings 2 through 5), particularly breakthrough papers directly extending the researcher's ongoing inquiries (ratings 4 and 5), must be surfaced at the very top of the reading list.
 \end{itemize}
 
-Bài toán \textbf{Personalized Research Paper Recommendation (Kaggle Assignment 261)} yêu cầu các nhóm nghiên cứu xây dựng một hệ thống học máy tự động nhằm phân loại và gán điểm ưu tiên đọc (\textit{priority}) cho 596 bài báo trong tập kiểm thử (Test set), dựa trên tập dữ liệu lịch sử gồm 2.494 bài báo đã được nhà nghiên cứu chấm điểm từ 1 đến 5 (Train set).
+The \textbf{Personalized Research Paper Recommendation (Kaggle Assignment 261)} challenge addresses this exact problem. Given historical reading preferences on 2,494 training publications scored on an integer scale from 1 to 5, participating teams are tasked with predicting and assigning continuous priority scores to 596 unrated candidate papers in the test collection.
 
-\section{Mục Tiêu Đồ Án}
-Mục tiêu trọng tâm của nhóm \textbf{hí ộ} bao gồm:
+\section{Project Objectives}
+The primary objectives pursued by team \textbf{hí ộ} encompass:
 \begin{enumerate}
-  \item \textbf{Khám phá và thấu hiểu dữ liệu (EDA \& Profiling):} Phân tích sở thích đọc thực tế của nhà nghiên cứu thông qua đặc trưng tiêu đề, tác giả, hội nghị và năm xuất bản.
-  \item \textbf{Áp dụng các phương pháp nền tảng môn Khai phá Dữ liệu:} Kết hợp linh hoạt kỹ thuật Phân cụm đề tài (\textit{K-Means Clustering}), Khai phá luật kết hợp (\textit{Association Rules Mining}), và các thuật toán học máy phân loại/hồi quy dựa trên cây quyết định (\textit{GBDT}).
-  \item \textbf{Xây dựng kiến trúc gợi ý hai giai đoạn (Two-Stage Recommendation Pipeline):} 
+  \item \textbf{Data Profiling \& Exploratory Analysis:} Thoroughly characterizing the researcher's reading preferences through empirical examination of title semantics, author networks, publication venues, and chronological trends.
+  \item \textbf{Substantive Methodological Integration:} Rigorously combining foundational Data Mining paradigms taught in the course, including \textit{K-Means Clustering}, \textit{Association Rules Mining}, and Gradient Boosted Decision Trees (\textit{GBDT}).
+  \item \textbf{Two-Stage Recommender Architecture:}
     \begin{itemize}
-      \item \textit{Giai đoạn 1 (Lọc):} Mô hình phân loại nhị phân chính xác cao nhằm triệt tiêu tối đa các bài nhãn 1 (gán $\text{priority} = 0$).
-      \item \textit{Giai đoạn 2 (Xếp hạng):} Mô hình hồi quy kết hợp xếp hạng chuyên sâu (\textit{LambdaMART / Multiclass Expected Gain}) nhằm tối ưu hóa thứ tự đọc từ nhãn 2 đến nhãn 5.
+      \item \textit{Stage 1 (Precision Filter):} A high-precision binary classification model designed to purge rating-1 papers from the candidate pool ($\text{priority} = 0$).
+      \item \textit{Stage 2 (Priority Ranker):} A continuous ranking model leveraging Multiclass Expected Gain and GBDT regression to sort worthwhile papers in descending order of utility.
     \end{itemize}
-  \item \textbf{Tối ưu hóa hàm mục tiêu cuộc thi:} Quét tìm ngưỡng lọc tối ưu $T^*$ trên Out-Of-Fold để cân bằng tối hảo giữa độ chính xác vị trí (\textit{Relevance - Q}) và tỷ lệ bao phủ bài đáng đọc (\textit{Coverage - R}).
-  \item \textbf{Đảm bảo tính tái lập (Reproducibility):} Toàn bộ mã nguồn, dữ liệu cache và hướng dẫn cài đặt môi trường được tổ chức bài bản tại GitHub repository: \url{https://github.com/sangngng/DataMining261}.
+  \item \textbf{Metric Optimization via Out-Of-Fold Grid Search:} Calibrating an optimal filtering threshold $T^*$ on Out-Of-Fold cross-validation splits to maximize the competition's Harmonic Mean score between Relevance ($Q$) and Coverage ($R$).
+  \item \textbf{Full Reproducibility:} Maintaining clean, modular code, documented dependencies, and exact random seeds within the official GitHub repository: \url{https://github.com/sangngng/DataMining261}.
 \end{enumerate}
 
-\section{Bố Cục Báo Cáo}
-Báo cáo được cấu trúc chặt chẽ theo 7 tiêu chí trong Rubric đánh giá của Giảng viên:
+\section{Report Organization}
+This report is structured in direct accordance with the 7 evaluation criteria outlined in the course rubric:
 \begin{itemize}
-  \item \textbf{Mục 1 (Tổng quan):} Giới thiệu bài toán, mục tiêu và bố cục báo cáo.
-  \item \textbf{Mục 2 (Định nghĩa bài toán):} Mô hình hóa nhu cầu đọc, phân tích chi tiết toán học của hàm mục tiêu $Q, R$, Harmonic Mean, và phân tích cận trên lý thuyết.
-  \item \textbf{Mục 3 (Phân tích dữ liệu - EDA):} Trực quan hóa dữ liệu bằng 5 biểu đồ chất lượng cao, khai phá luật kết hợp Apriori/FP-Growth và phân tích tương quan ngữ nghĩa Sentence-BERT.
-  \item \textbf{Mục 4 (Insights từ dữ liệu):} Đúc kết các phát hiện thực tế từ dữ liệu và luận cứ dẫn tới việc thiết kế đặc trưng.
-  \item \textbf{Mục 5 (Thiết kế giải pháp):} Trình bày chi tiết kiến trúc Two-Stage, các kỹ thuật trích xuất đặc trưng và thuật toán quét ngưỡng $T^*$.
-  \item \textbf{Mục 6 (Đánh giá thực nghiệm \& Phân tích lỗi):} Quy trình 5-Fold Stratified CV, bảng so sánh đối chứng mô hình, giải thích mô hình bằng SHAP và phân tích sâu các ca lỗi (Error Analysis).
-  \item \textbf{Mục 7 (Kết luận \& Mở rộng):} Đánh giá kết quả đạt được, chỉ ra các hạn chế và hướng phát triển trong tương lai.
+  \item \textbf{Chapter 1 (Introduction):} Outlines the research motivation, project objectives, and document structure.
+  \item \textbf{Chapter 2 (Problem Formulation):} Mathematically models reading utility, details the evaluation metric ($Q, R$, Harmonic Mean), examines the severe penalty of label-1 inclusions, and derives the theoretical score ceiling.
+  \item \textbf{Chapter 3 (Exploratory Data Analysis):} Presents 5 high-resolution visualizations, analyzes Association Rules, and validates semantic cosine similarity using Sentence-BERT embeddings.
+  \item \textbf{Chapter 4 (Data Insights):} Contrasts empirical observations with initial assumptions and maps data discoveries directly to feature engineering designs.
+  \item \textbf{Chapter 5 (System Architecture):} Explains the Two-Stage Recommendation Pipeline, clustering techniques, ranking formulations, and threshold optimization algorithms.
+  \item \textbf{Chapter 6 (Experimental Evaluation):} Reports 5-Fold Stratified CV benchmarks, compares model generations, interprets feature importance via SHAP, and conducts an in-depth Error Analysis.
+  \item \textbf{Chapter 7 (Conclusion):} Summarizes key achievements, outlines current technical limitations, and proposes promising future research directions.
 \end{itemize}

@@ -1,46 +1,46 @@
-\chapter{Định Nghĩa Bài Toán \& Phân Tích Chuyên Sâu Metric}
+\chapter{Problem Formulation \& Evaluation Metric Analysis}
 \label{chap:problem}
 
-\section{Mô Hình Hóa Nhu Cầu Đọc Của Nhà Nghiên Cứu}
-Trong bài toán gợi ý bài báo cá nhân hóa (\textit{Personalized Paper Recommendation}), mỗi bài báo được nhà nghiên cứu đánh giá theo thang điểm nguyên $y \in \{1, 2, 3, 4, 5\}$:
+\section{Mathematical Modeling of Reading Utility}
+In this personalized recommendation setting, each candidate research paper is evaluated according to the researcher's discrete preference rating $y \in \{1, 2, 3, 4, 5\}$:
 \begin{itemize}
-  \item \textbf{Nhãn 1 (Không muốn đọc --- Do not read):} Bài báo nằm ngoài phạm vi quan tâm, hoặc là tài liệu phi nghiên cứu (kỷ yếu hội thảo, lời tựa). Việc đề xuất các bài này gây lãng phí thời gian và làm giảm nghiêm trọng trải nghiệm người dùng.
-  \item \textbf{Nhãn 2 (Ưu tiên thấp --- Low Priority):} Bài báo có liên quan gián tiếp nhưng chỉ cần lướt qua khi có thời gian rảnh rỗi.
-  \item \textbf{Nhãn 3 (Ưu tiên trung bình --- Medium Priority):} Bài báo chứa ý tưởng hoặc kỹ thuật hữu ích liên quan đến chuyên ngành.
-  \item \textbf{Nhãn 4 (Ưu tiên cao --- High Priority):} Bài báo rất hay, xuất phát từ các tác giả uy tín hoặc giải quyết bài toán cốt lõi mà nhà nghiên cứu đang theo đuổi.
-  \item \textbf{Nhãn 5 (Bắt buộc phải đọc ngay --- Must Read):} Công trình mang tính đột phá, mở rộng trực tiếp các nghiên cứu hiện tại của tác giả; bắt buộc phải đọc sớm nhất có thể.
+  \item \textbf{Rating 1 (Do Not Read):} Publications falling completely outside the researcher's domain, or non-research conference metadata (such as conference proceedings headers, workshop prefaces, or organizing committee overviews). Recommending these wastes cognitive bandwidth.
+  \item \textbf{Rating 2 (Low Priority):} Publications offering tangentially relevant background knowledge, suitable for occasional skimming.
+  \item \textbf{Rating 3 (Medium Priority):} Papers containing standard technical methods or formalisms pertinent to the researcher's broad discipline.
+  \item \textbf{Rating 4 (High Priority):} Highly relevant contributions authored by prominent peers or addressing key theoretical challenges directly aligned with the researcher's agenda.
+  \item \textbf{Rating 5 (Must Read):} Groundbreaking papers providing critical extensions or direct solutions to the researcher's core topics; must be read immediately.
 \end{itemize}
 
-Nhiệm vụ của mô hình là gán một giá trị điểm ưu tiên $\text{priority} \in [0, +\infty)$ cho từng bài báo ứng viên trong tập kiểm thử gồm 596 bài:
+The recommendation system must assign a continuous priority score $\text{priority}_i \in [0, +\infty)$ to each candidate paper in the unrated test collection:
 \begin{itemize}
-  \item $\text{priority} = 0$: Loại bỏ bài báo khỏi danh sách gợi ý.
-  \item $\text{priority} > 0$: Khuyến nghị bài báo; giá trị điểm số càng lớn thể hiện thứ tự đọc càng sớm.
+  \item $\text{priority}_i = 0$: Exclude paper $i$ from the recommendation list.
+  \item $\text{priority}_i > 0$: Recommend paper $i$, with strictly larger numerical values dictating earlier reading positions.
 \end{itemize}
 
-\section{Phân Tích Chi Tiết Toán Học Của Hàm Mục Tiêu}
-Tập kiểm thử gồm 596 bài báo được hệ thống chấm điểm của Kaggle chia đều thành hai tập con ẩn độc lập: \textbf{Public Test set (298 bài)} và \textbf{Private Test set (298 bài)}. Trên mỗi tập con, bộ đánh giá thực hiện:
+\section{Formal Evaluation Metric Breakdown}
+The 596 test publications are partitioned into two equal, disjoint hidden splits: the \textbf{Public Test set (298 papers)} and the \textbf{Private Test set (298 papers)}. Within each split independently, the competition evaluator executes the following procedure:
 \begin{enumerate}
-  \item Loại bỏ toàn bộ các bài có $\text{priority} = 0$.
-  \item Sắp xếp các bài còn lại giảm dần theo $\text{priority}$. Nếu điểm số bằng nhau, sử dụng ID (chuỗi ký tự) tăng dần để phá vỡ thế hòa.
-  \item Gán vị trí đọc $r = 1, 2, \dots, m$ cho $m$ bài báo được giữ lại và tính toán điểm số.
+  \item Excludes all candidate papers assigned $\text{priority} \le 0$.
+  \item Sorts the remaining $m$ positive-priority papers in descending order of priority, breaking numerical ties by ascending alphabetical paper ID.
+  \item Assigns sequential reading rank positions $r = 1, 2, \dots, m$ and computes the official competition score.
 \end{enumerate}
 
-Điểm số chung cuộc là trung bình điều hòa (\textit{Harmonic Mean}) giữa độ chính xác vị trí (\textit{Relevance - Q}) và tỷ lệ bao phủ (\textit{Coverage - R}):
+The final score is the Harmonic Mean of Relevance ($Q$) and Coverage ($R$):
 \begin{equation}
   \text{Score} = \frac{2 \cdot Q \cdot R}{Q + R}
   \label{eq:harmonic_mean}
 \end{equation}
 
-\subsection{Chỉ Số Relevance ($Q$)}
-Chỉ số Relevance đo lường chất lượng của danh sách khuyến nghị, trong đó các vị trí đầu tiên nhận trọng số lớn hơn theo nguyên lý chiết khấu tích lũy (\textit{Discounted Cumulative Gain - DCG}) \cite{jarvelin2002cumulated}:
+\subsection{Relevance ($Q$): Discounted Cumulative Gain}
+Relevance measures the positional utility of the recommended reading sequence. Following the Discounted Cumulative Gain (DCG) formulation \cite{jarvelin2002cumulated}, earlier positions receive substantially greater weight:
 \begin{equation}
   Q = \frac{\sum_{r=1}^m w_r \cdot g_r}{\sum_{r=1}^m w_r}
   \label{eq:relevance}
 \end{equation}
-Trong đó:
+where:
 \begin{itemize}
-  \item $g_r = \frac{y_r - 1}{4} \in [0, 1]$ là điểm lợi ích thu được (\textit{usefulness gain}) từ bài báo tại vị trí $r$. Bảng quy đổi điểm lợi ích được cho trong Bảng \ref{tab:gain_weights}.
-  \item $w_r = \frac{1}{\log_2(r + 1)}$ là trọng số vị trí (\textit{position weight}). Khi vị trí $r$ tăng lên, $w_r$ suy giảm theo logarit.
+  \item $g_r = \frac{y_r - 1}{4} \in [0, 1]$ represents the normalized usefulness gain for a paper with hidden rating $y_r$. The exact gain mapping is summarized in Table \ref{tab:gain_weights}.
+  \item $w_r = \frac{1}{\log_2(r + 1)}$ denotes the position discount weight.
 \end{itemize}
 
 \begin{table}[H]
@@ -49,79 +49,71 @@ Trong đó:
   \begin{tabularx}{0.85\linewidth}{>{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}X}
     \toprule
     \rowcolor{PrismHeader}
-    \color{PrismWhite}\textbf{Nhãn Thật ($y_r$)} & 
-    \color{PrismWhite}\textbf{Điểm Lợi Ích ($g_r$)} & 
-    \color{PrismWhite}\textbf{Đóng Góp Vào Điểm $Q$} \\
+    \color{PrismWhite}\textbf{True Rating ($y_r$)} & 
+    \color{PrismWhite}\textbf{Usefulness Gain ($g_r$)} & 
+    \color{PrismWhite}\textbf{Contribution to Relevance ($Q$)} \\
     \midrule
-    1 & $0.00$ & Không tăng tử số, tăng mẫu số $\to$ \textbf{Kéo tụt $Q$ rất mạnh} \\
+    1 & $0.00$ & Contributes zero gain, inflates denominator $\to$ \textbf{Severely penalizes $Q$} \\
     \rowcolor{PrismLabel}
-    2 & $0.25$ & Đóng góp lợi ích tối thiểu ($25\%$) \\
-    3 & $0.50$ & Đóng góp lợi ích mức trung bình ($50\%$) \\
+    2 & $0.25$ & Minimum positive gain ($25\%$) \\
+    3 & $0.50$ & Moderate utility gain ($50\%$) \\
     \rowcolor{PrismLabel}
-    4 & $0.75$ & Đóng góp lợi ích cao ($75\%$) \\
-    5 & $1.00$ & Đóng góp lợi ích tối đa ($100\%$) \\
+    4 & $0.75$ & High utility gain ($75\%$) \\
+    5 & $1.00$ & Maximum possible gain ($100\%$) \\
     \bottomrule
   \end{tabularx}
-  \caption{Quy đổi thang điểm nhãn sang điểm lợi ích $g_r$ trong công thức Relevance}
+  \caption{Mapping from true reading preference ratings to normalized usefulness gain $g_r$}
   \label{tab:gain_weights}
 \end{table}
 
-\begin{prismbox}[title=\textbf{Cơ Chế Hình Phạt Chí Mạng Của Bài Nhãn 1 Đối Với $Q$}]
-Quan sát công thức \eqref{eq:relevance}, nếu một bài nhãn 1 ($y_r = 1 \implies g_r = 0$) xuất hiện tại vị trí $r$:
+\begin{prismbox}[title=\textbf{The Severe Mathematical Penalty of Rating-1 Inclusions}]
+Consider what happens when a rating-1 paper ($y_r = 1 \implies g_r = 0$) infiltrates the recommendation list at position $r$:
 \begin{itemize}
-  \item Tử số $\sum w_r g_r$ tăng thêm: $w_r \times 0 = 0$.
-  \item Mẫu số $\sum w_r$ tăng thêm: $w_r > 0$.
+  \item The numerator $\sum w_r g_r$ increases by $w_r \times 0 = 0$.
+  \item The denominator $\sum w_r$ strictly increases by $w_r > 0$.
 \end{itemize}
-Điều này làm cho giá trị phân số giảm ngay lập tức. Đặc biệt, nếu bài nhãn 1 lọt vào các vị trí đầu ($r = 1, 2, 3$ với $w_1 = 1.0, w_2 \approx 0.63, w_3 = 0.50$), mẫu số sẽ tăng vọt khiến chỉ số $Q$ sụt giảm thảm hại. Do đó, \textbf{nguyên tắc sống còn của hệ thống là phải lọc sạch các bài có khả năng cao là nhãn 1}.
+Consequently, the fraction drops immediately. Because $w_1 = 1.0, w_2 \approx 0.63$, and $w_3 = 0.50$, allowing a rating-1 paper into the top ranks acts as a catastrophic drag on $Q$. Therefore, \textbf{the foremost architectural priority of the system is the decisive suppression of all suspected rating-1 items}.
 \end{prismbox}
 
-\subsection{Chỉ Số Coverage ($R$)}
-Coverage đo lường độ phủ của các bài báo đáng đọc (nhãn $y \ge 2$) được mô hình giữ lại:
+\subsection{Coverage ($R$): Recall of Worthwhile Publications}
+Coverage quantifies the recall of worthwhile papers (ratings $y \ge 2$) retained in the recommendation pool:
 \begin{equation}
   R = \frac{\sum_{r=1}^m \mathbb{I}(y_r > 1)}{N_{\text{worthwhile}}}
   \label{eq:coverage}
 \end{equation}
-Trong đó $N_{\text{worthwhile}} = \sum_{j=1}^N \mathbb{I}(y_j > 1)$ là tổng số bài báo đáng đọc ($y > 1$) trong phân vùng kiểm thử đang xét, và $\mathbb{I}(\cdot)$ là hàm chỉ thị. Đặc điểm của Coverage:
+where $N_{\text{worthwhile}} = \sum_{j=1}^N \mathbb{I}(y_j > 1)$ represents the total count of worthwhile papers in the evaluated split, and $\mathbb{I}(\cdot)$ is the indicator function. Key characteristics of Coverage include:
 \begin{itemize}
-  \item Không phụ thuộc vào thứ tự xếp hạng; chỉ cần bài nhãn $\ge 2$ được gán $\text{priority} > 0$ là được tính vào tử số.
-  \item Gợi ý bài nhãn 1 không làm tăng $R$, nhưng loại bỏ nhầm bài nhãn 2--5 sẽ làm giảm $R$.
+  \item Rank invariance: Reordering selected papers does not alter $R$.
+  \item Zero reward for rating 1: Recommending rating-1 papers adds nothing to the numerator.
+  \item False negative penalty: Erroneously filtering out a rating $\ge 2$ paper directly reduces $R$.
 \end{itemize}
 
-\subsection{Bản Chất Của Trung Bình Điều Hòa \& Sự Đánh Đổi (Trade-Off)}
-Hàm mục tiêu sử dụng Harmonic Mean thay vì Trung bình cộng (\textit{Arithmetic Mean}):
+\subsection{Harmonic Mean \& The Fundamental Precision-Recall Trade-off}
+The selection of the Harmonic Mean over the Arithmetic Mean creates an acute trade-off:
 \begin{itemize}
-  \item Trung bình cộng $\frac{Q + R}{2}$ cho phép mô hình hy sinh một chỉ số để đẩy chỉ số kia lên cực cao (ví dụ $Q = 0.9, R = 0.2 \implies \text{Mean} = 0.55$).
-  \item Trong khi đó, Harmonic Mean \eqref{eq:harmonic_mean} bị khống chế nặng nề bởi giá trị nhỏ hơn trong hai số:
-  \begin{equation*}
-    \text{Score} \le 2 \cdot \min(Q, R)
-  \end{equation*}
+  \item \textbf{High Filtering Threshold $T$ (Aggressive Pruning):} Extremely high precision eliminates nearly all rating-1 items, driving $Q$ above $0.65$. However, marginal rating-2 and rating-3 papers are dropped, crashing $R$ below $0.50$ and depressing the final Harmonic Mean.
+  \item \textbf{Low Filtering Threshold $T$ (Lenient Inclusion):} High recall secures $R > 0.90$, but rating-1 papers inevitably leak into the ranking list, diluting $Q$ below $0.45$ and causing a severe overall score drop.
+\end{itemize}
+Hence, optimal performance hinges on tuning a precise decision threshold $T^*$ that maximizes the harmonic balance on out-of-fold predictions.
+
+\section{Theoretical Ceiling Analysis}
+To establish the maximum performance achievable under perfect information, we executed a Monte Carlo simulation (100 trials) on 298-paper splits using a hypothetical \textit{Oracle Recommender} with omniscient knowledge of ground truth labels:
+\begin{itemize}
+  \item The Oracle filters all rating-1 papers by assigning $\text{priority} = 0$.
+  \item It places all rating-5 papers at ranks $1, \dots, N_5$, followed by rating-4, rating-3, and rating-2 papers.
 \end{itemize}
 
-Từ đó nảy sinh sự đánh đổi cốt lõi giữa hai giai đoạn:
-\begin{itemize}
-  \item \textbf{Nếu ngưỡng lọc $T$ quá cao (Lọc quá gắt):} Hầu như không có bài nhãn 1 nào lọt vào danh sách $\to Q$ rất cao ($Q > 0.70$). Tuy nhiên, nhiều bài nhãn 2 và 3 bị loại bỏ oan $\to R$ giảm mạnh ($R < 0.50$) $\to \text{Score}$ sụp đổ.
-  \item \textbf{Nếu ngưỡng lọc $T$ quá thấp (Thả lỏng):} Giữ lại được hầu hết các bài nhãn 2--5 $\to R$ rất cao ($R > 0.90$). Tuy nhiên, các bài nhãn 1 tràn vào danh sách $\to Q$ tụt dốc thảm hại $\to \text{Score}$ sụp đổ.
-\end{itemize}
-$\implies$ \textbf{Mấu chốt của bài toán:} Tìm kiếm ngưỡng lọc tối ưu $T^*$ trên phân phối dự đoán Out-Of-Fold để đạt điểm cực trị của hàm điều hòa.
-
-\section{Phân Tích Cận Trên Lý Thuyết (Theoretical Ceiling Analysis)}
-Để xác định trần điểm tối đa mà một mô hình hoàn hảo có thể đạt được, nhóm đã thực hiện mô phỏng Monte Carlo 100 lần trên các tập con 298 bài báo (tương ứng kích thước split của Kaggle) với giả định mô hình là một \textit{"Nhà tiên tri" (Oracle)} biết trước $100\%$ nhãn thật của giám khảo:
-\begin{itemize}
-  \item Nhà tiên tri gán $\text{priority} = 0$ cho toàn bộ bài nhãn 1.
-  \item Sắp xếp toàn bộ bài nhãn 5 lên đầu danh sách, tiếp theo đến nhãn 4, nhãn 3 và cuối cùng là nhãn 2.
-\end{itemize}
-
-Kết quả mô phỏng cho thấy:
+The simulation establishes an absolute upper bound:
 \begin{equation}
   \text{Score}_{\text{Oracle}} \approx \mathbf{0.77654} \quad (Q = 0.63489, \; R = 1.00000)
 \end{equation}
 
-\begin{prismbox}[title=\textbf{Tại Sao Điểm Tối Đa Không Thể Đạt 0.8?}]
-Để $\text{Score} \ge 0.800$ khi $R = 1.0$:
+\begin{prismbox}[title=\textbf{Why Is the Maximum Theoretical Ceiling 0.776 Rather Than 0.800?}]
+For the final score to reach $\text{Score} \ge 0.800$ with $R = 1.000$:
 \begin{equation*}
   \frac{2Q}{Q + 1} \ge 0.8 \iff 1.2Q \ge 0.8 \iff Q \ge \frac{2}{3} \approx \mathbf{0.6667}
 \end{equation*}
-Tuy nhiên, trong tập dữ liệu thực tế, các bài nhãn 2 ($g=0.25$) và nhãn 3 ($g=0.50$) chiếm tới gần $\mathbf{60\%}$ tổng số bài đáng đọc. Dù Nhà tiên tri có đẩy chúng về cuối danh sách, chúng vẫn đóng góp lợi ích thấp vào tử số và làm phình to mẫu số có trọng số, khiến $Q$ không thể vượt quá mốc $\mathbf{0.635}$. 
+However, within the actual empirical distribution, rating-2 ($g=0.25$) and rating-3 ($g=0.50$) papers constitute nearly $\mathbf{60\%}$ of all worthwhile publications. Because securing $R = 1.0$ mandates their inclusion, their modest gain values inevitably dilute the position-weighted average $Q$, capping it at $\mathbf{0.6349}$.
 
-Nếu Nhà tiên tri cố tình vứt bỏ toàn bộ bài nhãn 2 để ép $Q$ tăng lên $0.768$, thì Coverage $R$ sẽ tụt từ $1.0$ xuống còn $0.674$, khiến điểm số $\text{Score}$ giảm từ $0.776$ xuống còn $\mathbf{0.717}$. Vì vậy, \textbf{0.776 chính là trần lý thuyết tuyệt đối của cuộc thi}.
+If the Oracle attempts to artificially inflate $Q$ to $0.768$ by dropping all rating-2 papers, Coverage drops precipitously to $R = 0.674$, causing the overall score to drop from $0.776$ down to $\mathbf{0.717}$. Thus, $\mathbf{0.776}$ represents the empirical theoretical ceiling of this dataset.
 \end{prismbox}

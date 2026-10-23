@@ -3,14 +3,13 @@
 \input{preamble}
 
 \begin{document}
-\selectlanguage{vietnamese}
 
-%% ── Trang Bìa (Cover Page) ───────────────────────────────────────────────
+%% ── Title Page ───────────────────────────────────────────────────────────
 \begin{titlepage}
   \centering
-  {\large\bfseries ĐẠI HỌC QUỐC GIA THÀNH PHỐ HỒ CHÍ MINH}\\[3pt]
-  {\large\bfseries TRƯỜNG ĐẠI HỌC BÁCH KHOA}\\[3pt]
-  {\normalsize\bfseries KHOA KHOA HỌC VÀ KỸ THUẬT MÁY TÍNH}\\[0.4cm]
+  {\large\bfseries VIETNAM NATIONAL UNIVERSITY, HO CHI MINH CITY}\\[3pt]
+  {\large\bfseries UNIVERSITY OF TECHNOLOGY}\\[3pt]
+  {\normalsize\bfseries FACULTY OF COMPUTER SCIENCE AND ENGINEERING}\\[0.4cm]
   \noindent\rule{\linewidth}{1.2pt}
   \vspace{0.8cm}
 
@@ -20,24 +19,24 @@
   \end{figure}
 
   \vspace{0.5cm}
-  {\LARGE\bfseries\color{PrismHeader} BÁO CÁO BÀI TẬP LỚN}\\[0.3cm]
-  {\Large\bfseries\color{PrismDark} MÔN HỌC: KHAI PHÁ DỮ LIỆU (CO3029)}\\[0.5cm]
+  {\LARGE\bfseries\color{PrismHeader} COURSE PROJECT REPORT}\\[0.3cm]
+  {\Large\bfseries\color{PrismDark} DATA MINING (CO3029)}\\[0.5cm]
   
-  \begin{prismbox}[title=\centering\bfseries ĐỀ TÀI: PERSONALIZED PAPER RECOMMENDATION SYSTEM, colbacktitle=PrismHeader]
+  \begin{prismbox}[title=\centering\bfseries PROJECT: PERSONALIZED RESEARCH PAPER RECOMMENDATION SYSTEM, colbacktitle=PrismHeader]
     \centering
-    {\normalsize\bfseries Cuộc thi: Kaggle Assignment 261 | Học kỳ: HK241 (Năm học 2026--2027)}\\[4pt]
-    {\small Xếp hạng độ ưu tiên đọc bài báo khoa học dựa trên kiến trúc hai giai đoạn (Two-Stage Recommendation Pipeline) kết hợp mô hình ngôn ngữ và phân cụm ngữ nghĩa}
+    {\normalsize\bfseries Competition: Kaggle Assignment 261 | Semester: HK241 (Academic Year 2026--2027)}\\[4pt]
+    {\small Prioritizing research papers based on a Two-Stage Recommendation Architecture combining Dense Semantic Embeddings, Topic Clustering, and Expected Gain Ranking}
   \end{prismbox}
 
   \vspace{0.6cm}
   \begin{tabular}{ll}
-    \textbf{Giảng viên hướng dẫn:} & \textit{ThS. Vũ Ngọc Tú} (\href{mailto:tuvn@hcmut.edu.vn}{tuvn@hcmut.edu.vn}) \\[4pt]
-    \textbf{Tên đội thi Kaggle:}   & \textbf{hí ộ} \\[4pt]
-    \textbf{Khoảng thời gian:}     & \textit{Học kỳ 1 (2026--2027)} \\[4pt]
+    \textbf{Course Instructor:} & \textit{MSc. Vũ Ngọc Tú} (\href{mailto:tuvn@hcmut.edu.vn}{tuvn@hcmut.edu.vn}) \\[4pt]
+    \textbf{Kaggle Team Name:}  & \textbf{hí ộ} \\[4pt]
+    \textbf{Academic Term:}     & \textit{Semester 1 (2026--2027)} \\[4pt]
   \end{tabular}
 
   \vspace{0.5cm}
-  {\bfseries\color{PrismHeader} BẢNG PHÂN CÔNG NHIỆM VỤ THÀNH VIÊN THEO RUBRIC (10.0 ĐIỂM)}
+  {\bfseries\color{PrismHeader} MEMBER CONTRIBUTION MATRIX ACCORDING TO RUBRIC (10.0 PTS)}
   \vspace{0.2cm}
   
   \begin{table}[H]
@@ -46,35 +45,34 @@
     \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{3.8cm} >{\centering\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}X >{\centering\arraybackslash}p{2.2cm}}
       \toprule
       \rowcolor{PrismHeader}
-      \color{PrismWhite}\textbf{Thành viên} & 
-      \color{PrismWhite}\textbf{MSSV} & 
-      \color{PrismWhite}\textbf{Vai trò \& Trách nhiệm} & 
-      \color{PrismWhite}\textbf{Mục Rubric} \\
+      \color{PrismWhite}\textbf{Full Name} & 
+      \color{PrismWhite}\textbf{Student ID} & 
+      \color{PrismWhite}\textbf{Role \& Responsibilities} & 
+      \color{PrismWhite}\textbf{Rubric Section} \\
       \midrule
-      Nguyễn Ngọc Sáng & 2353046 & Team Leader, ML Architect, Two-Stage Pipeline, tối ưu ngưỡng $T^*$, quản lý GitHub \& nộp bài Kaggle & Mục 5 (2.0đ), Mục 6 (1.0đ) \\
+      Nguyễn Ngọc Sáng & 2353046 & Team Leader \& ML Architect: Two-Stage Pipeline design, threshold $T^*$ tuning, GitHub \& Kaggle management & Section 5 (2.0p), Section 6 (1.0p) \\
       \rowcolor{PrismLabel}
-      Nguyễn Trần Vĩ & 2353338 & NLP Specialist, trích xuất Sentence-BERT / SciBERT, phân cụm K-Means ngữ nghĩa, xây dựng đặc trưng & Mục 4 (1.5đ), Mục 5 (FE) \\
-      Trần Minh Duân & 2352166 & Data Analyst \& Report Lead, phân tích EDA dữ liệu, khai phá luật kết hợp, phân tích ca lỗi \& viết báo cáo & Mục 1 (1.0đ), Mục 2 (1.5đ), Mục 3 (1.5đ), Mục 6, 7 \\
+      Nguyễn Trần Vĩ & 2353338 & NLP Specialist \& Feature Engineer: Sentence-BERT / SciBERT embeddings, semantic K-Means, feature design & Section 4 (1.5p), Section 5 (FE) \\
+      Trần Minh Duân & 2352166 & Data Analyst \& Report Lead: Exploratory Data Analysis, Association Rules mining, Error Analysis \& Report writing & Section 1 (1.0p), 2 (1.5p), 3 (1.5p), 6, 7 \\
       \bottomrule
     \end{tabularx}
   \end{table}
 
   \vfill
   \noindent\rule{\linewidth}{0.8pt}
-  {\small Thành phố Hồ Chí Minh, Tháng 10 Năm 2026}
+  {\small Ho Chi Minh City, October 2026}
 \end{titlepage}
 
 \pagestyle{fancy}
 
-%% ── Mục Lục & Danh Mục Hình / Bảng ────────────────────────────────────────
+%% ── Table of Contents, Figures & Tables ──────────────────────────────────
 \tableofcontents
 \newpage
 \listoffigures
 \listoftables
 \newpage
 
-%% ── Các Chương Báo Cáo Chuẩn 7 Mục Rubric ───────────────────────────────
-%% Không chèn \newpage thủ công giữa các chapter để tránh sinh trang trắng
+%% ── Chapters Following the 7 Rubric Criteria ────────────────────────────
 \input{chapters/01_introduction}
 \input{chapters/02_problem_formulation}
 \input{chapters/03_data_analysis}
@@ -84,7 +82,7 @@
 \input{chapters/07_conclusion}
 
 \newpage
-%% ── Tài Liệu Tham Khảo ───────────────────────────────────────────────────
+%% ── References ───────────────────────────────────────────────────────────
 \bibliographystyle{plainnat}
 \bibliography{references}
 

@@ -1,63 +1,63 @@
-\chapter{Khám Phá Dữ Liệu (EDA) \& Tiền Xử Lý}
+\chapter{Exploratory Data Analysis \& Preprocessing}
 \label{chap:eda}
 
-\section{Tổng Quan Tập Dữ Liệu \& Quy Trình Tiền Xử Lý}
-Tập dữ liệu do Ban tổ chức cung cấp bao gồm:
+\section{Dataset Overview \& Data Preprocessing Pipeline}
+The competition dataset comprises:
 \begin{itemize}
-  \item \textbf{Tập huấn luyện (Train set):} 2.494 bài báo khoa học với các trường thông tin: \texttt{id}, \texttt{title}, \texttt{venue}, \texttt{year}, \texttt{authors}, \texttt{doi}, và nhãn đánh giá \texttt{Label} $\in \{1, 2, 3, 4, 5\}$.
-  \item \textbf{Tập kiểm thử (Test set):} 596 bài báo ứng viên với cùng các trường thông tin trên, ngoại trừ trường \texttt{Label} bị ẩn.
+  \item \textbf{Training Set:} 2,494 research papers containing metadata fields: \texttt{id}, \texttt{title}, \texttt{venue}, \texttt{year}, \texttt{authors}, \texttt{doi}, and the ground-truth reading preference \texttt{Label} $\in \{1, 2, 3, 4, 5\}$.
+  \item \textbf{Test Set:} 596 unrated candidate papers containing identical metadata attributes with hidden labels.
 \end{itemize}
 
-\subsection{Làm Sạch Văn Bản \& Xử Lý Giá Trị Khuyết}
-Qua quá trình kiểm tra toàn vẹn dữ liệu (\textit{Data Sanity Check}), nhóm đã phát hiện và xử lý các vấn đề kỹ thuật sau:
+\subsection{Data Cleaning \& Text Normalization}
+Rigorous data hygiene checks revealed several critical domain-specific anomalies that were addressed before modeling:
 \begin{enumerate}
-  \item \textbf{Giải mã thực thể HTML trong tiêu đề bài báo:} Nhiều tiêu đề bài báo xuất phát từ nguồn trích xuất tự động chứa các thực thể HTML mã hóa như \texttt{\&apos;} (dấu nháy đơn), \texttt{\&quot;} (dấu ngoặc kép), \texttt{\&amp;} (dấu và), \texttt{\&lt;}, \texttt{\&gt;}. Nếu không giải mã, các mô hình ngôn ngữ và TF-IDF sẽ phân tách sai cấu trúc từ vựng. Nhóm đã sử dụng thư viện \texttt{html.unescape()} và chuẩn hóa khoảng trắng dư thừa cho $100\%$ tiêu đề.
-  \item \textbf{Xử lý trường tác giả (\texttt{authors}):} Khoảng $1.8\%$ bài báo bị khuyết trường tác giả (thường là bài kỷ yếu hoặc báo cáo tổng kết). Với các bài này, chuỗi tác giả được điền giá trị rỗng \texttt{""} và số lượng tác giả được gán bằng $0$.
-  \item \textbf{Xử lý trường định danh DOI (\texttt{doi}):} Có khoảng $18.5\%$ bài báo không có mã DOI. Nhóm tạo một biến cờ nhị phân $\texttt{has\_doi} \in \{0, 1\}$ để nắm bắt thông tin xuất bản chính thống.
-  \item \textbf{Chuẩn hóa năm xuất bản (\texttt{year}):} Các giá trị năm khuyết hoặc không hợp lệ được gán bằng trung vị lịch sử (năm 2020), sau đó chuẩn hóa tuyến tính về đoạn $[-0.5, 0.5]$: $\text{year\_norm} = (\text{year} - 2000) / 30$.
+  \item \textbf{HTML Entity Decoding in Titles:} Numerous paper titles contained encoded HTML entities from scraping artifacts, such as \texttt{\&apos;} (single quote), \texttt{\&quot;} (double quote), \texttt{\&amp;} (ampersand), \texttt{\&lt;}, and \texttt{\&gt;}. Leaving these unescaped severely degrades both tokenization and dense transformer embeddings. All titles were processed via \texttt{html.unescape()} followed by whitespace regularization.
+  \item \textbf{Missing Author Imputation:} Approximately $1.8\%$ of records lacked author metadata (primarily proceedings volumes and committee prefaces). Missing authors were imputed with empty strings, and the numerical feature \texttt{author\_count} was assigned to 0.
+  \item \textbf{DOI Presence Flagging:} Approximately $18.5\%$ of records lacked a registered Digital Object Identifier (DOI). We engineered a binary indicator feature $\texttt{has\_doi} \in \{0, 1\}$ to capture official catalog registration status.
+  \item \textbf{Publication Year Normalization:} Chronological values were coerced to numeric, with missing values imputed by the historical median (2020), and linearly normalized via $\text{year\_norm} = (\text{year} - 2000) / 30$.
 \end{enumerate}
 
-\section{Phân Tích Trực Quan Khám Phá Dữ Liệu (EDA)}
+\section{Exploratory Data Analysis (EDA)}
 
-\subsection{Phân Phối Nhãn Đánh Giá (\texttt{Label})}
-Hình \ref{fig:label_dist} thể hiện phân phối tần suất của 5 mức đánh giá trong tập huấn luyện 2.494 bài báo.
+\subsection{Target Label Distribution Analysis}
+Figure \ref{fig:label_dist} depicts the frequency and proportion of the 5 rating categories across the training collection.
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.75\linewidth]{figures/01_label_distribution.png}
-  \caption{Phân phối tần suất và tỷ lệ phần trăm các mức đánh giá (Nhãn 1 đến 5)}
+  \caption{Empirical distribution and percentage breakdown of preference ratings (Labels 1 to 5)}
   \label{fig:label_dist}
 \end{figure}
 
 \begin{itemize}
-  \item \textbf{Nhãn 1 (Không muốn đọc):} Chiếm số lượng áp đảo với 903 bài báo (**$36.2\%$**). Điều này phản ánh thực tế rằng trong một danh mục bài báo tổng hợp, phần lớn các bài không thuộc mối quan tâm của nhà nghiên cứu.
-  \item \textbf{Nhãn 2--5 (Bài đáng đọc):} Chiếm $63.8\%$ tổng thể (1.591 bài), trong đó số lượng giảm dần theo mức độ ưu tiên: Nhãn 2 (514 bài, $20.6\%$), Nhãn 3 (438 bài, $17.6\%$), Nhãn 4 (367 bài, $14.7\%$), và Nhãn 5 (272 bài, $10.9\%$).
-  \item $\implies$ \textbf{Ý nghĩa với mô hình:} Dữ liệu có sự mất cân bằng giữa bài cần lọc (Nhãn 1: 36.2\%) và bài cần giữ (Nhãn 2--5: 63.8\%). Mô hình phân loại ở Stage 1 cần đặc biệt chú ý kiểm soát tỷ lệ lỗi loại I (\textit{False Positive}) để không để lọt bài nhãn 1.
+  \item \textbf{Rating 1 (Do Not Read):} Constitutes the largest single category with 903 papers (**$36.2\%$**). This reflects the reality that most incoming publications in a broad scientific index fall outside an individual's specific sub-field.
+  \item \textbf{Ratings 2--5 (Worthwhile Papers):} Total 1,591 papers (**$63.8\%$**), exhibiting a monotonic frequency decline: Rating 2 (514 papers, $20.6\%$), Rating 3 (438 papers, $17.6\%$), Rating 4 (367 papers, $14.7\%$), and Rating 5 (272 papers, $10.9\%$).
+  \item $\implies$ \textbf{Modeling Implication:} Stage 1 of the pipeline faces an asymmetric classification challenge between negative instances ($36.2\%$) and positive instances ($63.8\%$), necessitating precise False Positive suppression.
 \end{itemize}
 
-\subsection{Mối Quan Hệ Giữa Năm Xuất Bản \& Điểm Đánh Giá}
-Hình \ref{fig:year_dist} phân tích sự phân bổ của điểm đánh giá theo từng năm xuất bản (từ 2016 đến 2026).
+\subsection{Temporal Publication Trends}
+Figure \ref{fig:year_dist} illustrates the distribution of reading preferences stratified across publication years from 2016 to 2026.
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.76\linewidth]{figures/02_year_vs_label.png}
-  \caption{Phân phối năm xuất bản phân tầng theo mức độ ưu tiên đọc}
+  \caption{Publication year distribution stratified by reading preference tier}
   \label{fig:year_dist}
 \end{figure}
 
 \begin{itemize}
-  \item Số lượng bài báo tập trung dày đặc nhất trong giai đoạn 2020--2025 (trung bình 250--310 bài/năm).
-  \item Các bài báo xuất bản trong các năm gần đây (2022--2025) có điểm đánh giá trung bình cao hơn rõ rệt ($\approx 2.55 - 2.74$) so với các bài báo giai đoạn 2016--2019 ($\approx 2.18 - 2.23$). 
-  \item $\implies$ \textbf{Nhận định:} Nhà nghiên cứu có xu hướng ưu tiên cập nhật các công trình mới nhất phản ánh các bước tiến khoa học gần đây, tạo nên tín hiệu thời gian quan trọng cho mô hình xếp hạng.
+  \item The dataset concentrates heavily on recent publications (2020--2025), averaging 250--310 papers per year.
+  \item Papers published in recent years (2022--2025) demonstrate higher average ratings ($\approx 2.55 - 2.74$) compared to older literature from 2016--2019 ($\approx 2.18 - 2.23$).
+  \item $\implies$ \textbf{Insight:} The researcher prioritizes the latest scientific developments over historical papers, indicating that recency serves as a positive ranking signal.
 \end{itemize}
 
-\subsection{Hiện Tượng Thiên Lệch Hội Nghị (Venue Skew Analysis)}
-Hình \ref{fig:venues} thể hiện số lượng bài báo và tỷ lệ bài đáng đọc phân bổ theo từng hội nghị/tạp chí.
+\subsection{Venue Skew Analysis}
+Figure \ref{fig:venues} and Table \ref{tab:venue_stats} examine the distribution of papers and worthwhile ratios across publication venues.
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.75\linewidth]{figures/03_top_venues.png}
-  \caption{Thống kê số lượng bài báo và điểm đánh giá trung bình theo từng hội nghị/tạp chí}
+  \caption{Paper volume and average preference ratings across target academic venues}
   \label{fig:venues}
 \end{figure}
 
@@ -67,11 +67,11 @@ Hình \ref{fig:venues} thể hiện số lượng bài báo và tỷ lệ bài �
   \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.2cm} >{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.8cm} >{\centering\arraybackslash}p{2.5cm}}
     \toprule
     \rowcolor{PrismHeader}
-    \color{PrismWhite}\textbf{Hội Nghị (\texttt{venue})} & 
-    \color{PrismWhite}\textbf{Số Bài (Train)} & 
-    \color{PrismWhite}\textbf{Điểm Trung Bình} & 
-    \color{PrismWhite}\textbf{Tỷ Lệ Đáng Đọc ($y \ge 2$)} & 
-    \color{PrismWhite}\textbf{Số Bài (Test)} \\
+    \color{PrismWhite}\textbf{Venue Name} & 
+    \color{PrismWhite}\textbf{Train Count} & 
+    \color{PrismWhite}\textbf{Mean Rating} & 
+    \color{PrismWhite}\textbf{Worthwhile Ratio ($y \ge 2$)} & 
+    \color{PrismWhite}\textbf{Test Count} \\
     \midrule
     \texttt{lpnmr} & 116 & $\mathbf{3.14}$ & $\mathbf{81.9\%}$ & 37 \\
     \rowcolor{PrismLabel}
@@ -82,56 +82,54 @@ Hình \ref{fig:venues} thể hiện số lượng bài báo và tỷ lệ bài �
     \texttt{lics}  & 604 & $1.94$ & $52.3\%$ & $\mathbf{187}$ ($31.4\%$) \\
     \bottomrule
   \end{tabularx}
-  \caption{So sánh thống kê tỷ lệ nhãn theo Venue giữa tập huấn luyện và tập kiểm thử}
+  \caption{Comparison of training label statistics and test volume across target venues}
   \label{tab:venue_stats}
 \end{table}
 
-\begin{prismbox}[title=\textbf{Phát Hiện Quan Trọng Về Venue Skew Trong Tập Test}]
-Bảng \ref{tab:venue_stats} chỉ ra một sự phân hóa cực kỳ sâu sắc:
+\begin{prismbox}[title=\textbf{Critical Discovery: Severe Venue Skew in the Test Set}]
+Table \ref{tab:venue_stats} reveals an acute structural distribution shift:
 \begin{itemize}
-  \item Các hội nghị thuần về Logic Programming và Lập trình tập ràng buộc (\texttt{lpnmr}, \texttt{iclp}) có tỷ lệ bài đáng đọc lên tới $74\% - 82\%$.
-  \item Ngược lại, các hội nghị về Kiểm chứng mô hình (\texttt{cav}) và Logic lý thuyết (\texttt{lics}) chỉ có khoảng $52\% - 54\%$ bài đáng đọc.
-  \item \textbf{Điểm hiểm hóc trong tập Test:} Hai hội nghị \texttt{cav} và \texttt{lics} lại chiếm tới $\mathbf{68.5\%}$ tổng số bài trong tập Test (408 trên tổng số 596 bài)! 
-  \item Nếu mô hình không áp dụng đặc trưng thống kê mục tiêu (\textit{Target Encoding}) cho Venue, nó sẽ dễ dàng gán điểm ưu tiên quá đà cho các bài ở hai hội nghị này, làm lọt nhãn 1 và kéo sập chỉ số $Q$.
+  \item Venues specialized in Logic Programming and Non-Monotonic Reasoning (\texttt{lpnmr}, \texttt{iclp}) exhibit high worthwhile ratios ($74\% - 82\%$).
+  \item Conversely, theoretical logic and hardware/software verification venues (\texttt{cav}, \texttt{lics}) exhibit low worthwhile ratios ($52\% - 54\%$).
+  \item \textbf{The Test Trap:} Together, \texttt{cav} and \texttt{lics} account for $\mathbf{68.5\%}$ of all test instances (408 out of 596 papers)!
+  \item A model lacking Out-Of-Fold Venue Target Encoding will over-recommend papers from \texttt{cav} and \texttt{lics}, leaking rating-1 papers into the shortlist and decimating $Q$.
 \end{itemize}
 \end{prismbox}
 
-\subsection{Phân Tích Độ Dài Tiêu Đề Bài Báo}
-Hình \ref{fig:title_length} phân tích tương quan giữa độ dài tiêu đề (số từ và số ký tự) với từng nhãn đánh giá.
+\subsection{Title Length Characteristics}
+Figure \ref{fig:title_length} investigates the relationship between title length (word count and character count) and preference tiers.
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.76\linewidth]{figures/04_title_length_analysis.png}
-  \caption{Phân phối độ dài tiêu đề (số lượng từ và số ký tự) theo từng nhãn đánh giá}
+  \caption{Title length distribution (word count and character count) across rating tiers}
   \label{fig:title_length}
 \end{figure}
 
 \begin{itemize}
-  \item Tiêu đề các bài báo khoa học có độ dài trung bình dao động từ 8 đến 14 từ (khoảng 60 đến 100 ký tự).
-  \item Các bài nhãn 1 có phương sai độ dài rất lớn: một số bài có tiêu đề cực ngắn (2--4 từ, ví dụ *"Preface"* hay *"Invited Talk"*), trong khi một số khác có tiêu đề cực dài (30--50 từ, ghi rõ danh sách ban tổ chức hội nghị và địa điểm tổ chức).
-  \item Tiêu đề các bài nhãn 4 và 5 có độ dài tập trung ổn định quanh mức 9--12 từ.
+  \item Titles of authentic research papers average 8 to 14 words (60 to 100 characters).
+  \item Rating-1 items exhibit extreme variance: very short titles (2--4 words, e.g., \textit{"Preface"} or \textit{"Invited Talk"}) or excessively long titles (30--50 words describing multi-day conference proceedings).
+  \item Publications rated 4 and 5 display consistent, focused title lengths centered tightly between 9 and 12 words.
 \end{itemize}
 
-\subsection{Phân Tích Từ Khóa \& N-Gram Phân Biệt}
-Hình \ref{fig:keywords} so sánh tỷ lệ xuất hiện của các cụm từ khóa (N-grams) phổ biến giữa nhóm bài báo có mức ưu tiên cao (Nhãn 4--5) và nhóm bài báo không muốn đọc (Nhãn 1).
+\subsection{Discriminative Keyword \& N-Gram Analysis}
+Figure \ref{fig:keywords} compares n-gram term frequencies between high-priority papers (Ratings 4--5) and irrelevant publications (Rating 1).
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.76\linewidth]{figures/05_top_keywords_comparison.png}
-  \caption{Tần suất xuất hiện của các từ khóa đặc trưng trong bài nhãn cao (4--5) so với nhãn 1}
+  \caption{Comparative frequency of discriminative keywords in high-priority papers versus rating 1}
   \label{fig:keywords}
 \end{figure}
 
-Phân tích định lượng tỷ số xuất hiện $\frac{\text{Tỷ lệ ở Nhãn 4-5}}{\text{Tỷ lệ ở Nhãn 1}}$ cho thấy:
+Quantitative odds ratios $\frac{\text{Rate in Ratings 4-5}}{\text{Rate in Rating 1}}$ reveal:
 \begin{itemize}
-  \item \textbf{Cụm từ khóa ưu tiên tuyệt đối:} \texttt{"answer set"} (gấp $28.4$ lần), \texttt{"set programming"} (gấp $27.0$ lần), \texttt{"asp"} (gấp $23.0$ lần), \texttt{"neural networks"} (gấp $19.0$ lần), \texttt{"probabilistic logic"} (gấp $18.2$ lần), \texttt{"explainable"} (gấp $10.1$ lần), \texttt{"ontology"} (gấp $9.4$ lần).
-  \item \textbf{Cụm từ khóa nhãn 1 (Chỉ dấu loại bỏ):} \texttt{"proceedings"} (57 lần ở nhãn 1, 0 lần ở nhãn 4-5), \texttt{"conference"} (66 lần ở nhãn 1, 0 lần ở nhãn 4-5), \texttt{"workshop"} (24 lần ở nhãn 1, 0 lần ở nhãn 4-5), \texttt{"preface"}.
+  \item \textbf{Positive Indicators (High Priority):} \texttt{"answer set"} ($28.4\times$), \texttt{"set programming"} ($27.0\times$), \texttt{"asp"} ($23.0\times$), \texttt{"neural networks"} ($19.0\times$), \texttt{"probabilistic logic"} ($18.2\times$), \texttt{"explainable"} ($10.1\times$), \texttt{"ontology"} ($9.4\times$).
+  \item \textbf{Negative Indicators (Rating 1 Markers):} \texttt{"proceedings"} (57 occurrences in rating 1, 0 in ratings 4--5), \texttt{"conference"} (66 in rating 1, 0 in ratings 4--5), \texttt{"workshop"} (24 in rating 1, 0 in ratings 4--5), \texttt{"preface"}.
 \end{itemize}
 
-\section{Khai Phá Luật Kết Hợp (Association Rules Mining)}
-Để đáp ứng chuẩn mực phương pháp luận trong chương trình môn học Khai phá Dữ liệu, nhóm đã xây dựng thuật toán khai phá luật kết hợp (\textit{Apriori / FP-Growth}) trên tập dữ liệu từ khóa và tác giả của các bài báo đạt nhãn cao ($y \ge 4$) \cite{agrawal1994fast}.
-
-Mỗi bài báo được coi là một giao dịch (\textit{transaction}) gồm tập các từ khóa trong tiêu đề và tên tác giả. Kết quả khai phá các luật kết hợp mạnh (với $\text{Support} \ge 0.02$, $\text{Confidence} \ge 0.60$, $\text{Lift} > 1.0$) được thể hiện trong Bảng \ref{tab:assoc_rules}.
+\section{Association Rules Mining}
+To fulfill core curricular requirements, we implemented the \textit{Apriori} algorithm \cite{agrawal1994fast} on transactions constructed from paper titles and authors of high-priority publications ($y \ge 4$). Table \ref{tab:assoc_rules} highlights the strongest mined rules with $\text{Support} \ge 0.02, \text{Confidence} \ge 0.60$, and $\text{Lift} > 1.0$.
 
 \begin{table}[H]
   \centering
@@ -139,11 +137,11 @@ Mỗi bài báo được coi là một giao dịch (\textit{transaction}) gồm 
   \begin{tabularx}{\linewidth}{>{\bfseries\raggedright\arraybackslash}p{3.8cm} >{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.2cm} >{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.0cm}}
     \toprule
     \rowcolor{PrismHeader}
-    \color{PrismWhite}\textbf{Tiền Đề (Antecedent)} & 
-    \color{PrismWhite}\textbf{Hệ Quả (Consequent)} & 
-    \color{PrismWhite}\textbf{Độ Hỗ Trợ (Support)} & 
-    \color{PrismWhite}\textbf{Độ Tin Cậy (Confidence)} & 
-    \color{PrismWhite}\textbf{Độ Nâng (Lift)} \\
+    \color{PrismWhite}\textbf{Antecedent} & 
+    \color{PrismWhite}\textbf{Consequent} & 
+    \color{PrismWhite}\textbf{Support} & 
+    \color{PrismWhite}\textbf{Confidence} & 
+    \color{PrismWhite}\textbf{Lift} \\
     \midrule
     \texttt{neural} & \texttt{networks} & $0.0470$ & $0.641$ & $\mathbf{11.00}$ \\
     \rowcolor{PrismLabel}
@@ -156,19 +154,17 @@ Mỗi bài báo được coi là một giao dịch (\textit{transaction}) gồm 
     \texttt{answer} & \texttt{programming} & $0.1391$ & $0.692$ & $3.41$ \\
     \bottomrule
   \end{tabularx}
-  \caption{Các luật kết hợp có độ nâng cao nhất trong các bài báo được ưu tiên đọc ($y \ge 4$)}
+  \caption{Mined Association Rules displaying highest lift and confidence in high-priority papers ($y \ge 4$)}
   \label{tab:assoc_rules}
 \end{table}
 
 \begin{itemize}
-  \item \textbf{Luật 1 \& 2 (\texttt{neural} $\leftrightarrow$ \texttt{networks}):} Độ nâng $\text{Lift} = 11.00$ cực cao phản ánh sự gắn kết chặt chẽ của hướng nghiên cứu Neuro-Symbolic AI (kết hợp mạng nơ-ron và logic hình thức).
-  \item \textbf{Luật 3 (\texttt{\{programming, using\}} $\to$ \texttt{answer}):} Độ tin cậy lên tới $\mathbf{93.3\%}$ khẳng định rằng bất cứ khi nào tác giả viết bài về kỹ thuật lập trình logic ứng dụng, nó gần như chắc chắn là về \textit{Answer Set Programming (ASP)}.
+  \item \textbf{Rules 1 \& 2 (\texttt{neural} $\leftrightarrow$ \texttt{networks}):} An exceptional lift of $\mathbf{11.00}$ confirms the researcher's intense focus on Neuro-Symbolic integration.
+  \item \textbf{Rule 3 (\texttt{\{programming, using\}} $\to$ \texttt{answer}):} An astounding confidence of $\mathbf{93.3\%}$ underscores that applied programming titles almost exclusively concern \textit{Answer Set Programming (ASP)}.
 \end{itemize}
 
-\section{Phân Tích Tương Quan Ngữ Nghĩa Bằng Sentence-BERT}
-Để vượt qua giới hạn của phương pháp khớp từ vựng truyền thống, nhóm sử dụng mô hình \texttt{all-MiniLM-L6-v2} \cite{reimers2019sentence} để mã hóa toàn bộ tiêu đề thành không gian vector ngữ nghĩa 384 chiều, đồng thời chuẩn hóa $L_2$. 
-
-Nhóm tính toán vector tâm quan tâm (\textit{Interest Centroid} $\vec{C}_{\text{high}}$) bằng trung bình vector của các bài nhãn 4--5 trong tập train, sau đó tính độ tương đồng Cosine giữa mỗi bài báo với tâm này:
+\section{Semantic Embedding Analysis via Sentence-BERT}
+To capture latent semantic relationships beyond discrete vocabulary matching, we deployed \texttt{all-MiniLM-L6-v2} \cite{reimers2019sentence} to encode titles into 384-dimensional $L_2$-normalized dense vectors. An Interest Centroid $\vec{C}_{\text{high}}$ was computed by averaging embeddings of all training papers with $y \ge 4$. Cosine similarity to this centroid was evaluated for each publication:
 \begin{equation}
   \text{Sim}(i) = \vec{v}_i \cdot \vec{C}_{\text{high}}
 \end{equation}
@@ -176,20 +172,20 @@ Nhóm tính toán vector tâm quan tâm (\textit{Interest Centroid} $\vec{C}_{\t
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.92\linewidth]{figures/05_sentence_bert_semantic_insights.png}
-  \caption{Phân tích ngữ nghĩa tiêu đề bài báo bằng Sentence-BERT: (Trái) Phân phối Cosine Similarity theo nhãn đọc; (Phải) Chiếu không gian ngữ nghĩa 2D bằng PCA}
+  \caption{Semantic analysis of paper titles via Sentence-BERT: (Left) Cosine similarity distribution across ratings; (Right) 2D PCA projection of semantic space}
   \label{fig:sbert_insights}
 \end{figure}
 
-Hình \ref{fig:sbert_insights} đem lại một phát hiện thực nghiệm mang tính bước ngoặt:
+Figure \ref{fig:sbert_insights} provides a pivotal empirical finding:
 \begin{itemize}
-  \item Độ tương đồng Cosine tăng **đơn điệu nghiêm ngặt** theo từng thang điểm nhãn đọc:
+  \item Mean cosine similarity increases **strictly monotonically** across all 5 rating tiers:
     \begin{itemize}
-      \item Nhãn 1 (Không đọc): $0.3827 \pm 0.08$
-      \item Nhãn 2 (Ưu tiên thấp): $0.4160 \pm 0.08$
-      \item Nhãn 3 (Trung bình): $0.4484 \pm 0.08$
-      \item Nhãn 4 (Ưu tiên cao): $0.4642 \pm 0.09$
-      \item Nhãn 5 (Bắt buộc đọc): $\mathbf{0.5019} \pm 0.09$
+      \item Rating 1: $0.3827 \pm 0.08$
+      \item Rating 2: $0.4160 \pm 0.08$
+      \item Rating 3: $0.4484 \pm 0.08$
+      \item Rating 4: $0.4642 \pm 0.09$
+      \item Rating 5: $\mathbf{0.5019} \pm 0.09$
     \end{itemize}
-  \item Hệ số tương quan thứ bậc Spearman đạt $\mathbf{0.2800}$ ($p < 10^{-40}$) và tương quan tuyến tính Pearson đạt $\mathbf{0.2805}$.
-  \item Biểu đồ PCA (phải) chứng minh các bài báo nhãn 4 và 5 (màu xanh dương và đỏ) tập trung thành các cụm dày đặc riêng biệt ở phía bên phải không gian đặc trưng, tách biệt rõ ràng khỏi các bài nhãn 1 (màu xám).
+  \item The Spearman rank correlation reaches $\mathbf{0.2800}$ ($p < 10^{-40}$) and Pearson correlation achieves $\mathbf{0.2805}$.
+  \item The PCA semantic manifold (right) visually demonstrates that rating-4 and rating-5 papers form tight clusters distinctly separated from rating-1 items.
 \end{itemize}
