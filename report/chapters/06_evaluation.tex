@@ -32,7 +32,9 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \textbf{V3 (OOF Stats)} & V2 + OOF Author/Venue Stats + LightGBM LambdaMART ranker & $0.61716$ & $0.49700$ & $0.81395$ & $0.53$ & $0.64766$ \\
     \rowcolor{PrismLabel}
     \textbf{V4 (Ensemble)} & SBERT (384d) + SVD (48) + KMeans (12) + Multi-Centroids + Tri-Model Ensemble & $0.62103$ & $0.49991$ & $0.81961$ & $0.525$ & $0.64907$ (\textbf{Rank 5}) \\
-    \textbf{V6 (Consensus)} & Consensus Gated Blending (V2+V4+V5, vote $\ge 2/3$, 380 recs) & $\mathbf{0.62350}$ & $\mathbf{0.50520}$ & $\mathbf{0.82100}$ & $0.530$ & $0.64752$ (\textbf{Rank 5}) \\
+    \textbf{V6 (Consensus)} & Consensus Gated Blending (V2+V4+V5, vote $\ge 2/3$, 380 recs) & $0.62350$ & $0.50520$ & $0.82100$ & $0.530$ & $0.64752$ (\textbf{Rank 5}) \\
+    \rowcolor{PrismLabel}
+    \textbf{V8 (Pure Blend)} & Pure Semantic Master Blend (50\% V2 + 50\% V4, 381 recs, zero author leak) & $\mathbf{0.62250}$ & $\mathbf{0.50200}$ & $\mathbf{0.82050}$ & $0.530$ & $\mathbf{0.65008}$ (\textbf{Rank 5}) \\
     \bottomrule
   \end{tabularx}
   \caption{Benchmark comparison of model generations on 5-Fold CV and Kaggle Leaderboard}
