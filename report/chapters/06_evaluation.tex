@@ -28,13 +28,14 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \midrule
     \textbf{V1 (Baseline)} & Two-Stage LightGBM + TF-IDF (2500) + KMeans (8 TF-IDF clusters) & $0.60431$ & $0.49595$ & $0.75801$ & $0.35$ & $0.61546$ (Rank 10) \\
     \rowcolor{PrismLabel}
-    \textbf{V2 (SBERT)} & Sentence-BERT (384d) + Preference Centroids + LightGBM/XGBoost Blending & $0.61256$ & $0.49175$ & $0.81207$ & $0.53$ & $\mathbf{0.65006}$ (\textbf{Rank 5}) \\
-    \textbf{V3 (OOF Stats)} & V2 + OOF Author/Venue Stats + LightGBM LambdaMART ranker & $0.61716$ & $0.49700$ & $0.81395$ & $0.53$ & $0.64766$ \\
+    \textbf{V2 (SBERT)} & Sentence-BERT (384d) + Preference Centroids + LightGBM/XGBoost Blending & $0.61256$ & $0.49175$ & $0.81207$ & $0.53$ & $0.65006$ \\
+    \textbf{V4 (Ensemble)} & SBERT (384d) + SVD (48) + KMeans (12) + Multi-Centroids + Tri-Model Ensemble & $0.62103$ & $0.49991$ & $0.81961$ & $0.525$ & $0.64907$ \\
     \rowcolor{PrismLabel}
-    \textbf{V4 (Ensemble)} & SBERT (384d) + SVD (48) + KMeans (12) + Multi-Centroids + Tri-Model Ensemble & $0.62103$ & $0.49991$ & $0.81961$ & $0.525$ & $0.64907$ (\textbf{Rank 5}) \\
-    \textbf{V6 (Consensus)} & Consensus Gated Blending (V2+V4+V5, vote $\ge 2/3$, 380 recs) & $0.62350$ & $0.50520$ & $0.82100$ & $0.530$ & $0.64752$ (\textbf{Rank 5}) \\
+    \textbf{V6 (Consensus)} & Consensus Gated Blending (V2+V4+V5, vote $\ge 2/3$, 380 recs) & $0.62350$ & $0.50520$ & $0.82100$ & $0.530$ & $0.64752$ \\
+    \textbf{V8 (Pure Blend)} & Pure Semantic Master Blend (50\% V2 + 50\% V4, 381 recs, zero author leak) & $0.62250$ & $0.50200$ & $0.82050$ & $0.530$ & $0.65008$ \\
     \rowcolor{PrismLabel}
-    \textbf{V8 (Pure Blend)} & Pure Semantic Master Blend (50\% V2 + 50\% V4, 381 recs, zero author leak) & $\mathbf{0.62250}$ & $\mathbf{0.50200}$ & $\mathbf{0.82050}$ & $0.530$ & $\mathbf{0.65008}$ (\textbf{Rank 5}) \\
+    \textbf{V9 (MPNet Dense)} & MPNet (768d) + BGE (384d) 1152d + Multi-Modal Sub-Centroids ($K=5$ pos, $K=3$ neg) & $\mathbf{0.63064}$ & $\mathbf{0.51881}$ & $0.80515$ & $0.505$ & $0.64005$ \\
+    \textbf{V11 (Consensus Rerank)} & Intra-list consensus re-ranking on V8 ($\text{penalty} = 0.20 \cdot |\Delta|$, 381 recs) & $0.62310$ & $0.50350$ & $\mathbf{0.82050}$ & $0.530$ & $\mathbf{0.65040}$ (\textbf{Rank 6}) \\
     \bottomrule
   \end{tabularx}
   \caption{Benchmark comparison of model generations on 5-Fold CV and Kaggle Leaderboard}
@@ -43,8 +44,9 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
 
 \begin{prismbox}[title=\textbf{Performance Evolution Analysis}]
 \begin{itemize}
-  \item The transition from \textbf{V1 to V2 (+0.0346 on Public LB)} yielded the most dramatic leap, elevating the team into \textbf{Rank 5}. This empirically proves that dense semantic geometry substantially outperforms sparse n-gram bags-of-words.
-  \item In version \textbf{V4}, the 5-Fold OOF CV reached a record high of $\mathbf{0.62103}$ (Mean Fold $\mathbf{0.63281}$, $+0.0168$ over V2). With low cross-fold variance ($\sigma_{\text{CV}} \approx 0.0088$), V4 provides a clean, distribution-shift-free semantic feature space ensuring robust generalizability for the final Private Leaderboard.
+  \item The transition from \textbf{V1 to V2 (+0.0346 on Public LB)} yielded the initial major leap, elevating the team into the Top 5. Dense semantic geometry substantially outperformed sparse n-gram bags-of-words.
+  \item In version \textbf{V9}, multi-modal sub-centroids pushed 5-Fold CV to an all-time record $\mathbf{0.63064}$, but Public LB revealed a test-distribution divergence on 107 papers, demonstrating why pure MiniLM embeddings serve as our resilient anchor.
+  \item In version \textbf{V11}, decoupled intra-list consensus re-ranking achieved our new peak score of $\mathbf{0.65040}$ (Rank 6/16, closing the gap to Top 4 to just $0.0032$). By freezing the optimal 381 candidate mask to protect Coverage $R$ and re-ranking the top 30 positions using model disagreement penalties, Relevance $Q$ was maximized without incurring classification risk.
 \end{itemize}
 \end{prismbox}
 
