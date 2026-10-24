@@ -43,15 +43,12 @@ Rigorous Data Mining demands a strict separation between \textit{unverified init
   \item \textbf{Engineering Action:} We construct a deterministic rule-based filter: $\texttt{is\_proceedings} = 1$ when titles contain keywords such as \textit{"proceedings", "conference on", "preface", "workshop on"}, forcing predicted worthwhile probability to zero.
 \end{itemize}
 
-\subsection{Insight 3: High Author Affinity \& Co-Authorship Signal}
+\subsection{Insight 3: Author Affinity vs. Distribution Shift Safeguard}
 \begin{itemize}
-  \item \textbf{Discovery:} Test authors exhibit a substantial $\mathbf{45.9\%}$ overlap with the training author base (648 unique co-authors). Papers co-authored by trusted domain figures consistently earn top ratings.
-  \item \textbf{Engineering Action:} We compute Out-Of-Fold author statistics strictly within training folds:
-    \begin{itemize}
-      \item \texttt{author\_max\_rating}: Maximum historical rating earned by any co-author.
-      \item \texttt{author\_mean\_rating}: Average historical rating of the paper's authors.
-      \item \texttt{author\_paper\_count}: Historical publication frequency in the dataset.
-    \end{itemize}
+  \item \textbf{Discovery:} Test authors exhibit a substantial $\mathbf{45.9\%}$ overlap with the training author base (648 unique co-authors). Leading researchers (e.g., \textit{Francesco Ricca, Tran Cao Son, Torsten Schaub}) consistently earn top ratings.
+  \item \textbf{Initial Engineering Action:} We computed Out-Of-Fold author statistics strictly within training folds (\texttt{author\_max\_rating}, \texttt{author\_mean\_rating}, \texttt{author\_paper\_count}).
+  \item \textbf{Critical Empirical Finding (Distribution Shift):} Despite showing apparent CV gains, Leaderboard evaluation across versions V3 ($0.64766$), V3.1 ($0.64268$), and V7 ($0.64193$) revealed that author target encoding introduced severe distribution shift. Decision trees over-relied on training author identifiers and heavily penalized candidates from \texttt{lics} and \texttt{cav} where author overlap was sparse. 
+  \item \textbf{Sanitization Protocol:} In production models (V4, V8, V11), we strictly sanitized author features, preserving only label-independent structural signals (\texttt{author\_paper\_count}) and relying on pure semantic representations. This immediately resolved the test-set distribution shift and unlocked our new peak score ($0.65040$).
 \end{itemize}
 
 \subsection{Insight 4: Bayesian Venue Smoothing}
