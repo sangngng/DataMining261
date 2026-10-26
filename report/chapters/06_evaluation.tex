@@ -41,7 +41,7 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \textbf{V14 (Precision Swap)} & Precision Shortlist Swap: prune 8 borderline FPs, inject 8 candidate LPNMR/KR TPs (381 recs) & $\mathbf{0.63220}$ & $\mathbf{0.51850}$ & $0.83500$ & $0.530$ & $0.64934$ \\
     \rowcolor{PrismLabel}
     \textbf{V15 (Late Fusion)} & Triple Independent Pipelines (MiniLM+MPNet+BGE) + 10-Fold CV + OOF Grid Search Blend & $0.62691$ & $0.49795$ & $0.84601$ & $0.5385$ & $0.64551$ \\
-    \textbf{V16 (MiniLM Tri-Arch)} & Pure MiniLM Core + 3 Architectures (Topic SVD + Sub-Centroids + k-NN Density) + 10-Fold CV & $0.62339$ & $0.48955$ & $\mathbf{0.85795}$ & $0.6735$ & \textit{Ready to submit} \\
+    \textbf{V16 (MiniLM Tri-Arch)} & Pure MiniLM Core + 3 Architectures (Topic SVD + Sub-Centroids + k-NN Density) + 10-Fold CV & $0.62339$ & $0.48955$ & $\mathbf{0.85795}$ & $0.6735$ & $\mathbf{0.65474}$ (\textbf{Rank 4}) \\
     \bottomrule
   \end{tabularx}
   \caption{Benchmark comparison of model generations on Stratified CV and Kaggle Leaderboard}
