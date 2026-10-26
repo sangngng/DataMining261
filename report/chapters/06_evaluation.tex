@@ -40,7 +40,7 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \textbf{V13 (Deep Domain)} & Deep domain re-ranking ($+0.55$ bonus across 52 Gold papers, 381 recs) & $0.62510$ & $0.50620$ & $0.82050$ & $0.530$ & $\mathbf{0.65071}$ (\textbf{Rank 6}) \\
     \textbf{V14 (Precision Swap)} & Precision Shortlist Swap: prune 8 borderline FPs, inject 8 candidate LPNMR/KR TPs (381 recs) & $\mathbf{0.63220}$ & $\mathbf{0.51850}$ & $0.83500$ & $0.530$ & $0.64934$ \\
     \rowcolor{PrismLabel}
-    \textbf{V15 (Late Fusion)} & Triple Independent Pipelines (MiniLM+MPNet+BGE) + 10-Fold CV + OOF Grid Search Blend & $0.62691$ & $0.49795$ & $\mathbf{0.84601}$ & $0.5385$ & \textit{Queued (Tomorrow)} \\
+    \textbf{V15 (Late Fusion)} & Triple Independent Pipelines (MiniLM+MPNet+BGE) + 10-Fold CV + OOF Grid Search Blend & $0.62691$ & $0.49795$ & $\mathbf{0.84601}$ & $0.5385$ & $0.64551$ \\
     \bottomrule
   \end{tabularx}
   \caption{Benchmark comparison of model generations on Stratified CV and Kaggle Leaderboard}
