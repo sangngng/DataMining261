@@ -45,6 +45,8 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \rowcolor{PrismLabel}
     \textbf{V17 (Decoupled Blend)} & Decoupled Selection (V16) + Consensus Ranking (V16+V13 DCG + Disagreement Penalty) & $0.62780$ & $0.50850$ & $\mathbf{0.85795}$ & $0.6735$ & $\mathbf{0.65595}$ (\textbf{Rank 4}) \\
     \textbf{V18 (Transductive Blend)} & MiniLM Quad-Arch (Topic + Sub-Centroids + k-NN + Transductive Spectral Diffusion) & $0.62840$ & $0.51020$ & $\mathbf{0.85820}$ & $0.5755$ & $0.65576$ \\
+    \rowcolor{PrismLabel}
+    \textbf{V20 (Grand Apex Blend)} & Tri-Paradigm Consensus ($45\%$ V17 + $35\%$ V18 + $20\%$ V19 Ordinal Gain $- 0.08$ Penalty) & $\mathbf{0.62910}$ & $\mathbf{0.51150}$ & $\mathbf{0.85820}$ & $0.5755$ & $\mathbf{0.65687}$ (\textbf{Peak}) \\
     \bottomrule
   \end{tabularx}
   \caption{Benchmark comparison of model generations on Stratified CV and Kaggle Leaderboard}
@@ -60,6 +62,7 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
   \item In version \textbf{V16 (MiniLM Tri-Architecture)}, we anchored representation 100\% on the pristine MiniLM manifold while constructing three mathematically diverse inductive paradigms: (1) Global Topic SVD/KMeans, (2) Positive Sub-Centroids ($K=8$), and (3) Non-parametric $k$-NN Density \& Margin graph under 10-Fold Stratified CV. This recovered critical domain publications dropped in V15, achieving a 94.23\% shortlist overlap (359/381) with V13 and automatically ranking core Answer Set Programming publications at the top five positions entirely via machine learning ($0.65474$ on Public LB, overtaking Rank 5).
   \item In version \textbf{V17 (Decoupled Consensus Selection-Ranking)}, driven by our Oracle Simulation finding that Stage-1 candidate selection yields a $7.4\times$ greater performance headroom than intra-list ranking ($+0.13020$ vs. $+0.01752$), we decoupled the two stages: locking candidate selection strictly to V16's machine-learned 381-item boundary (preserving high Coverage $R = 0.85795$) while re-ranking the interior using rank-normalized consensus ($65\%$ V16 Rank $+ 35\%$ V13 Domain DCG $- 0.12$ Disagreement Penalty). This pushed Public LB to an all-time personal best of $\mathbf{0.65595}$ (\textbf{Rank 4/16}), widening the gap over Rank 5 to $+0.00231$.
   \item In version \textbf{V18 (Transductive Spectral Graph Quad-Architecture)}, we extended the framework with a fourth paradigm: transductive 2-hop spectral graph diffusion and author-Jaccard bridging across the global 3,090-node paper manifold. V18 achieved $0.65576$ on Public LB with an extraordinary $99.2\%$ candidate overlap (378/381) with V17 (a minuscule variance delta of $-0.00019$), verifying algorithmic stability across distinct geometric spaces.
+  \item In version \textbf{V20 (Grand Apex Consensus)}, we synthesized three complementary inductive paradigms: Inductive Tri-Arch (V17), Transductive Spectral Diffusion (V18), and Frank \& Hall Cumulative Ordinal Gain (V19.1) under calibrated consensus weights ($0.45 / 0.35 / 0.20$) and a regularized disagreement penalty ($-0.08$). This established an all-time personal record of $\mathbf{0.65687}$ on the Public Leaderboard ($+0.00092$ over V17), extending our lead over Rank 6 ($0.65364$) to $+0.00323$ while closing the margin to the Top 3.
 \end{itemize}
 \end{prismbox}
 
