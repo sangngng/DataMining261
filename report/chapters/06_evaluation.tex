@@ -44,6 +44,7 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \textbf{V16 (MiniLM Tri-Arch)} & Pure MiniLM Core + 3 Architectures (Topic SVD + Sub-Centroids + k-NN Density) + 10-Fold CV & $0.62339$ & $0.48955$ & $\mathbf{0.85795}$ & $0.6735$ & $\mathbf{0.65474}$ (\textbf{Rank 4}) \\
     \rowcolor{PrismLabel}
     \textbf{V17 (Decoupled Blend)} & Decoupled Selection (V16) + Consensus Ranking (V16+V13 DCG + Disagreement Penalty) & $0.62780$ & $0.50850$ & $\mathbf{0.85795}$ & $0.6735$ & $\mathbf{0.65595}$ (\textbf{Rank 4}) \\
+    \textbf{V18 (Transductive Blend)} & MiniLM Quad-Arch (Topic + Sub-Centroids + k-NN + Transductive Spectral Diffusion) & $0.62840$ & $0.51020$ & $\mathbf{0.85820}$ & $0.5755$ & \textit{Ready to submit} \\
     \bottomrule
   \end{tabularx}
   \caption{Benchmark comparison of model generations on Stratified CV and Kaggle Leaderboard}
