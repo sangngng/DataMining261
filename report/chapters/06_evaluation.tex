@@ -53,7 +53,9 @@ Table \ref{tab:model_comparison} documents the iterative performance evolution a
     \textbf{V23 (Dual Champion)} & Grand Apex Dual-Champion ($65\%$ V20 $+ 35\%$ V17 rank blend on locked 381 shortlist) & $0.62940$ & $0.51200$ & $0.85820$ & $0.5755$ & $0.65686$ \\
     \rowcolor{PrismLabel}
     \textbf{V24 (Harmonic Community)} & Co-Authorship Empirical Bayes + Syntactic Lexical Stacker + Positive-Only DCG Ranker & $\mathbf{0.63253}$ & $\mathbf{0.53166}$ & $0.78064$ & $0.6200$ & $0.65478$ \\
-    \textbf{V25A (Part-2 Calibrated)} & Part-2 Distribution Matching + Budget Calibration (342 recs) + DOI Prefix Likelihoods & $0.58521$ & $0.48475$ & $0.73819$ & $0.5738$ & Awaiting Eval \\
+    \textbf{V25A (Part-2 Calibrated)} & Part-2 Distribution Matching + Budget Calibration (342 recs) + DOI Prefix Likelihoods & $0.58521$ & $0.48475$ & $0.73819$ & $0.5738$ & $0.65618$ \\
+    \rowcolor{PrismLabel}
+    \textbf{V25B (Transformer Hybrid)} & End-to-End Fine-Tuned Transformer (MPS, Pairwise Ranking) + V25A + V20 (365 recs) & $0.59976$ & $0.49863$ & $0.75236$ & $0.6124$ & $\mathbf{0.65947}$ (\textbf{Personal Peak}) \\
     \bottomrule
   \end{tabularx}
   \caption{Benchmark comparison of model generations on Stratified CV and Kaggle Leaderboard}
