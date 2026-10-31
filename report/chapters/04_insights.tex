@@ -62,6 +62,26 @@ Rigorous Data Mining demands a strict separation between \textit{unverified init
     providing a disciplined prior for candidate papers based on publication source.
 \end{itemize}
 
+
+\subsection{Insight 5: Unsupervised Semantic Topic Spectrum via K-Means (=12$)}
+\begin{itemize}
+  \item \textbf{Discovery:} By fitting an unsupervised K-Means clustering algorithm (=12$) on dense Sentence-BERT vectors combining titles and full abstracts, we revealed the researcher's empirical preference continuum across distinct sub-disciplines (Figure \ref{fig:kmeans_topics}).
+  \item \textbf{Extreme Preference Divergence:}
+    \begin{enumerate}
+      \item \textbf{Top Tier --- Answer Set Programming (Cluster 8, $\bar{y} = 3.783$):} Papers on ASP solvers, grounders, and non-monotonic semantics represent the researcher's highest utility domain (=166$).
+      \item \textbf{Upper Tier --- Neural Network Verification (Cluster 5, $\bar{y} = 3.131$):} Verification of deep learning controllers and autonomous systems at CAV represents a modern high-priority interest.
+      \item \textbf{Penalized Tier --- Hardware \& Protocol Model Checking (Cluster 9, $\bar{y} = 1.617$):} Classical hardware circuit verification and telecom protocols exhibit the lowest average rating, representing non-pertinent rating-1 noise.
+    \end{enumerate}
+  \item \textbf{Engineering Action:} In addition to cluster indicator features, we compute the 12-dimensional Euclidean distance vector $\bm{d}(x) = [\|\bm{v}_x - \bm{c}_k\|]_{k=0}^{11}$ to all topic centroids. This allows downstream rankers and surgical boundary adjudicators (V26C) to decisively boost C8/C5 candidates and suppress C9 items.
+\end{itemize}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.92\linewidth]{figures/08_kmeans_topic_clusters.png}
+  \caption{Empirical topic preference spectrum discovered via Sentence-BERT K-Means clustering (=12$)}
+  \label{fig:kmeans_topics}
+\end{figure}
+
 \section{Feature Engineering Mapping Matrix}
 Table \ref{tab:feature_mapping} presents the comprehensive suite of engineered features integrated into our modeling pipeline.
 

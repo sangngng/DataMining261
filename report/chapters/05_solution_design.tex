@@ -94,6 +94,25 @@ To break through this trade-off, we introduced the \textbf{Decoupled Intra-List 
 \end{enumerate}
 Empirically, this decoupled formulation directly elevated our official Kaggle Leaderboard performance from $0.65008$ to our all-time peak of $\mathbf{0.65040}$ (\textbf{Rank 6 / 16}), proving that consensus-guided intra-list re-ranking yields genuine generalization benefits.
 
+
+\section{Abstract-Augmented Scientific Transformer \& Surgical Cluster Apex (V26--V27)}
+To transcend the title-only feature plateau, we formulated an Abstract-Augmented Scientific Transformer architecture operating over multi-source technical abstracts:
+
+\begin{enumerate}
+  \item \textbf{Multi-Source Academic Text Retrieval:} Using batch queries against OpenAlex and Semantic Scholar Graph APIs, we recovered full-text scientific abstracts for .44\%$ of the training set (,031$ publications) and .97\%$ of the test set ($ publications, reaching .4\%$ on \texttt{lics}).
+  \item \textbf{Semantic Text Construction:} Candidate publications are represented as structured scientific prompts:
+  \begin{equation*}
+    \text{Prompt}_i = \text{Venue: } V_i \;\|\; \text{Topic: } C_i \;\|\; \text{Title: } T_i \;.\; T_i \;\|\; \text{Abstract: } A_i
+  \end{equation*}
+  integrating the 12 K-Means topic tags $ directly into the multi-head self-attention mechanism.
+  \item \textbf{Dual-Zone Pairwise Ranking Loss:} Fine-tuning is governed by a composite loss uniting ordinal classification, smooth $ gain regression, and dual-zone pairwise margin constraints:
+  \begin{equation}
+    \mathcal{L} = \mathcal{L}_{\text{ord}} + 0.80 \mathcal{L}_{\text{gain}} + 0.50 \mathcal{L}_{\text{boundary}} + 0.70 \mathcal{L}_{\text{top}}
+  \end{equation}
+  where $\mathcal{L}_{\text{boundary}}$ enforces margin separation between rating $\ge 2$ and rating 1 items, while $\mathcal{L}_{\text{top}}$ penalizes rank inversions among top-tier publications ( \in \{4, 5\}$).
+  \item \textbf{Surgical Cluster Boundary Apex (V26C):} Recognizing the \textit{Shortlist Invariance Principle}, our peak model (V26C) preserves .9\%$ of the proven V25B candidate set at Golden Budget $, applying a surgical boundary swap to only 4 borderline publications: demoting non-logic C9 items (supply chain contracts \#1298) and promoting C5 autonomous system verification (\#1814, \#1937).
+\end{enumerate}
+
 \section{Reproducibility Protocol}
 The full project repository is hosted at \url{https://github.com/sangngng/DataMining261}. All experimental artifacts, feature representations, and submission files are fully reproducible via the following streamlined execution sequence:
 
