@@ -1,6 +1,6 @@
 # CO3029 Data Mining Assignment - Personalized Research Paper Recommendation
 
-[![Competition Status](https://img.shields.io/badge/Kaggle-Top%208%20(0.66762)-gold.svg)](https://www.kaggle.com/competitions/assignment-data-mining-261/leaderboard)
+[![Competition Status](https://img.shields.io/badge/Kaggle-Top%208%20(0.66772)-gold.svg)](https://www.kaggle.com/competitions/assignment-data-mining-261/leaderboard)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -13,7 +13,7 @@ Repository for the **CO3029 Data Mining (Semester 261)** course assignment at **
   - Nguyễn Trọng Sáng (2353046) — **Team Lead, Re-ranking & Architecture**
   - Nguyễn Đức Vĩ (2353338) — **NLP, Scientific Transformer & Embeddings**
   - Đỗ Đình Duân (2352166) — **EDA, Feature Engineering & Academic Report**
-- **Current Standing**: **Rank 8 / Top 8** — **`0.66762`** (Gap to Rank 7: `0.00038`, Gap to Top 2: `0.00242`)
+- **Current Standing**: **Rank 8 / Top 8** — **`0.66772`** (Gap to Rank 7: `0.00028`, Gap to Top 2: `0.00232`)
 
 ---
 
@@ -38,13 +38,14 @@ The objective is to recommend and prioritize research publications for a domain 
 | **V1 (Baseline)** | Two-Stage LightGBM + Sparse TF-IDF (2500) + KMeans (8 clusters) | $0.60431$ | $0.49595$ | $0.75801$ | $381$ | $0.61546$ |
 | **V2 (SBERT)** | Sentence-BERT (MiniLM 384d) + Preference Centroids + GBDT Ensembling | $0.61256$ | $0.49175$ | $0.81207$ | $372$ | $0.65006$ |
 | **V16 (Tri-Arch)** | MiniLM Core + 3 Diverse Inductive Paradigms (Topic + Centroids + k-NN) | $0.62339$ | $0.48955$ | $\mathbf{0.85795}$ | $381$ | $0.65474$ |
-| **V20 (Grand Apex)** | Tri-Paradigm Decoupled Consensus + Frank & Hall Cumulative Ordinal Gain | $0.62910$ | $0.51150$ | $0.85820$ | $381$ | $0.65687$ |
+| **V20 (Grand Apex)** | Tri-Paradigm Decoupled Consensus + Frank \& Hall Cumulative Ordinal Gain | $0.62910$ | $0.51150$ | $0.85820$ | $381$ | $0.65687$ |
 | **V25B (Transformer)**| End-to-End Fine-Tuned Transformer (MPS, Pairwise Loss) + Budget Calibration | $0.59976$ | $0.49863$ | $0.75236$ | $365$ | $0.65947$ |
 | **V26C (Topic Apex)** | Unsupervised K-Means ($k=12$) Discovery + Micro-Surgical Boundary Pruning | $0.60120$ | $0.49150$ | $0.77500$ | $365$ | $0.66297$ |
 | **V28C (3-Engine Apex)**| Venue Asymmetry Recovery (Budget $365 \to 374$) + 82% Abstract PRP + Zero Ties | $0.61850$ | $0.53500$ | $0.81500$ | $374$ | $0.66753$ |
-| **V29A (Diamond Apex)**| **Hyper Top-22 Ground-Truth Diamond Authors ($\mathbb{E}[g]$ Resonance) + Strict Convex Priority** | $\mathbf{0.61920}$ | $\mathbf{0.53800}$ | $0.81500$ | $374$ | $\mathbf{0.66762}$ (**All-Time Peak**) |
+| **V29A (Diamond Apex)**| Hyper Top-22 Ground-Truth Diamond Authors ($\mathbb{E}[g]$ Resonance) + Convex Priority | $0.61920$ | $0.53800$ | $0.81500$ | $374$ | $0.66762$ |
+| **V29C (Pure Fusion Apex)**| **Locked 374 + Top-22 Diamonds + Multi-Model Imputed Late Fusion (50/30/10/10)** | $\mathbf{0.62150}$ | $\mathbf{0.54200}$ | $0.81500$ | $374$ | $\mathbf{0.66772}$ (**All-Time Peak**) |
 
-*Detailed experimental trajectory for all 35 configurations is comprehensively recorded in [`reports/experiment_log.csv`](reports/experiment_log.csv).*
+*Detailed experimental trajectory for all 37 configurations is comprehensively recorded in [`reports/experiment_log.csv`](reports/experiment_log.csv).*
 
 ---
 
