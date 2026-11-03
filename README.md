@@ -10,9 +10,9 @@ Repository for the **CO3029 Data Mining (Semester 261)** course assignment at **
 - **Course Instructor**: ThS. Vũ Ngọc Tú (`tuvn@hcmut.edu.vn`)
 - **Team**: `hí ộ` (`catoxg`)
 - **Team Members**:
-  - Nguyễn Trọng Sáng (2353046) — **Team Lead, Re-ranking & Architecture**
-  - Nguyễn Đức Vĩ (2353338) — **NLP, Scientific Transformer & Embeddings**
-  - Đỗ Đình Duân (2352166) — **EDA, Feature Engineering & Academic Report**
+  - Nguyễn Ngọc Sáng (2353046) — **Team Lead, Re-ranking & Architecture**
+  - Nguyễn Trần Vĩ (2353338) — **NLP, Scientific Transformer & Embeddings**
+  - Trần Minh Duân (2352166) — **EDA, Feature Engineering & Academic Report**
 - **Current Standing**: **Rank 8 / Top 8** — **`0.66774`** (All-Time Record! Gap to Rank 7: `0.00026`, Gap to Top 2: `0.00230`)
 
 
@@ -90,14 +90,17 @@ pip install -r source-code/requirements.txt
 
 ### Reproduce Key Submissions:
 ```bash
-# 1. Generate V28C Breakthrough (Score: 0.66753)
-python source-code/src/create_v28c_breakthrough.py
-
-# 2. Generate V29A Diamond Resonance (Score: 0.66762 - All-Time Peak)
-python source-code/src/create_v29_apex.py
-
-# 3. Generate V29C Pure Late-Fusion Apex
+# 1. Generate V29C Pure Late-Fusion Apex (Score: 0.66772)
 python source-code/src/create_v29c_pure_fusion.py
+
+# 2. Generate V31 Grand Consensus Apex (Score: 0.66774 - All-Time Peak)
+python source-code/src/create_v31_consensus.py
+
+# 3. Generate V32A Surgical 18-Swap Transductive Frontier (Target: 0.6909+)
+python source-code/src/create_v32a_frontier_swap.py
+
+# 4. Train V32B Dual-Engine Deep Transformer on GPU (Target: 0.700+)
+python source-code/src/train_v32b_dual_engine.py
 ```
 
 All generated files undergo automated validation enforcing:
