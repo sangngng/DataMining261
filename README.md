@@ -1,6 +1,6 @@
 # CO3029 Data Mining Assignment - Personalized Research Paper Recommendation
 
-[![Competition Status](https://img.shields.io/badge/Kaggle-Top%208%20(0.66772)-gold.svg)](https://www.kaggle.com/competitions/assignment-data-mining-261/leaderboard)
+[![Competition Status](https://img.shields.io/badge/Kaggle-Top%208%20(0.66774)-gold.svg)](https://www.kaggle.com/competitions/assignment-data-mining-261/leaderboard)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -13,7 +13,8 @@ Repository for the **CO3029 Data Mining (Semester 261)** course assignment at **
   - Nguyễn Trọng Sáng (2353046) — **Team Lead, Re-ranking & Architecture**
   - Nguyễn Đức Vĩ (2353338) — **NLP, Scientific Transformer & Embeddings**
   - Đỗ Đình Duân (2352166) — **EDA, Feature Engineering & Academic Report**
-- **Current Standing**: **Rank 8 / Top 8** — **`0.66772`** (Gap to Rank 7: `0.00028`, Gap to Top 2: `0.00232`)
+- **Current Standing**: **Rank 8 / Top 8** — **`0.66774`** (All-Time Record! Gap to Rank 7: `0.00026`, Gap to Top 2: `0.00230`)
+
 
 ---
 

@@ -35,7 +35,9 @@ Table \ref{tab:model_comparison} highlights the major architectural milestones r
     \textbf{V25B (Transformer)} & End-to-End Fine-Tuned Transformer (MPS, Pairwise Loss) + Part-2 Calibrated Budget & $0.59976$ & $0.49863$ & $0.75236$ & $365$ & $0.65947$ \\
     \rowcolor{PrismLabel}
     \textbf{V29A (Diamond Apex)} & Locked 374 Budget + Top-22 Ground-Truth Diamond Authors ($\mathbb{E}[g]$ Resonance) & $0.61920$ & $0.53800$ & $0.81500$ & $374$ & $0.66762$ \\
-    \textbf{V29C (Pure Fusion Apex)} & \textbf{Locked 374 + Top-22 Diamonds + Multi-Model Imputed Late Fusion (50/30/10/10)} & $\mathbf{0.62150}$ & $\mathbf{0.54200}$ & $\mathbf{0.81500}$ & $374$ & $\mathbf{0.66772}$ (\textbf{All-Time Peak}) \\
+    \textbf{V29C (Pure Fusion)} & Locked 374 + Top-22 Diamonds + Multi-Model Imputed Late Fusion (50/30/10/10) & $0.62150$ & $0.54200$ & $0.81500$ & $374$ & $0.66772$ \\
+    \rowcolor{PrismLabel}
+    \textbf{V31 (Grand Consensus)} & \textbf{Locked 374 + Top-22 Diamonds + 5-Family Grand Consensus Rank Averaging} & $\mathbf{0.62200}$ & $\mathbf{0.54300}$ & $\mathbf{0.81500}$ & $374$ & $\mathbf{0.66774}$ (\textbf{All-Time Peak}) \\
     \bottomrule
   \end{tabularx}
   \caption{Key architectural milestones and benchmark evaluation across developmental generations}
@@ -49,7 +51,7 @@ Table \ref{tab:model_comparison} highlights the major architectural milestones r
   \item \textbf{Part-2 Distribution Matching \& End-to-End Transformers (V25B, $0.65947$):} Discovering that test instances are drawn 100\% from Part 2 (where true positive rate is $59.4\%$ vs. $74.8\%$ in Part 1) revealed that recommending 381 papers was diluting Relevance $Q$ with tail noise. Calibrating the recommendation budget to $M_{\text{rec}} = 365$ and fine-tuning an End-to-End Transformer broke through the title-only GBDT ceiling.
   \item \textbf{Curriculum Topic Discovery via K-Means (V26C, $0.66297$):} Unsupervised K-Means ($k=12$) clustering over dense Title+Abstract representations uncovered stark domain polarization: peak preference in Answer Set Programming (Cluster 8, mean $3.78/5.0$) and Neural Network Verification (Cluster 5, mean $3.13/5.0$) versus hardware model checking noise (Cluster 9, mean $1.62/5.0$). A micro-surgical 4-paper boundary swap delivered a $+0.00350$ leap.
   \item \textbf{The 3-Engine Breakthrough \& Asymmetric Venue Recovery (V28C, $0.66753$):} By uncovering venue distribution asymmetry in Part 2 (where CAV and LICS true positives were starved in the 365-candidate cutoff), V28C strategically expanded the recommendation budget from 365 to 374, successfully recovering 9 high-confidence consensus publications. Coupled with an 82\% Abstract-driven $\mathbb{E}[g]$ PRP weighting and a strict zero-tie monotonic priority mapping, V28C broke through the $0.667$ ceiling.
-  \item \textbf{Pure Late-Fusion Apex \& Variance Neutralization (V29C, $\mathbf{0.66772}$):} Fusing out-of-sample rank probabilities from diverse paradigms ($50\%$ V29A Diamond, $30\%$ V28C Breakthrough, $10\%$ V28B, $10\%$ V27) while strictly preserving the Top-22 Diamond core and the 374-candidate budget successfully smoothed interior rank variance. This unlocked our crowning all-time peak of $\mathbf{0.66772}$, putting our team within a razor-thin margin of $0.00028$ to Rank 7 and $0.0023$ to Rank 2.
+  \item \textbf{Grand Consensus Apex \& Multidisciplinary Variance Cancellation (V31, $\mathbf{0.66774}$):} Integrating rank distributions across 5 distinct model families ($45\%$ V29C, $25\%$ V29A Diamond, $15\%$ V28C Breakthrough, $10\%$ V26C Topic Cluster, $5\%$ V27 Transformer) with zero priority ties and 100\% locked 374-candidate budget successfully canceled individual ranking variance. This crowned our solution with an all-time personal best of $\mathbf{0.66774}$ on Kaggle Public Leaderboard, placing our team firmly in Top 8, within a razor-thin $0.00026$ of Rank 7 and $0.0023$ of Rank 2.
 \end{itemize}
 \end{prismbox}
 
