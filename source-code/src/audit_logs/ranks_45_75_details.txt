@@ -1,0 +1,155 @@
+--- Rank 45 | ID 723 | kr 2023 ---
+Title: Argumentative Reasoning in ASPIC+ under Incomplete Information.
+Authors: Daphne Odekerken, Tuomo Lehtonen, Johannes P. Wallner, Matti Järvisalo
+Abstract: Reasoning under incomplete information is an important research direction in the study of computational argumentation. Most advances in this direction so far have focused on abstract argumentation fra...
+
+--- Rank 46 | ID 959 | kr 2020 ---
+Title: Reasoning with Inconsistent Knowledge using the Epistemic Approach to Probabilistic Argumentation.
+Authors: Anthony Hunter
+Abstract: Structured argumentation involves drawing inferences from knowledge in order to construct arguments and counterarguments. Since knowledge can be uncertain, we can use a probabilistic approach to repre...
+
+--- Rank 47 | ID 1351 | lpnmr 2019 ---
+Title: An ASP-Based Framework for the Manipulation of Articulated Objects Using Dual-Arm Robots.
+Authors: Riccardo Bertolucci, Alessio Capitanelli, Carmine Dodaro, Nicola Leone, Marco Maratea, Fulvio Mastrogiovanni, Mauro Vallati
+Abstract: nan...
+
+--- Rank 48 | ID 1083 | kr 2018 ---
+Title: Knowledge-Based Transfer Learning Explanation.
+Authors: nan
+Abstract: Machine learning explanation can significantly boost machine learning's application in decision making, but the usability of current methods is limited in human-centric explanation, especially for tra...
+
+--- Rank 49 | ID 933 | kr 2020 ---
+Title: Towards a Framework for Visual Intelligence in Service Robotics: Epistemic Requirements and Gap Analysis.
+Authors: Agnese Chiatti, Enrico Motta, Enrico Daga
+Abstract: A key capability required by service robots operating in real-world, dynamic environments is that of Visual Intelligence, i.e., the ability to use their vision system, reasoning components and backgro...
+
+--- Rank 50 | ID 899 | kr 2020 ---
+Title: Augmenting Logic-based Knowledge Graphs: The Case of Company Graphs.
+Authors: Aditya Malusare
+Abstract: nan...
+
+--- Rank 51 | ID 1214 | kr 2016 ---
+Title: Building Epistemic Logic from Observations and Public Announcements.
+Authors: nan
+Abstract: nan...
+
+--- Rank 52 | ID 1372 | lpnmr 2019 ---
+Title: Elaboration Tolerant Representation of Markov Decision Process via Decision-Theoretic Extension of Probabilistic Action Language pBC+.
+Authors: YI WANG, JOOHYUNG LEE
+Abstract: We extend probabilistic action language $p{\cal BC}$+ with the notion of utility in decision theory. The semantics of the extended $p{\cal BC}$+ can be defined as a shorthand notation for a decision-t...
+
+--- Rank 53 | ID 908 | kr 2020 ---
+Title: Reasoning with Contextual Knowledge and Influence Diagrams.
+Authors: Erman Acar, Rafael Peñaloza
+Abstract: Influence diagrams (IDs) are well-known formalisms, which extend Bayesian networks to model decision situations under uncertainty. Although they are convenient as a decision theoretic tool, their know...
+
+--- Rank 54 | ID 1006 | kr 2019 ---
+Title: Local vs. Global Interpretability of Machine Learning Models in Type 2 Diabetes Mellitus Screening.
+Authors: Leon Kopitar, Leona Cilar, Primoz Kocbek, Gregor Stiglic
+Abstract: nan...
+
+--- Rank 55 | ID 3035 | lics 2016 ---
+Title: Unifying Logical and Statistical AI.
+Authors: Pedro Domingos, Daniel Lowd
+Abstract: nan...
+
+--- Rank 56 | ID 765 | kr 2022 ---
+Title: Faithful Approaches to Rule Learning.
+Authors: David J. Tena Cucala, Bernardo Cuenca Grau, Boris Motik
+Abstract: Rule learning involves developing machine learning models that can be applied to a set of logical facts to predict additional facts, as well as providing methods for extracting from the learned model ...
+
+--- Rank 57 | ID 910 | kr 2020 ---
+Title: Explainable Acceptance in Probabilistic Abstract Argumentation: Complexity and Approximation.
+Authors: Gianvincenzo Alfano, Marco Calautti, Sergio Greco, Francesco Parisi, Irina Trubitsyna
+Abstract: Recently there has been an increasing interest in probabilistic abstract argumentation, an extension of Dung's abstract argumentation framework with probability theory. In this setting, we address the...
+
+--- Rank 58 | ID 1003 | kr 2019 ---
+Title: An Explainable Approach of Inferring Potential Medication Effects from Social Media Data.
+Authors: Keyuan Jiang, Tingyu Chen, Liyuan Huang, Ravish Gupta, Ricardo A. Calix, Gordon R. Bernard
+Abstract: nan...
+
+--- Rank 59 | ID 951 | kr 2020 ---
+Title: Entity Type Recognition - Dealing with the Diversity of Knowledge.
+Authors: Fausto Giunchiglia, Mattia Fumagalli
+Abstract: Semantic Heterogeneity is the problem that arises when multiple resources present differences in how they represent the same real-world phenomenon. In KR, an early approach was the development of onto...
+
+--- Rank 60 | ID 2424 | lics 2024 ---
+Title: A Nominal Approach to Probabilistic Separation Logic.
+Authors: John M. Li, Jon Aytac, Philip Johnson-Freyd, Amal Ahmed, Steven Holtzen
+Abstract: Currently, there is a gap between the tools used by probability theorists and those used in formal reasoning about probabilistic programs. On the one hand, a probability theorist decomposes probabilis...
+
+--- Rank 61 | ID 2258 | cav 2016 ---
+Title: PSI: Exact Symbolic Inference for Probabilistic Programs.
+Authors: Timon Gehr, Sasa Misailovic, Martin Vechev
+Abstract: nan...
+
+--- Rank 62 | ID 751 | kr 2022 ---
+Title: Embed2Sym - Scalable Neuro-Symbolic Reasoning via Clustered Embeddings.
+Authors: Yaniv Aspis, Krysia Broda, Jorge Lobo, Alessandra Russo
+Abstract: Neuro-symbolic reasoning approaches proposed in recent years combine a neural perception component with a symbolic reasoning component to solve a downstream task. By doing so, these approaches can pro...
+
+--- Rank 63 | ID 1282 | lpnmr 2024 ---
+Title: Reasoning and Explanation Generation in Ad Hoc Collaboration Between Humans and Embodied AI.
+Authors: Hasra Dodampegama, Mohan Sridharan
+Abstract: . An assistive embodied AI agent often has to collaborate with previously unseen humans. State of the art frameworks for such ad hoc teamwork use a large labeled dataset of prior observations to model...
+
+--- Rank 64 | ID 1007 | kr 2019 ---
+Title: Deep Learning for Haemodialysis Time Series Classification.
+Authors: , Hassan Ismail Fawaz
+Abstract: nan...
+
+--- Rank 65 | ID 1110 | kr 2018 ---
+Title: Updating Belief in Arguments in Epistemic Graphs.
+Authors: Matthias Steup
+Abstract: nan...
+
+--- Rank 66 | ID 1419 | lpnmr 2017 ---
+Title: Answer Set Programming with Graded Modality.
+Authors: Zhizheng Zhang
+Abstract: nan...
+
+--- Rank 67 | ID 1481 | cav 2025 ---
+Title: A Misconception-Driven Adaptive Tutor for Linear Temporal Logic.
+Authors: Siddhartha Prasad, Ben Greenman, Tim Nelson, Shriram Krishnamurthi
+Abstract: ,...
+
+--- Rank 68 | ID 2030 | cav 2019 ---
+Title: Reinforcement Learning and Formal Requirements.
+Authors: nan
+Abstract: nan...
+
+--- Rank 69 | ID 1229 | kr 2016 ---
+Title: On Partial Information and Contradictions in Probabilistic Abstract Argumentation.
+Authors: , Justin Picard
+Abstract: nan...
+
+--- Rank 70 | ID 1342 | lpnmr 2022 ---
+Title: Towards Causality-Based Conflict Resolution in Answer Set Programs.
+Authors: Andre Thevapalan, Konstantin Haupt, Gabriele Kern-Isberner
+Abstract: nan...
+
+--- Rank 71 | ID 1264 | kr 2016 ---
+Title: Generating Conflict-Free Treatments for Patients with Comorbidity Using Answer Set Programming.
+Authors: Elie Merhej, Steven Schockaert, T. Greg McKelvey, Martine De Cock
+Abstract: nan...
+
+--- Rank 72 | ID 2206 | cav 2017 ---
+Title: Logical Clustering and Learning for Time-Series Data.
+Authors: John C. Porcello
+Abstract: In order to effectively analyze and build cyberphysical systems (CPS), designers today have to combat the data deluge problem, i.e., the burden of processing intractably large amounts of data produced...
+
+--- Rank 73 | ID 1230 | kr 2016 ---
+Title: Bayesian Deduction with Subjective Opinions.
+Authors: Huaping Lu-Adler
+Abstract: nan...
+
+--- Rank 74 | ID 2059 | cav 2019 ---
+Title: Location Anomalies Detection for Connected and Autonomous Vehicles.
+Authors: Xiaoyang Wang, Ioannis Mavromatis, Andrea Tassi, Raul Santos-Rodriguez, Robert J. Piechocki
+Abstract: Future Connected and Automated Vehicles (CAVs), and more generally ITS, will form a highly interconnected system. Such a paradigm is referred to as the Internet of Vehicles (herein Internet of CAVs) a...
+
+--- Rank 75 | ID 1747 | cav 2022 ---
+Title: VPN: Verification of Poisoning in Neural Networks.
+Authors: Youcheng Sun, Muhammad Usman, Divya Gopinath, Corina S. Păsăreanu
+Abstract: Neural networks are successfully used in a variety of applications, many of them having safety and security concerns. As a result researchers have proposed formal verification techniques for verifying...
+

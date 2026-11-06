@@ -1,0 +1,42 @@
+      id  v37_rank                    author  cnt  mean  venue  year                                                         title
+49  1343         1               ly ly trieu    3  5.00  lpnmr  2022  xASP: An Explanation Generation System for Answer Set Progra
+48  1378         3              takehide soh    2  4.00  lpnmr  2017  catnap: Generating Test Suites of Constrained Combinatorial 
+27  1330         4           enrico pontelli    4  4.50  lpnmr  2022  State Transition in Multi-agent Epistemic Domains Using Answ
+3   1185         6                kewen wang    3  4.33     kr  2016   The Ultimate Guide to Forgetting in Answer Set Programming.
+34  1143         8       zeynep g. saribatur    4  4.50     kr  2018           Omission-Based Abstraction for Answer Set Programs.
+44   991         9       zeynep g. saribatur    4  4.50     kr  2020        A Semantic Perspective on Omission Abstraction in ASP.
+14   767        10           johannes oetsch    3  4.67     kr  2022        ALASPO: An Adaptive Large-Neighbourhood ASP Optimiser.
+0   1296        16        hidetomo nabeshima    2  4.00  lpnmr  2024  ASP-Based Large Neighborhood Prioritized Search for Course T
+38   878        22       zeynep g. saribatur    4  4.50     kr  2021  Existential Abstraction on Argumentation Frameworks via Clus
+29  1700        27  ekaterina komendantskaya    4  4.25    cav  2022  Neural Network Robustness as a Verification Property: A Prin
+46  1329        28            zachary hansen    3  4.00  lpnmr  2022       Semantics for Conditional Literals via the SM Operator.
+15  1925        29          matthew b. dwyer    2  5.00    cav  2020  Systematic Generation of Diverse Benchmarks for DNN Verifica
+16  1626        31           matthew daggitt    2  4.50    cav  2023  The Vehicle Tutorial: Neural Network Verification with Vehic
+37   903        33                kewen wang    3  4.33     kr  2020  An Evolutionary Algorithm for Rule Learning over Knowledge G
+23  1123        34            domenico lembo    2  4.00     kr  2018  A Comprehensive Framework for Controlled Query Evaluation, C
+39  1407        36            orkunt sabuncu    2  4.50  lpnmr  2017  moviola: Interpreting Dynamic Logic Programs via Multi-shot 
+45  1317        37          andrea formisano    4  4.75  lpnmr  2022         Epistemic Logic Programs: A Study of Some Properties.
+36  1717        38           gagandeep singh    2  4.00    cav  2022          Shared Certificates for Neural Network Verification.
+9   1370        39        antonius weinzierl    2  4.50  lpnmr  2019  Degrees of Laziness in Grounding - Effects of Lazy-Grounding
+19  1074        41        antonius weinzierl    2  4.50     kr  2018  Towards Lazy Grounding with Lazy Normalization in Answer-Set
+51   765        56               boris motik    2  4.00     kr  2022                         Faithful Approaches to Rule Learning.
+8    910        57          francesco parisi    2  4.00     kr  2020  Explainable Acceptance in Probabilistic Abstract Argumentati
+4   1053        77       gianvincenzo alfano    2  4.00     kr  2018  An Incremental Approach to Structured Argumentation over Dyn
+10   877       102             javier romero    3  4.33     kr  2021  Learning First-Order Representations for Planning from Black
+35   784       106             lukas schulze    2  4.00     kr  2022  Ontology-Mediated Querying on Databases of Bounded Cliquewid
+31  1332       118         ricardo gonçalves    2  4.50  lpnmr  2022          Towards Provenance in Heterogeneous Knowledge Bases.
+32   770       123          tommaso flaminio    2  4.00     kr  2022  Compound Conditionals as Random Quantities and Boolean Algeb
+18  1114       124        hector j. levesque    2  4.00     kr  2018  Specifying Plausibility Levels for Iterated Belief Change in
+21   920       140           sara bernardini    2  4.00     kr  2020          An Optimization Approach to Robust Goal Obfuscation.
+20   718       146               tim s. lyon    2  4.00     kr  2023  Connecting Proof Theory and Knowledge Representation: Sequen
+28   885       181          egor v. kostylev    2  4.00     kr  2021       DatalogMTL with Negation Under Stable Models Semantics.
+41  2685       211              raul fervari    2  4.50   lics  2020  Modal Logics with Composition on Finite Forests: Expressivit
+13  1275       249             philipp wanko    5  4.00  lpnmr  2024               Towards Industrial-Scale Product Configuration.
+24   800       256          umberto straccia    2  4.00     kr  2022  A Minimal Deductive System for RDFS with Negative Statements
+6    997       284          egor v. kostylev    2  4.00     kr  2020                         DatalogMTL over the Integer Timeline.
+42  2251       300                chuchu fan    2  4.00    cav  2016  Automatic Reachability Analysis for Nonlinear Hybrid Models 
+33  1354       303                 alex brik    2  4.00  lpnmr  2019     Diagnosing Data Pipeline Failures Using Action Languages.
+25  2507       999            tobias winkler    3  4.00   lics  2023  On Certificates, Expected Runtimes, and Termination in Proba
+26  2098       999                chuchu fan    2  4.00    cav  2018  Controller Synthesis Made Real: Reach-Avoid Specifications a
+22  2968       999               ohad kammar    2  4.50   lics  2017                      A monad for full ground reference cells.
+43  2432       999          egor v. kostylev    2  4.00   lics  2024  A Characterisation Theorem for Two-Way Bisimulation-Invarian
