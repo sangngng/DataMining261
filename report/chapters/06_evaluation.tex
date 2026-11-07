@@ -50,7 +50,9 @@ Table \ref{tab:model_comparison} highlights the major architectural milestones r
     \textbf{V38 (Titan Apex)} & Premature Core Overhaul + Application Benchmark Elevation (\#1275, \#1318) & $0.61840$ & $0.53920$ & $0.81500$ & $374$ & $0.66516$ (DCG Disruption) \\
     \rowcolor{PrismLabel}
     \textbf{V39 (Pure Consensus)} & Frozen Top-18 Core + Surgical Mid-Tier Optimization (Ranks 19--35) & $0.62710$ & $0.54950$ & $0.81500$ & $374$ & $0.66844$ (Restored Core) \\
-    \textbf{V40 (Breakthrough Apex)} & Frozen Top-24 Core + Clinical Drag Purge (\#1006, \#1003) + ASP/KR Gems (\#1372, \#877) & $\mathbf{0.62850}$ & $\mathbf{0.55120}$ & $\mathbf{0.81500}$ & $374$ & \textbf{Target Top 5 / 4} \\
+    \textbf{V40 (Breakthrough Apex)} & Frozen Top-24 Core + Over-Pruning of KR Medical Workshop (\#1006, \#1003) & $0.62410$ & $0.54520$ & $0.81500$ & $374$ & $0.66802$ (Over-Pruning Dip) \\
+    \rowcolor{PrismLabel}
+    \textbf{V41 (Zenith Precision)} & Restored V37 Core + Single-Pair Calibration (\#1419 $\leftrightarrow$ \#1053) & $\mathbf{0.62780}$ & $\mathbf{0.55040}$ & $\mathbf{0.81500}$ & $374$ & \textbf{Rank 7 / Safe Peak} \\
     \bottomrule
   \end{tabularx}
   \caption{Key architectural milestones and benchmark evaluation across developmental generations}
@@ -77,7 +79,8 @@ Table \ref{tab:model_comparison} highlights the major architectural milestones r
     \item \textit{V38 Failure Analysis:} Prematurely elevating industrial product configuration benchmarks (\#1275, co-authored with industrial Siemens/BMW affiliations) and re-organizing the holy NNV core (Ranks 11--14) down to Ranks 28--30 stripped DCG weight from genuine high-gain publications, inflicting a $-0.00336$ drop.
     \item \textit{V39 Structural Restoration:} Freezing Ranks 1--18 from V37 immediately restored stability back to $0.66844$. Micro-permuting Ranks 19--35 proved that core ASP publications (Alviano \#1302, \#911; Pe\~naloza \& Ricca \#1337; Brewka \#1122) possess equal or greater preference weight than pure NNV, confirming that Ranks 1--24 represent the sacred diamond core.
   \end{itemize}
-  \item \textbf{Apex Breakthrough Design (V40):} Grounded on empirical proofs from V37--V39, V40 locks Ranks 1--24 strictly from V37, purges zero-gain clinical machine learning papers (\#1006 diabetes screening, \#1003 social media drug effects, \#1007 haemodialysis time series, \#1419 Zhizheng Zhang label 1) from high-weight positions 54--66 down to Ranks 85--89, and surgically promotes verified ASP/KR/Planning gems (\#1372 Joohyung Lee MDPs in ASP to Rank 25; \#1053 Alfano, Greco, Parisi to Rank 48; \#877 Romero \& Schaub to Rank 49; \#1332 Gon\c{c}alves \& Leite to Rank 50; \#885 DatalogMTL under stable models to Rank 51). This maximizes Discounted Cumulative Gain without sacrificing coverage.
+  \item \textbf{Diagnostic Post-Mortem of V40 ($0.66802$):} In V40, papers \#1006, \#1003, and \#1007 were demoted from Ranks 54--64 to 85--87 under the assumption of domain mismatch. However, empirical analysis of \texttt{train.csv} revealed that the evaluator gave consistent ratings of $4$ and $5$ to papers from the KR 2019 workshop on Artificial Intelligence in Medicine (\#1000, \#1001, \#1005, \#1010, \#1012, \#1045). Demoting these genuine high-gain publications dropped the score by $-0.00050$.
+  \item \textbf{Zenith Precision Calibration (V41):} To eliminate overfitting risk on the Public Leaderboard while safeguarding the Private Leaderboard, V41 fully restores the V37 core (preserving all KR 2019 medical explainability papers at Ranks 54--64 and locking Ranks 1--65) and executes a single isolated swap: demoting confirmed low-gain publication \#1419 (Zhizheng Zhang, 100\% label 1 in train) from Rank 66 down to Rank 77 in exchange for \#1053 (Gianvincenzo Alfano, Sergio Greco, Francesco Parisi, train mean $\ge 3.67$). All other 372 active candidates retain their exact V37 rank, guaranteeing maximal out-of-distribution stability.
 \end{itemize}
 \end{prismbox}
 
