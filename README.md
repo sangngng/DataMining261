@@ -1,112 +1,80 @@
-# CO3029 Data Mining Assignment - Personalized Research Paper Recommendation
+# Kaggle "Assignment Data Mining - 261" (CO3029, HCMUT) — Team "hí ộ"
 
-[![Competition Status](https://img.shields.io/badge/Kaggle-Top%208%20(0.66774)-gold.svg)](https://www.kaggle.com/competitions/assignment-data-mining-261/leaderboard)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+Personalised paper recommendation: assign a `priority` to each of the 596 test papers
+(`priority = 0` → not recommended). Metric = F-score of Relevance Q (position-weighted gain,
+`g=(y-1)/4`, `w=1/log2(r+1)`) and Coverage R (recall of papers with label > 1), computed per
+298-paper split.
 
-Repository for the **CO3029 Data Mining (Semester 261)** course assignment at **Ho Chi Minh City University of Technology (HCMUT)**.
+## Approach (all learned directions: classification, regression, clustering, itemset rules)
+Stacked ensemble of 23 base learners (out-of-fold predictions) → ridge + LightGBM meta-models →
+utility = rank-average of regression and P(y>1) scores → keep top fraction (`--keep`), give strictly
+decreasing priorities (10 → 0.01), set the rest to 0.
 
-- **Competition**: [Assignment Data Mining - 261 (Kaggle)](https://www.kaggle.com/competitions/assignment-data-mining-261/overview)
-- **Course Instructor**: ThS. Vũ Ngọc Tú (`tuvn@hcmut.edu.vn`)
-- **Team**: `hí ộ` (`catoxg`)
-- **Team Members**:
-  - Nguyễn Ngọc Sáng (2353046) — **Team Lead, Re-ranking & Architecture**
-  - Nguyễn Trần Vĩ (2353338) — **NLP, Scientific Transformer & Embeddings**
-  - Trần Minh Duân (2352166) — **EDA, Feature Engineering & Academic Report**
-- **Current Standing**: **Rank 8 / Top 8** — **`0.66774`** (All-Time Record! Gap to Rank 7: `0.00026`, Gap to Top 2: `0.00230`)
+Base learners: word/char TF-IDF logistic & ridge, MiniLM embedding ridge/kNN/MLP, ordinal logistic
+P(y≥k), author target-encoding, venue×year prior, KMeans (k=12, 40) target-encoding,
+**Apriori-style itemset rules** (lift of single/pair items {title words, authors, venue, year} → y≥3),
+SVD+GBDT, etc. See `source-code/src/models.py`.
 
+## Data and external resources (declared)
+- `source-code/data/{train,test,sample_submission}.csv`: official competition files.
+- Abstracts (external, `train/test_with_abstracts.csv`): fetched from OpenAlex, CrossRef and
+  Semantic Scholar APIs via `src/data_prep/fetch_*.py` (coverage 81% train / 71% test). Cached in
+  `abstracts_cache.json`.
+- Embeddings: `sentence-transformers/all-MiniLM-L6-v2` (Reimers & Gurevych, 2019, Apache-2.0),
+  text = "VENUE: title. abstract[:300]"; stored in `clusters_k12.npz` (`src/data_prep/make_embeddings.py`).
+- **Unlabelled test text is used unsupervisedly**: TF-IDF vocabulary, SVD, KMeans and item
+  vocabulary are fitted on train+test (no labels). The CV mirrors this protocol.
+- No manual labels, no hand edits of predictions, no Leaderboard-derived information in this pipeline.
 
----
-
-## 1. Project Overview & Architectural Evolution
-
-The objective is to recommend and prioritize research publications for a domain expert based on historical reading preferences ($y \in \{1, 2, 3, 4, 5\}$).
-- **Core Taught Methods Applied**:
-  1. **Clustering**: K-Means clustering ($K=12$) on dense Title+Abstract representations to discover latent research subfields (Answer Set Programming, Neural Network Verification, Description Logics, etc.).
-  2. **Classification & Filtering**: Gradient Boosted Trees (LightGBM/XGBoost/CatBoost) and Scientific Transformers estimating $P(y \ge 2)$ to eliminate uninteresting publications ($y=1$).
-  3. **Regression & Learning-to-Rank**: Probability Ranking Principle (PRP) optimizing continuous expected gain $\mathbb{E}[g]$ under non-linear DCG discounts.
-  4. **Association Rule Mining**: Apriori frequent itemset mining on high-priority subsets.
-
-- **Official Competition Metric**:
-  $$\text{Score} = \frac{2 \cdot Q \cdot R}{Q + R}, \quad Q = \frac{\sum_{r=1}^{M} w_r \cdot g_r}{\sum_{r=1}^{M} w_r}, \quad w_r = \frac{1}{\log_2(r+1)}, \quad g_r = \frac{2^{y_r} - 1}{2^5 - 1}$$
-
----
-
-## 2. Key Architectural Milestones
-
-| Milestone | Core Technological Paradigm | CV Score | CV $Q$ | CV $R$ | Budget $M$ | Kaggle Public LB |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **V1 (Baseline)** | Two-Stage LightGBM + Sparse TF-IDF (2500) + KMeans (8 clusters) | $0.60431$ | $0.49595$ | $0.75801$ | $381$ | $0.61546$ |
-| **V2 (SBERT)** | Sentence-BERT (MiniLM 384d) + Preference Centroids + GBDT Ensembling | $0.61256$ | $0.49175$ | $0.81207$ | $372$ | $0.65006$ |
-| **V16 (Tri-Arch)** | MiniLM Core + 3 Diverse Inductive Paradigms (Topic + Centroids + k-NN) | $0.62339$ | $0.48955$ | $\mathbf{0.85795}$ | $381$ | $0.65474$ |
-| **V20 (Grand Apex)** | Tri-Paradigm Decoupled Consensus + Frank \& Hall Cumulative Ordinal Gain | $0.62910$ | $0.51150$ | $0.85820$ | $381$ | $0.65687$ |
-| **V25B (Transformer)**| End-to-End Fine-Tuned Transformer (MPS, Pairwise Loss) + Budget Calibration | $0.59976$ | $0.49863$ | $0.75236$ | $365$ | $0.65947$ |
-| **V26C (Topic Apex)** | Unsupervised K-Means ($k=12$) Discovery + Micro-Surgical Boundary Pruning | $0.60120$ | $0.49150$ | $0.77500$ | $365$ | $0.66297$ |
-| **V28C (3-Engine Apex)**| Venue Asymmetry Recovery (Budget $365 \to 374$) + 82% Abstract PRP + Zero Ties | $0.61850$ | $0.53500$ | $0.81500$ | $374$ | $0.66753$ |
-| **V29A (Diamond Apex)**| Hyper Top-22 Ground-Truth Diamond Authors ($\mathbb{E}[g]$ Resonance) + Convex Priority | $0.61920$ | $0.53800$ | $0.81500$ | $374$ | $0.66762$ |
-| **V29C (Pure Fusion Apex)**| **Locked 374 + Top-22 Diamonds + Multi-Model Imputed Late Fusion (50/30/10/10)** | $\mathbf{0.62150}$ | $\mathbf{0.54200}$ | $0.81500$ | $374$ | $\mathbf{0.66772}$ (**All-Time Peak**) |
-
-*Detailed experimental trajectory for all 37 configurations is comprehensively recorded in [`reports/experiment_log.csv`](reports/experiment_log.csv).*
-
----
-
-## 3. Directory Structure
-
-```
-DataMining/
-├── source-code/           # Core source code and model pipelines
-│   ├── data/              # Dataset files (train.csv, test.csv, test_with_abstracts.csv)
-│   ├── src/               # Library modules and scripts
-│   │   ├── metric.py      # Official competition metric calculation
-│   │   ├── utils.py       # Helper functions (seed, I/O, submission validation)
-│   │   ├── features.py    # Feature extraction (TF-IDF, SBERT embeddings, Bayes priors)
-│   │   ├── models.py      # Model architectures (GBDT, LambdaRank, Multi-stage)
-│   │   ├── evaluate.py    # Stratified 5-Fold CV and threshold calibration
-│   │   ├── create_v28c_breakthrough.py # V28C 3-Engine Breakthrough pipeline
-│   │   ├── create_v29_apex.py          # V29 Diamond Resonance & Staged Escalation
-│   │   └── create_v29c_pure_fusion.py  # V29C Pure Late-Fusion Apex pipeline
-│   └── submissions/       # Evaluated Kaggle submission CSV files
-├── reports/               # Experiment logs and analytical charts
-│   ├── figures/           # EDA, clustering, and SHAP interpretability charts
-│   └── experiment_log.csv # Exhaustive 35-run experimental logbook
-├── report/                # Academic LaTeX report (Rubric: 10/10)
-│   ├── chapters/          # Chapters 01 to 07
-│   ├── figures/           # Embedded report figures
-│   └── main.tex           # Main LaTeX document
-└── README.md
-```
-
----
-
-## 4. Quickstart & Reproducibility
-
-### Setup Virtual Environment:
+## Reproduce
 ```bash
-python -m venv .venv
-source .venv/bin/activate       # On Linux/macOS
-.\.venv\Scripts\Activate.ps1    # On Windows PowerShell
-pip install -r source-code/requirements.txt
+pip install -r requirements.txt
+cd source-code
+python -m pytest tests                          # metric unit tests (7)
+python -m src.eda                               # reports/eda_summary.txt + figures
+for r in 0 1 2; do python -m src.validate cache --rep $r; done   # ~90 s per repeat, 2 CPU
+python -m src.validate report --reps 0 1 2      # reports/cv_results.csv, cv_summary.txt
+python -m src.validate compare --reps 3 4       # 18 vs 23 base learners on fresh seeds
+python -m src.make_submission --keep 0.60 0.65 0.70   # ~25 s, writes submissions/*.csv
 ```
+Seeds: `SEED=42`, CV repeat r uses seed 42+r. Hardware used: 2 CPU, 3 GB RAM, Python 3.10.12.
 
-### Reproduce Key Submissions:
-```bash
-# 1. Generate V29C Pure Late-Fusion Apex (Score: 0.66772)
-python source-code/src/create_v29c_pure_fusion.py
+## Validation protocol
+Repeated 5-fold StratifiedGroupKFold (groups = near-duplicate titles, TF-IDF cosine ≥ 0.8; 3 dev repeats,
+2 fresh repeats). Stacker inputs are nested inner-OOF predictions. Score is evaluated on random
+298-paper subsets of the OOF predictions with the **test venue mix** (cav 37%, lics 31%, kr 25%, lpnmr 6%,
+no iclp). Split-to-split std ≈ 0.02, so differences below ~0.01 are noise.
 
-# 2. Generate V31 Grand Consensus Apex (Score: 0.66774 - All-Time Peak)
-python source-code/src/create_v31_consensus.py
+## Results (CV, `reports/cv_summary.txt`)
+| Model | keep | Score | Q | R |
+|---|---|---|---|---|
+| Random order | 0.65 | 0.429 | 0.320 | 0.655 |
+| Char TF-IDF + LogReg | 0.65 | 0.583 | 0.464 | 0.784 |
+| Ordinal LogReg | 0.65 | 0.592 | 0.477 | 0.781 |
+| **Stack (final)** | 0.65 | **0.603 ± 0.021** | 0.486 | 0.795 |
 
-# 3. Generate V32A Surgical 18-Swap Transductive Frontier (Target: 0.6909+)
-python source-code/src/create_v32a_frontier_swap.py
+The stack beats the best simple baseline by +0.021 (paired 95% CI [+0.003, +0.041]). Using 23 instead of
+18 base learners adds only +0.004 (CI includes 0). Text signal carries most of the gain
+(without text: 0.566); authors / clusters / itemsets / venue-year add ≈0. Keep fraction is flat for 0.60–0.70.
 
-# 4. Train V32B Dual-Engine Deep Transformer on GPU (Target: 0.700+)
-python source-code/src/train_v32b_dual_engine.py
-```
+## Selected submissions (`source-code/submissions/`)
+| File | Method | Kaggle Public |
+|---|---|---|
+| `submission_v48_clean_stack_387.csv` | 18-learner stack, keep 0.65 | 0.63920 |
+| `submission_v49_stack_keep75_447.csv` | 23-learner stack, keep 0.75 | 0.62747 |
+| `submission_stack23_keep{60,65,70}_*.csv` | 23-learner stack, keep 0.60 / 0.65 / 0.70 (candidates) | not submitted |
 
-All generated files undergo automated validation enforcing:
-- Exactly 596 test rows.
-- Exactly 374 active non-zero priorities.
-- Exactly 374 unique values (**Strict Monotonic Convex Mapping, Zero Duplicate Ties**).
-- Zero NaN / Inf values.
+Final 3 are chosen by CV (not Public). Submission IDs and the final commit hash are recorded in the report.
 
+## Honest notes / limitations
+- Clean Public scores (≈0.63–0.64) are **below** the team's earlier best (0.66862) and the baseline row
+  (0.66962). That earlier history (branch `main`, V1–V47) contained manual ID adjustments and
+  Public-guided blending; it is not used, not reproducible from code, and is excluded from this branch.
+- The Overview text mentions coverage via "title similarity"; the Evaluation/Data pages define
+  Coverage as recall of label > 1. We use the latter.
+- CV ceiling for these features ≈ 0.60; the Public/Private gap shows distribution differences (label shift)
+  that CV with train-only labels cannot capture. Single researcher's labels; ids correlate with venue order.
+- Tried and rejected: LambdaRank, id-neighbour features, structural flags, further hyperparameter tuning.
 
+## Access
+Repository access is granted to **tuvn@hcmut.edu.vn**. Team members, student IDs and contributions: see the report.

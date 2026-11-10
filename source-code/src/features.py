@@ -1,88 +1,55 @@
+"""Feature spaces. Unsupervised representations are built once on ALL available text (train + test titles/abstracts),
+identically in cross-validation and in the final fit (declared unsupervised use of unlabeled test text)."""
 import numpy as np
-import pandas as pd
+from scipy import sparse
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
-from typing import Tuple, Dict, Any
+from .data import text_of, SEED
 
-class FeaturePipeline:
-    """
-    Feature extraction pipeline combining:
-      1. Text features: TF-IDF on paper title
-      2. Metadata features: year, venue frequency, author statistics, doi presence
-      3. Clustering features: K-Means topic clusters on title TF-IDF
-    """
-    def __init__(self, tfidf_max_features: int = 2500, n_clusters: int = 8, random_state: int = 42):
-        self.tfidf_max_features = tfidf_max_features
-        self.n_clusters = n_clusters
-        self.random_state = random_state
-        
-        self.tfidf = TfidfVectorizer(
-            max_features=self.tfidf_max_features,
-            ngram_range=(1, 2),
-            sublinear_tf=True,
-            stop_words='english',
-            min_df=2
-        )
-        self.kmeans = KMeans(
-            n_clusters=self.n_clusters,
-            random_state=self.random_state,
-            n_init=10
-        )
-        self.venue_counts = {}
-        self.median_year = 2020.0
-        self.fitted = False
-
-    def _extract_meta_features(self, df: pd.DataFrame, is_train: bool = True) -> np.ndarray:
-        # Title length features
-        title_series = df['title'].fillna('')
-        char_len = title_series.apply(len).values.reshape(-1, 1)
-        word_count = title_series.apply(lambda s: len(s.split())).values.reshape(-1, 1)
-
-        # Year feature
-        year_series = pd.to_numeric(df['year'], errors='coerce')
-        if is_train:
-            self.median_year = float(year_series.median())
-        year_clean = year_series.fillna(self.median_year).values.reshape(-1, 1)
-        year_norm = (year_clean - 2000.0) / 30.0
-
-        # DOI presence
-        has_doi = (~df['doi'].isna()).astype(float).values.reshape(-1, 1)
-
-        # Author count
-        author_series = df['authors'].fillna('')
-        author_count = author_series.apply(lambda s: len(s.split(',')) if len(s.strip()) > 0 else 0).values.reshape(-1, 1)
-
-        # Venue frequency encoding
-        venue_series = df['venue'].fillna('UNKNOWN').astype(str)
-        if is_train:
-            self.venue_counts = venue_series.value_counts().to_dict()
-        venue_freq = venue_series.map(self.venue_counts).fillna(0.0).values.reshape(-1, 1)
-        venue_freq_log = np.log1p(venue_freq)
-
-        meta_matrix = np.hstack([char_len, word_count, year_norm, has_doi, author_count, venue_freq_log])
-        return meta_matrix
-
-    def fit_transform(self, df: pd.DataFrame) -> np.ndarray:
-        """Fit feature extractors on training data and return feature matrix."""
-        titles = df['title'].fillna('').astype(str)
-        tfidf_feats = self.tfidf.fit_transform(titles).toarray()
-
-        # Fit KMeans clustering (a core taught technique in Data Mining)
-        cluster_distances = self.kmeans.fit_transform(tfidf_feats)
-
-        # Metadata features
-        meta_feats = self._extract_meta_features(df, is_train=True)
-
-        self.fitted = True
-        return np.hstack([tfidf_feats, cluster_distances, meta_feats])
-
-    def transform(self, df: pd.DataFrame) -> np.ndarray:
-        """Transform unseen data (e.g. test set or validation fold)."""
-        assert self.fitted, "Pipeline must be fitted first before transform!"
-        titles = df['title'].fillna('').astype(str)
-        tfidf_feats = self.tfidf.transform(titles).toarray()
-
-        cluster_distances = self.kmeans.transform(tfidf_feats)
-        meta_feats = self._extract_meta_features(df, is_train=False)
-
-        return np.hstack([tfidf_feats, cluster_distances, meta_feats])
+class Space:
+    """Unsupervised representations built once on ALL available text (train+test, declared)."""
+    def __init__(self, tr, te, Etr, Ete):
+        self.df = tr.reset_index(drop=True)._append(te.reset_index(drop=True), ignore_index=True)
+        self.ntr = len(tr)
+        txt = text_of(self.df)
+        self.Xw = TfidfVectorizer(ngram_range=(1, 2), min_df=2, sublinear_tf=True, stop_words="english").fit_transform(txt)
+        self.Xc = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), min_df=3, sublinear_tf=True).fit_transform(self.df["title"].fillna(""))
+        self.E = np.vstack([Etr, Ete]).astype(np.float32)
+        ven = self.df["venue"].astype(str)
+        self.vcodes = ven.astype("category").cat.codes.values
+        V = sparse.csr_matrix(np.eye(self.vcodes.max() + 1)[self.vcodes])
+        yr = self.df["year"].clip(2016, 2025).values
+        Y = sparse.csr_matrix(np.eye(10)[yr - 2016] * 0.5)
+        self.VY = sparse.hstack([V, Y]).tocsr()
+        self.vy_code = self.vcodes * 10 + (yr - 2016)
+        self.Xw_v = sparse.hstack([self.Xw, self.VY]).tocsr()
+        self.Xc_v = sparse.hstack([self.Xc, self.VY]).tocsr()
+        self.E_v = np.hstack([self.E, self.VY.toarray()]).astype(np.float32)
+        from sklearn.cluster import KMeans
+        from sklearn.decomposition import TruncatedSVD
+        self.km12 = KMeans(12, n_init=5, random_state=SEED).fit_predict(self.E)
+        self.km40 = KMeans(40, n_init=5, random_state=SEED).fit_predict(self.E)
+        self.svd = TruncatedSVD(48, random_state=SEED).fit_transform(self.Xw)
+        # items for Apriori-style rules: frequent title/abstract unigrams (df>=12), venue, year-bin
+        from sklearn.feature_extraction.text import CountVectorizer
+        cv = CountVectorizer(binary=True, min_df=12, max_df=0.5, stop_words="english", token_pattern=r"[A-Za-z][A-Za-z\-]{2,}")
+        W = cv.fit_transform(txt)
+        ybin = sparse.csr_matrix(np.eye(3)[np.digitize(self.df["year"].values, [2019, 2022])])
+        self.items = sparse.hstack([W, V, ybin]).tocsr().astype(np.float32)
+        t = self.df["title"].fillna("")
+        self.tl = t.str.split().str.len().values; self.tc = t.str.len().values
+        self.tag = t.str.contains(r"\((?:short|invited|extended|tutorial|talk|abstract|demo|poster|tool|survey|keynote)", case=False, regex=True).values.astype(int)
+        self.meta_kw = t.str.contains(r"proceedings|preface|workshop|volume|editorial|invited|keynote|tutorial|panel", case=False, regex=True).values.astype(int)
+        vg = np.where(np.isin(self.df["venue"].astype(str), ["cav", "lics"]), self.df["venue"].astype(str).map({"cav": 0, "lics": 1}).fillna(0), 2).astype(int)
+        Vg = np.eye(3)[np.where(self.df["venue"].astype(str) == "cav", 0, np.where(self.df["venue"].astype(str) == "lics", 1, 2))]
+        self.E_vi = np.hstack([self.E] + [self.E * Vg[:, [j]] for j in range(3)]).astype(np.float32)
+        self.Xt = TfidfVectorizer(ngram_range=(1, 2), min_df=2, sublinear_tf=True, stop_words="english").fit_transform(self.df["title"].fillna(""))
+        self.Xt_v = sparse.hstack([self.Xt, self.VY]).tocsr()
+        ab = self.df["abstract"].fillna("") if "abstract" in self.df else self.df["title"].fillna("")
+        self.Xa = TfidfVectorizer(analyzer="char_wb", ngram_range=(4, 5), min_df=4, max_features=60000, sublinear_tf=True).fit_transform(ab)
+        self.Xa_v = sparse.hstack([self.Xa, self.VY]).tocsr()
+        self.Xwc = sparse.hstack([self.Xw, self.Xc, self.VY]).tocsr()
+        self.authors = [set(a.split(", ")) - {""} if isinstance(a, str) else set() for a in self.df["authors"]]
+        self.nauth = np.array([len(a) for a in self.authors])
+        self.has_abs = self.df["abstract"].notna().values.astype(int) if "abstract" in self.df else np.zeros(len(self.df))
+        self.year = self.df["year"].values
+        self.global_ids = self.df["id"].values

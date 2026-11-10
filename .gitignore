@@ -36,3 +36,6 @@ env/
 personal/
 scratch/
 
+
+# Cached CV predictions (regenerable)
+source-code/artifacts/
