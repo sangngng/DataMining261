@@ -1,0 +1,21 @@
+== sizes == 2494 train / 596 test; total 3090
+== label distribution == {1: 903, 2: 514, 3: 438, 4: 367, 5: 272} | worthwhile (y>1) share 0.638 | mean gain 0.359
+== missing == {'title': 0, 'venue': 0, 'year': 0, 'authors': 192, 'doi': 0} | test authors missing 41 | abstract coverage train/test 0.814 0.711
+== duplicates == duplicate ids 0 | duplicate DOI 38 | near-duplicate title groups (cos>=0.8) with >1 paper: 46 covering 102 papers
+== venue (train label rates) ==
+         n  worthwhile  mean_label
+venue                             
+cav    657       0.543       2.120
+iclp   456       0.743       2.943
+kr     661       0.732       2.729
+lics   604       0.523       1.937
+lpnmr  116       0.819       3.138
+== venue share train vs test == {'cav': (np.float64(0.263), np.float64(0.371)), 'iclp': (np.float64(0.183), np.float64(0.0)), 'kr': (np.float64(0.265), np.float64(0.253)), 'lics': (np.float64(0.242), np.float64(0.314)), 'lpnmr': (np.float64(0.047), np.float64(0.062))}
+== year range train/test == (2016, 2026) (2016, 2025)
+== authors == unique in train 4238 | test papers with >=1 author seen in train 410 / 596
+   authors (>=8 papers) with highest mean label: [('Francesco Ricca', np.float64(3.7333333333333334)), ('Katsumi Inoue', np.float64(3.6666666666666665)), ('Tran Cao Son', np.float64(3.642857142857143)), ('Thomas Eiter', np.float64(3.625)), ('Michael Morak', np.float64(3.5))]
+   authors (>=8 papers) with lowest mean label: [('Gilles Barthe', np.float64(1.5)), ('James Worrell', np.float64(1.5)), ('Cesare Tinelli', np.float64(1.5555555555555556)), ('Georg Zetzsche', np.float64(1.5833333333333333)), ('Ichiro Hasuo', np.float64(1.6))]
+== title length (words) corr with label == -0.061 | mean 8.4
+== id order == lag-1 autocorrelation of labels along id: 0.231 (ids follow venue/proceedings order)
+== words most associated with y>=4: asp, answer, answer set, set, set programming, programming, neural, probabilistic, knowledge, learning, logic, reasoning, networks, neural networks, explanations
+== words most associated with y==1: conference, quantum, international, proceedings, international conference, automata, july, finite, smt, verification, ltl, theory, conference logic, 2017, synthesis

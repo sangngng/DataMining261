@@ -1,0 +1,41 @@
+# Python
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# CatBoost training artifacts
+catboost_info/
+
+.Python
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Data files (optional: keep data if small, but ignore zips)
+*.zip
+*.tar.gz
+*.npy
+/data
+
+
+# Personal & Private notes (not pushed to git)
+personal/
+scratch/
+
+
+# Cached CV predictions (regenerable)
+source-code/artifacts/

@@ -1,0 +1,72 @@
+== model comparison (venue-matched 298 splits, same folds) ==
+                    model  keep  score      Q      R  score_std
+             Random order  0.65 0.4292 0.3196 0.6550     0.0245
+             Random order  1.00 0.4832 0.3188 1.0000     0.0224
+         Venue-year prior  0.65 0.4924 0.3864 0.6800     0.0220
+         Venue-year prior  1.00 0.5204 0.3520 1.0000     0.0213
+   Author target-encoding  0.65 0.4963 0.3889 0.6874     0.0229
+   Author target-encoding  1.00 0.5174 0.3493 1.0000     0.0220
+     Clustering TE (k=40)  0.65 0.5403 0.4288 0.7319     0.0241
+     Clustering TE (k=40)  1.00 0.5319 0.3626 1.0000     0.0225
+Itemset rules (mean lift)  0.65 0.5405 0.4294 0.7307     0.0226
+Itemset rules (mean lift)  1.00 0.5355 0.3659 1.0000     0.0210
+     TF-IDF word + LogReg  0.65 0.5548 0.4410 0.7493     0.0220
+     TF-IDF word + LogReg  1.00 0.5406 0.3707 1.0000     0.0206
+ MiniLM embedding + Ridge  0.65 0.5696 0.4587 0.7524     0.0221
+ MiniLM embedding + Ridge  1.00 0.5477 0.3774 1.0000     0.0203
+               MiniLM kNN  0.65 0.5658 0.4557 0.7473     0.0217
+               MiniLM kNN  1.00 0.5486 0.3782 1.0000     0.0205
+     Char TF-IDF + LogReg  0.65 0.5828 0.4644 0.7837     0.0200
+     Char TF-IDF + LogReg  1.00 0.5483 0.3780 1.0000     0.0195
+   Ordinal LogReg P(y>=k)  0.65 0.5917 0.4766 0.7814     0.0204
+   Ordinal LogReg P(y>=k)  1.00 0.5559 0.3852 1.0000     0.0194
+ Stack (ridge + LightGBM)  0.65 0.6027 0.4860 0.7945     0.0208
+ Stack (ridge + LightGBM)  1.00 0.5592 0.3884 1.0000     0.0194
+
+== keep-fraction curve, stack ==
+  keep 0.50: score 0.5902  Q 0.5384  R 0.6542  (std over splits 0.0216)
+  keep 0.55: score 0.5985  Q 0.5205  R 0.7052  (std over splits 0.0220)
+  keep 0.60: score 0.6019  Q 0.5024  R 0.7520  (std over splits 0.0220)
+  keep 0.65: score 0.6016  Q 0.4848  R 0.7940  (std over splits 0.0217)
+  keep 0.70: score 0.6004  Q 0.4693  R 0.8346  (std over splits 0.0214)
+  keep 0.75: score 0.5972  Q 0.4542  R 0.8730  (std over splits 0.0211)
+  keep 0.80: score 0.5927  Q 0.4409  R 0.9058  (std over splits 0.0212)
+  keep 0.90: score 0.5791  Q 0.4141  R 0.9645  (std over splits 0.0204)
+  keep 1.00: score 0.5584  Q 0.3876  R 1.0000  (std over splits 0.0200)
+
+== ablation (drop a group of base learners, refit stacker) ==
+  without text (TF-IDF/char/embeddings/kNN/GBDT)    : 0.5657
+  without authors                                   : 0.6026
+  without venue-year prior                          : 0.6013
+  without clustering target-encoding                : 0.6018
+  without itemset / association rules               : 0.6016
+
+== label-shift robustness (odds multiplier on worthwhile papers in the simulated split) ==
+  odds x1.0: 0.6:0.6019  0.65:0.6016  0.7:0.6004  0.75:0.5972  0.8:0.5927  0.9:0.5791
+  odds x1.4: 0.6:0.6189  0.65:0.6223  0.7:0.6244  0.75:0.6233  0.8:0.6220  0.9:0.6116
+  odds x2.0: 0.6:0.6298  0.65:0.6371  0.7:0.6412  0.75:0.6437  0.8:0.6442  0.9:0.6396
+  odds x3.0: 0.6:0.6318  0.65:0.6432  0.7:0.6507  0.75:0.6564  0.8:0.6591  0.9:0.6604
+
+== uncertainty: stack @65% vs best single learner (char TF-IDF LogReg), paired ==
+  diff +0.0211  95% [+0.0029,+0.0406]  P(>0)=0.99
+
+== error analysis ==
+  cav    n= 657 R=0.807  label-1 kept=0.463  mean label kept/dropped=2.49/1.43
+  kr     n= 661 R=0.756  label-1 kept=0.356  mean label kept/dropped=3.15/1.95
+  lics   n= 604 R=0.756  label-1 kept=0.531  mean label kept/dropped=2.16/1.53
+  lpnmr  n= 116 R=0.747  label-1 kept=0.190  mean label kept/dropped=3.80/1.93
+  label-5 papers dropped: 12/172; label-1 share in top 10%: 0.044 (base rate 0.386)
+  false positives (label 1, ranked highest):
+    [cav,2022] Trainify: A CEGAR-Driven Training and Verification Framework for Safe Deep Reinforcement L
+    [kr,2024] Lost in the Crowd: k-unmatchability in Anonymized Knowledge Graphs.
+    [lics,2021] Symbolic Time and Space Tradeoffs for Probabilistic Verification.
+    [lpnmr,2019] Enhancing DLV for Large-Scale Reasoning.
+    [cav,2021] PAYNT: A Tool for Inductive Synthesis of Probabilistic Programs.
+    [kr,2018] ExactLearner: A Tool for Exact Learning of EL Ontologies.
+  false negatives (label >= 4, ranked lowest):
+    [lics,2021,y=4] Higher Lenses.
+    [kr,2021,y=4] The Nondeterministic Situation Calculus.
+    [cav,2020,y=4] The Move Prover.
+    [cav,2016,y=4] Liveness of Randomised Parameterised Systems under Arbitrary Schedulers.
+    [kr,2023,y=5] On the Suitability of Inconsistency Measures.
+    [lics,2025,y=4] Reachability Types, Traces and Full Abstraction.
