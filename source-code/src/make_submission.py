@@ -19,8 +19,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keep", type=float, nargs="+", default=[0.65], help="fraction of the 596 test papers to recommend")
     ap.add_argument("--bases", type=int, default=len(BASE_NAMES), help="number of base learners (first N of BASE_NAMES)")
-    ap.add_argument("--model", choices=["stack", "blend"], default="stack",
-                    help="stack = 23-learner stack only; blend = equal-weight rank average of stack, MiniLM-title and BGE-title learners")
+    ap.add_argument("--model", choices=["stack", "blend", "blend_ft"], default="stack",
+                    help="stack = 23-learner stack only; blend = equal-weight rank average of stack, MiniLM-title and BGE-title learners; blend_ft = blend plus fine-tuned BGE and E5 (precomputed test predictions in data/ft_*_test.npy, see src/data_prep/finetune_encoder.py), five equal parts")
     ap.add_argument("--out", default=str(ROOT / "submissions"))
     args = ap.parse_args()
 
@@ -33,6 +33,9 @@ def main():
     name = f"stack{args.bases}"
     if args.model == "blend":
         u = (rank01(u) + sum(title_emb_utility(S, load_title_embeddings(), a, y, b))) / 3; name = f"blend{args.bases}"
+    if args.model == "blend_ft":
+        ft = [rank01(np.load(DATA / f"ft_{t}_test.npy")) for t in ("bge", "e5")]
+        u = (rank01(u) + sum(title_emb_utility(S, load_title_embeddings(), a, y, b)) + sum(ft)) / 5; name = f"blendft{args.bases}"
     u = u + 1e-9 * np.arange(len(te))[::-1] / len(te)                    # deterministic tie-break
     ss = pd.read_csv(DATA / "sample_submission.csv")
     for keep in args.keep:
