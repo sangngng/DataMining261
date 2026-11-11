@@ -74,9 +74,12 @@ The blend (5 CV repeats, AUC of y>1: 0.788 -> 0.807) improves the stack by +0.01
 Final 3 are chosen by CV (not Public). Submission IDs and the final commit hash are recorded in the report.
 
 ## Honest notes / limitations
-- Clean Public scores (≈0.63–0.65) are **below** the team's earlier best (0.66862) and the baseline row
-  (0.66962). That earlier history (branch `main`, V1–V47) contained manual ID adjustments and
+- The instructor's benchmark on the Public leaderboard is 0.60953; all clean submissions here (0.627-0.649) are above it.
+  The team's earlier history (branch `main`, V1-V47, best Public 0.66862) contained manual ID adjustments and
   Public-guided blending; it is not used, not reproducible from code, and is excluded from this branch.
+- Tried without significant CV gain: 9 further encoders (MPNet, SPECTER, E5, GTE, BGE-large, MiniLM-L12 on titles;
+  BGE/SPECTER/MPNet on title+abstract). Adding all title encoders moves CV by about +0.001 (noise), so the final
+  blend keeps only MiniLM and BGE.
 - The Overview text mentions coverage via "title similarity"; the Evaluation/Data pages define
   Coverage as recall of label > 1. We use the latter.
 - CV ceiling for these features ≈ 0.60; the Public/Private gap shows distribution differences (label shift)
