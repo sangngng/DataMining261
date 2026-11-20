@@ -30,6 +30,8 @@ env/
 *.tar.gz
 *.npy
 /data
+# precomputed GPU / embedding outputs that are part of the reproducible pipeline
+!source-code/data/*.npy
 
 
 # Personal & Private notes (not pushed to git)

@@ -1,6 +1,7 @@
-# Colab (GPU): !python colab_finetune.py MODEL TAG
+# Colab (GPU): !python finetune_encoder_cv5.py MODEL TAG
 # Fine-tunes a pretrained encoder on train labels (ordinal targets P(y>=k), k=2..5) with the SAME CV folds as the
-# local pipeline (cv_pack5.csv), then reports whether adding it to the current blend helps. Also fits on all train -> test.
+# local pipeline (data/oof_blend_a.csv, written by src/export_oof.py), and also fits on all train -> test.
+# Needs oof_blend_a.csv and test.csv (from data/) in the working directory.
 import sys, time, numpy as np, pandas as pd, torch, torch.nn as nn
 from transformers import AutoTokenizer, AutoModel, get_linear_schedule_with_warmup
 from scipy.stats import rankdata
@@ -9,7 +10,7 @@ from sklearn.metrics import roc_auc_score
 MODEL, TAG = sys.argv[1], sys.argv[2]
 EPOCHS, LR, BS, MAXLEN = 5, 3e-5, 32, 48
 dev = "cuda"
-tr = pd.read_csv("cv_pack5.csv"); te = pd.read_csv("test_pack.csv")
+tr = pd.read_csv("oof_blend_a.csv"); te = pd.read_csv("test.csv")
 y = tr.y.values
 txt = lambda d: (d.venue.str.upper() + " " + d.year.astype(str) + ": " + d.title.fillna("")).tolist()
 Xtr, Xte = txt(tr), txt(te)
