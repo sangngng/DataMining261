@@ -95,10 +95,20 @@ Earlier stages of pipeline A (its own protocol, `reports/cv_summary.txt` and `so
 | 6 | `pipeline-b/submissions/submission_b_keep60_358.csv` | `submission_v2_keep60_358.csv` | pipeline B, keep 0.60 | 0.66497 |
 | 7 | `pipeline-b/submissions/submission_avg_ab_keep65_387.csv` | `submission_avg_old_v2_keep65_387.csv` | average A+B | 0.66240 |
 | 8 | `pipeline-b/submissions/submission_avg_abc_keep65_387.csv` | `submission_avg3_keep65_387.csv` | average A+B+C (final) | 0.65964 |
+| 9 | `source-code/submissions/submission_blendft4_23_keep55_328.csv` | same | pipeline A, keep 0.55 | see report |
 
 Kaggle file names differ for #1, #2 and #6–#8 because they were uploaded before the files were renamed here; the
 contents are identical (same MD5). Other CSVs in the submission folders are keep-fraction candidates that were not
-uploaded. The final submissions are chosen by CV, not by Public score.
+uploaded.
+
+## Final selection (`pipeline-b/src/select_final.py`, `pipeline-b/reports/final_selection.txt`)
+Kaggle ranks a team by the best Private score among its (up to 3) selected submissions, so we choose the triple with
+the highest expected **maximum** Score over 3,000 simulated 298-paper splits (and re-checked on two more sets of
+4,000 splits), not three copies of the single best model. Candidates: pipelines A, B, A+B, A+B+C at keep
+0.55–0.75. Selected: **#8 (A+B+C, keep 0.65)**, **#6 (B, keep 0.60)** and **#9 (A, keep 0.55)**: expected max
+0.639–0.640 versus 0.638 for the three best single files; the best single candidate is #8 (0.636). Different
+models and keep fractions hedge against the unknown share of worthwhile papers in the Private split. The choice
+uses CV only, not Public scores.
 
 ## Notes and limitations
 - The instructor's Public benchmark is 0.60953; all submissions above are higher.
