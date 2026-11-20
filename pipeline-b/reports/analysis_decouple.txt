@@ -1,0 +1,14 @@
+keep 0.6
+  final ABC/ABC                  Score 0.6354
+  sel CLF+ABC, order ABC         Score 0.6267
+  sel ABC, order REG+ABC         Score 0.6349
+  sel ABC, order FT+ABC          Score 0.6361
+  sel CLF+ABC, order FT+ABC      Score 0.6274
+  sel ABC, order FT              Score 0.6361
+keep 0.65
+  final ABC/ABC                  Score 0.6357
+  sel CLF+ABC, order ABC         Score 0.6280
+  sel ABC, order REG+ABC         Score 0.6352
+  sel ABC, order FT+ABC          Score 0.6364
+  sel CLF+ABC, order FT+ABC      Score 0.6286
+  sel ABC, order FT              Score 0.6364

@@ -1,0 +1,7 @@
+oracle (true labels), keep only y>1: [np.float64(0.7379), np.float64(0.0173)]
+final + 0.0 x true-rank mix: AUC 0.831  Score 0.6357
+final + 0.5 x true-rank mix: AUC 0.926  Score 0.6864
+final + 1.0 x true-rank mix: AUC 0.965  Score 0.7113
+final + 1.5 x true-rank mix: AUC 0.982  Score 0.7204
+final + 2.0 x true-rank mix: AUC 0.989  Score 0.7257
+final + 3.0 x true-rank mix: AUC 0.995  Score 0.7297
