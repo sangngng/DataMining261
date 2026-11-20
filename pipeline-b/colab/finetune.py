@@ -1,18 +1,21 @@
 # Google Colab (T4 GPU). Fine-tuned title encoders for pipeline B/C.
 #   Upload work/train.csv, work/test.csv and work/folds_b.csv / work/folds_c.csv, then
-#   !python finetune.py RUN TAG      RUN in {b, c}, TAG in {sci, bge, e5, mpnet}
+#   !python finetune.py RUN TAG      RUN in {b, c, d}, TAG in {sci, bge, e5, mpnet}
 #   -> ft_{RUN}_{TAG}_oof.npy (3 reps x 2494, out-of-fold) and ft_{RUN}_{TAG}_test.npy (596); copy them to work/.
 # Model: pretrained encoder + mean pooling + 4 sigmoid heads for P(y>=k), k=2..5; utility = mean of the 4 probabilities.
 # Text: "VENUE YEAR: title". Trained on train labels only; test = mean over seeds of models fitted on all of train.
-#   run b: folds_b, BCE loss, 5 epochs, lr 3e-5, 3 test seeds
-#   run c: folds_c, same recipe, different seeds
+#   run b: folds_b, BCE loss, 5 epochs, lr 3e-5, 3 test seeds        (used in the final ensemble)
+#   run c: folds_c, same recipe, different seeds                     (used in the final ensemble)
+#   run d: folds_c, BCE + pairwise RankNet loss on the expected gain, layer-wise lr decay 0.9, 6 epochs, lr 4e-5,
+#          5 test seeds                                              (experiment; not better, not used)
 # Encoders: allenai/scibert_scivocab_uncased (Beltagy et al., 2019), BAAI/bge-base-en-v1.5 (Xiao et al., 2023),
 #           intfloat/e5-base-v2 (Wang et al., 2022), sentence-transformers/all-mpnet-base-v2 (Song et al., 2020).
 import sys, time, numpy as np, pandas as pd, torch, torch.nn as nn
 from transformers import AutoTokenizer, AutoModel, get_linear_schedule_with_warmup
 RUN, TAG = sys.argv[1], sys.argv[2]
 CFG = {"b": dict(folds="folds_b.csv", seed_off=0, test_seed=9000, n_test=3, epochs=5, lr=3e-5, rank=False),
-       "c": dict(folds="folds_c.csv", seed_off=777, test_seed=9500, n_test=3, epochs=5, lr=3e-5, rank=False)}[RUN]
+       "c": dict(folds="folds_c.csv", seed_off=777, test_seed=9500, n_test=3, epochs=5, lr=3e-5, rank=False),
+       "d": dict(folds="folds_c.csv", seed_off=4444, test_seed=9700, n_test=5, epochs=6, lr=4e-5, rank=True)}[RUN]
 MODEL = {"bge": "BAAI/bge-base-en-v1.5", "e5": "intfloat/e5-base-v2", "sci": "allenai/scibert_scivocab_uncased",
          "mpnet": "sentence-transformers/all-mpnet-base-v2"}[TAG]
 tr = pd.read_csv("train.csv"); te = pd.read_csv("test.csv"); F = pd.read_csv(CFG["folds"]); assert (F.id == tr.id).all()
