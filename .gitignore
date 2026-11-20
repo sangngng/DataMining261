@@ -32,6 +32,9 @@ env/
 /data
 # precomputed GPU / embedding outputs that are part of the reproducible pipeline
 !source-code/data/*.npy
+!pipeline-b/work/*.npy
+pipeline-b/work/*.npz
+pipeline-b/work/*.log
 
 
 # Personal & Private notes (not pushed to git)
