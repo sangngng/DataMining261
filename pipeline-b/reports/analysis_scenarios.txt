@@ -1,0 +1,28 @@
+worthwhile share in the real train set: 0.638
+
+== by share of worthwhile papers in the split ==
+              n  A+B+C keep .65  B keep .60  A keep .55  best_of_3
+share_bin                                                         
+<55%       2836          0.6032      0.6054      0.6112     0.6133
+55-60%     2133          0.6299      0.6285      0.6294     0.6345
+60-65%     2236          0.6416      0.6382      0.6351     0.6439
+65-70%     2020          0.6515      0.6462      0.6399     0.6525
+>70%        775          0.6569      0.6504      0.6408     0.6574
+
+   how often each pick is the best of the three:
+winner     A keep .55  A+B+C keep .65  B keep .60
+share_bin                                        
+<55%             0.66            0.10        0.24
+55-60%           0.41            0.31        0.29
+60-65%           0.21            0.55        0.24
+65-70%           0.06            0.74        0.20
+>70%             0.01            0.84        0.15
+
+== by label-shift odds (1.0 = same as train) ==
+      A+B+C keep .65  B keep .60  A keep .55  best_of_3
+odds                                                   
+0.60          0.5989      0.6018      0.6081     0.6099
+0.80          0.6220      0.6214      0.6239     0.6279
+1.00          0.6365      0.6338      0.6329     0.6398
+1.25          0.6457      0.6417      0.6373     0.6475
+1.60          0.6540      0.6481      0.6402     0.6548
