@@ -6,8 +6,9 @@ import sys
 sys.path.insert(0, "src")
 from evaluate import evaluate
 from pipelines import oof
-A, B = (oof(k) for k in "AB")
-cands = {"A (source-code, blend_ft4)": A, "B": B, "avg A+B": (A + B) / 2}
+A, B, C = (oof(k) for k in "ABC")
+cands = {"A (source-code, blend_ft4)": A, "B": B, "C (B code, other folds/seeds)": C,
+         "avg A+B": (A + B) / 2, "avg A+B+C (final)": (A + B + C) / 3, "avg B+C": (B + C) / 2}
 out = []
 for k in (0.60, 0.65, 0.70):
     t = evaluate(cands, keep=k, n_sims=2500, seed=11, ref="avg A+B").to_string(index=False)

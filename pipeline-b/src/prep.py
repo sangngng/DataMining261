@@ -1,7 +1,7 @@
 """Step 1. Read the raw Kaggle files (data/), repair the unquoted Test.csv, write clean copies to work/, and build the CV
 folds. Folds: StratifiedGroupKFold, 5 folds x 3 repetitions; groups join exact-DOI duplicates and near-duplicate titles
 (TF-IDF cosine >= 0.8), so related papers never sit on both sides of a split.
-    run b -> work/folds_b.csv (seeds 2026, 2027, 2028)
+    run b -> work/folds_b.csv (seeds 2026, 2027, 2028)        run c -> work/folds_c.csv (seeds 3031, 3032, 3033)
 Usage (from pipeline-b/):  python src/prep.py"""
 import sys, numpy as np, pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -11,7 +11,7 @@ import scipy.sparse as sp
 sys.path.insert(0, "src")
 from io_data import read_train, read_test
 
-RUNS = {"b": 2026}
+RUNS = {"b": 2026, "c": 3031}
 tr = read_train("data/train.csv"); te = read_test("data/Test.csv"); ss = pd.read_csv("data/Submission.csv")
 assert set(te.id) == set(ss.id) and len(te) == 596 and tr.id.is_unique
 tr.to_csv("work/train.csv", index=False); te.to_csv("work/test.csv", index=False); ss.to_csv("work/sample_submission.csv", index=False)
